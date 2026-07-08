@@ -2,12 +2,7 @@
 
     <div class="absolute inset-0">
 
-        <img
-            src="{{ asset('assets/images/academic-banner.jpg') }}"
-            class="w-full h-full object-cover"
-            alt="{{ $page['title'] }}">
-
-        <div class="absolute inset-0 bg-gradient-to-r from-[#003B73]/90 via-[#005BAC]/75 to-[#003B73]/90"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] via-[#005BAC] to-[#003B73]"></div>
 
     </div>
 
