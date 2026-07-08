@@ -41,7 +41,7 @@
         </span>
 
         <h1
-            class="mt-6 text-5xl md:text-6xl font-extrabold text-white leading-tight">
+            class="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight">
 
             Teknik Otomotif
             <br>
