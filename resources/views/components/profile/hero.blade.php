@@ -53,9 +53,7 @@
             class="mt-6 max-w-2xl text-lg text-white/90 leading-8">
 
             Mengenal lebih dekat Program Studi Sarjana Terapan
-            Teknik Otomotif Elektronik Politeknik Negeri Malang,
-            mulai dari sejarah, visi misi, hingga profil lulusan
-            yang siap menghadapi industri otomotif modern.
+            Teknik Otomotif Elektronik Politeknik Negeri Malang.
 
         </p>
 

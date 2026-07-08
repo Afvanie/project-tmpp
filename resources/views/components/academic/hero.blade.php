@@ -2,6 +2,11 @@
 
     <div class="absolute inset-0">
 
+    <img
+            src="{{ asset('assets/images/akademik-banner.jpg') }}"
+            class="w-full h-full object-cover"
+            alt="">
+
         <div class="absolute inset-0 bg-gradient-to-r from-[#003B73] via-[#005BAC] to-[#003B73]"></div>
 
     </div>
