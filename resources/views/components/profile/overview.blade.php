@@ -36,7 +36,7 @@
 
             <h2 class="mt-3 text-5xl font-bold text-slate-800">
 
-                Mengenal Program Studi TOE
+                Mengenal Program Studi D-III Teknik Mesin
 
             </h2>
 
@@ -182,7 +182,7 @@
 
                         <h3 class="text-4xl font-bold text-blue-700">
 
-                            S.Tr.T
+                            A.Md.T
 
                         </h3>
 
@@ -194,8 +194,8 @@
 
                         <p class="mt-2 text-sm text-slate-500 leading-6">
 
-                            Sarjana Terapan Teknik
-                            (S.Tr.T.)
+                            Ahli Madya Teknik
+                            (A.Md.T.)
 
                         </p>
 
@@ -276,63 +276,12 @@
 
                     <p>
 
-                        Program Studi <strong>Teknik Otomotif Elektronik (TOE)</strong>
-                        Politeknik Negeri Malang merupakan salah satu program studi
-                        unggulan yang mulai dikembangkan pada tahun akademik
-                        <strong>2004/2005</strong>. Program ini lahir sebagai jawaban atas
-                        kebutuhan industri akan tenaga profesional di bidang otomotif
-                        yang mampu mengikuti perkembangan teknologi digital,
-                        elektrifikasi kendaraan, dan sistem otomotif modern.
+                        Program studi D-III Teknik Mesin merupakan salah satu dari program studi di Jurusan Teknik Mesin dirancang secara khusus guna menghasilkan tenaga sarjana sains terapan yang memiliki kemampuan dalam merancang jix and fixtures, press tool, dan plastic mould menggunakan CAD/CAM/CAE. Tidak hanya itu, mahasiswa juga dibekali kemampuan untukmerancang mesin dan komponen mekanik di industry manufaktur; merancang proses otomasi di industri manufaktur; kemampuan praktis dan teoritis untuk proses manufaktur logam dan non logam; berjiwa kepemimpinan yang jujur dan tanggung jawab serta berjiwa technopreneur bidang perancangan mesin, memiliki etika pekerjaan 
+
 
                     </p>
 
-                    <p>
-
-                        Pada awal penyelenggaraannya, TOE dibuka sebagai bagian dari
-                        pengembangan program alih jenjang dari <strong>D-III ke D-IV</strong>
-                        dan secara resmi memperoleh izin penyelenggaraan melalui
-                        <strong>Surat Keputusan Dirjen DIKTI Nomor 2964/D/T/2005</strong>
-                        tanggal 29 Agustus 2005. Sejak saat itu, program studi terus
-                        berkembang baik dari sisi akademik maupun fasilitas
-                        pendukung pembelajaran.
-
-                    </p>
-
-                    <p>
-
-                        Kurikulum TOE dirancang mengikuti perkembangan dunia
-                        industri otomotif. Materi pembelajaran tidak hanya mencakup
-                        sistem mekanik kendaraan, tetapi juga teknologi
-                        <strong>Electronic Control Unit (ECU)</strong>, sensor dan aktuator,
-                        kendaraan listrik (<strong>Electric Vehicle</strong>), autonomous
-                        vehicle, hingga penerapan <strong>Internet of Things (IoT)</strong>
-                        pada kendaraan cerdas.
-
-                    </p>
-
-                    <p>
-
-                        Dalam mendukung proses pembelajaran, TOE Polinema menjalin
-                        kolaborasi dengan berbagai industri otomotif serta lembaga
-                        penelitian. Dukungan laboratorium modern, ruang praktik yang
-                        representatif, serta fasilitas pembelajaran berbasis teknologi
-                        menjadi bagian penting dalam menciptakan pengalaman belajar
-                        yang aplikatif dan sesuai kebutuhan dunia kerja.
-
-                    </p>
-
-                    <p>
-
-                        Hingga tahun <strong>2025</strong>, Program Studi Teknik Otomotif
-                        Elektronik telah memperoleh <strong>Akreditasi Unggul</strong>
-                        sebagai bentuk pengakuan atas kualitas pendidikan yang
-                        diberikan. Dengan semangat inovasi yang berkelanjutan,
-                        TOE Polinema berkomitmen mencetak lulusan yang kompeten,
-                        profesional, adaptif terhadap perkembangan teknologi,
-                        serta mampu bersaing pada era transformasi otomotif menuju
-                        elektrifikasi, digitalisasi, dan <strong>smart mobility</strong>.
-
-                    </p>
+                    
 
                 </div>
 

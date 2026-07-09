@@ -32,14 +32,17 @@
 
                 <h3 class="text-2xl font-bold">
 
-                    Teknik Otomotif Elektronik
+                PROGRAM STUDI    
+                <br>
+
+                D-III Teknik Mesin
 
                 </h3>
 
                 <p class="mt-5 text-slate-300 leading-8">
 
-                    Program Studi Sarjana Terapan Teknik
-                    Otomotif Elektronik
+                    Program Diploma Teknik
+                    Mesin
 
                     <br><br>
 
@@ -142,7 +145,7 @@
 
                         📍
 
-                        Jurusan Teknik Mesin
+                        Program Studi D-III Teknik Mesin
 
                         <br>
 
@@ -164,7 +167,7 @@
 
                     <p>
 
-                        ✉ toe@polinema.ac.id
+                        ✉ Teknikmesin@polinema.ac.id
 
                     </p>
 
@@ -249,7 +252,7 @@
 
                 © {{ date('Y') }}
 
-                Program Studi Teknik Otomotif Elektronik
+                Program Studi D-III Teknik Mesin
 
                 Politeknik Negeri Malang.
 
@@ -259,7 +262,7 @@
 
             <p class="text-slate-400 text-sm mt-4 md:mt-0">
 
-                Made with by TOE Polinema
+                Made with by Teknik Mesin Polinema
 
             </p>
 

@@ -24,11 +24,11 @@
     <div class="relative z-10 text-center text-white px-6 max-w-4xl">
 
         <h1 class="text-4xl md:text-6xl font-bold leading-tight">
-            D-IV Teknik Otomotif & Elektronika
+            D-III Teknik Mesin
         </h1>
 
         <p class="mt-5 text-lg md:text-xl text-white/80">
-            Program Studi Teknik Otomotif Elektronik (TOE) merupakan program vokasi yang menggabungkan ilmu otomotif modern dengan teknologi elektronik dan kontrol cerdas.
+            Program studi D-III Teknik Mesin merupakan salah satu dari program studi di Jurusan Teknik Mesin dirancang secara khusus guna menghasilkan tenaga sarjana sains terapan yang memiliki kemampuan dalam berbagai bidang mengenai Mesin. 
         </p>
 
         {{-- CTA --}}

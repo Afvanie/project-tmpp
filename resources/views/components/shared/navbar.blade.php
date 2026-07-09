@@ -20,14 +20,14 @@
 
                     {{-- Mobile Text --}}
                     <h1 class="md:hidden font-extrabold text-[13px] uppercase tracking-tight leading-[1.15]">
-                        Teknik Otomotif Elektronik
+                        D-III Teknik Mesin
                         
                         
                     </h1>
 
                     {{-- Desktop Text --}}
                     <h1 class="hidden md:block font-extrabold text-lg md:text-xl uppercase tracking-tight">
-                        Program Studi Teknik Otomotif Elektronik
+                        D-III Teknik Mesin
                     </h1>
 
                     <p class="text-[11px] md:text-sm font-semibold opacity-90 mt-0.5">
@@ -48,7 +48,7 @@
 
                 <a href="{{ route('profile') }}"
                    class="hover:text-yellow-400 transition">
-                    Profil TOE
+                    Profil TM
                 </a>
 
                 <a href="{{ route('lecturers') }}"
@@ -208,7 +208,7 @@
             <div>
 
                 <h3 class="text-white font-extrabold leading-tight">
-                    Teknik Otomotif Elektronik
+                    D-III Teknik Mesin
                 </h3>
 
                 <p class="text-yellow-300 text-sm font-semibold mt-1">
@@ -249,7 +249,7 @@
                     <i class="fa-solid fa-building-columns"></i>
                 </span>
 
-                Profil TOE
+                Profil TM
             </a>
 
             <a href="{{ route('lecturers') }}"
@@ -346,7 +346,7 @@
         <div class="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white">
 
             <p class="font-bold">
-                Program Studi TOE
+                Program Studi D_III Teknik Mesin
             </p>
 
             <p class="text-sm text-slate-300 mt-2 leading-6">

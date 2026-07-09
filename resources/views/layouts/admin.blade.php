@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin TOE')</title>
+    <title>@yield('title', 'Admin Teknik Mesin')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -20,7 +20,7 @@
             <div class="p-6 border-b border-white/10">
 
                 <h1 class="text-xl font-bold">
-                    Admin TOE
+                    Admin Teknik Mesin
                 </h1>
 
                 <p class="text-sm text-slate-400 mt-1">
@@ -38,6 +38,30 @@
                     Dashboard
                 </a>
 
+                <a href="{{ route('admin.academic-documents.index') }}"
+                class="block px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    Visi & Misi
+                </a>
+
+                <a href="{{ route('admin.academic-documents.index') }}"
+                class="block px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    Tujuan
+                </a>
+
+                <a href="{{ route('admin.academic-documents.index') }}"
+                class="block px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    Profil Profesional Mandiri
+                </a>
+
+                <a href="{{ route('admin.academic-documents.index') }}"
+                class="block px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    CP Lulusan
+                </a>
+
                 <a href="{{ route('admin.lecturer-staff.index') }}"
                 class="block px-4 py-3 rounded-xl transition
                 {{ request()->routeIs('admin.lecturer-staff.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
@@ -50,10 +74,13 @@
                     Akademik
                 </a>
 
+
                 <a href="/"
                 class="block px-4 py-3 rounded-xl hover:bg-white/10 text-slate-300 transition">
                     Lihat Website
                 </a>
+
+                
 
             </nav>
 

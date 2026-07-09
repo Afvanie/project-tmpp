@@ -48,29 +48,13 @@
                     data-aos="fade-up"
                     data-aos-delay="300">
 
-                    Program Studi D-IV Teknik Otomotif Elektronik (TOE)
-                    merupakan salah satu Program Studi di Jurusan Teknik Mesin
-                    Politeknik Negeri Malang.
+                    Program studi D-III Teknik Mesin merupakan salah satu dari program studi di Jurusan Teknik Mesin dirancang secara khusus guna menghasilkan tenaga sarjana sains terapan yang memiliki kemampuan dalam merancang jix and fixtures, press tool, dan plastic mould menggunakan CAD/CAM/CAE
 
-                    Pada awalnya bernama Program Studi D-IV Ekonomi Teknik
-                    Otomotif yang didirikan atas kerja sama Politeknik Negeri
-                    Malang, VEDC Malang, dan Fakultas Ekonomi Universitas
-                    Brawijaya.
+                    Tidak hanya itu, mahasiswa juga dibekali kemampuan untukmerancang mesin dan komponen mekanik di industry manufaktur; merancang proses otomasi di industri manufaktur; kemampuan praktis dan teoritis untuk proses manufaktur logam dan non logam; berjiwa kepemimpinan yang jujur dan tanggung jawab serta berjiwa technopreneur bidang perancangan mesin, memiliki etika pekerjaan.
 
                 </p>
 
-                <p
-                    class="mt-6 text-gray-600 leading-8 text-justify"
-                    data-aos="fade-up"
-                    data-aos-delay="500">
-
-                    Program Studi mulai menerima mahasiswa baru pada tahun
-                    akademik 2004/2005 melalui program alih jenjang dan terus
-                    berkembang hingga saat ini menjadi salah satu program studi
-                    vokasi unggulan yang menghasilkan lulusan profesional dan
-                    siap menghadapi dunia industri.
-
-                </p>
+            
 
                 <a href="/about"
 
@@ -118,7 +102,6 @@
 
             {{-- IMAGE --}}
             <div
-
                 data-aos="fade-right"
                 data-aos-duration="1200">
 
@@ -134,15 +117,12 @@
                     </div>
 
                     <div
-                        class="overflow-hidden rounded-3xl shadow-2xl">
+                        class="overflow-hidden rounded-3xl shadow-2xl bg-white">
 
                         <img
-
                             src="{{ asset('assets/images/akreditasi.jpg') }}"
-
                             class="relative w-full transition duration-700 hover:scale-105"
-
-                            alt="Akreditasi">
+                            alt="Sertifikat Akreditasi Program Studi D-III Teknik Mesin">
 
                     </div>
 
@@ -152,20 +132,19 @@
 
             {{-- TEXT --}}
             <div
-
                 data-aos="fade-up"
                 data-aos-delay="200">
 
                 <span
                     class="inline-flex items-center px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 font-semibold text-sm">
 
-                    Akreditasi
+                    Akreditasi Program Studi
 
                 </span>
 
-                <h2 class="mt-5 text-4xl font-bold text-gray-800">
+                <h2 class="mt-5 text-4xl font-bold text-gray-800 leading-tight">
 
-                    Program Studi Terakreditasi Unggul
+                    Program Studi D-III Teknik Mesin Terakreditasi Unggul
 
                 </h2>
 
@@ -180,9 +159,10 @@
                     data-aos="fade-up"
                     data-aos-delay="400">
 
-                    Program Studi D-IV Teknik Otomotif Elektronik berhasil
-                    memperoleh predikat <strong>Unggul</strong> dari LAM Teknik
-                    yang berlaku hingga tahun 2028.
+                    Program Studi Teknik Mesin pada Program Diploma Tiga Politeknik Negeri Malang
+                    telah memperoleh akreditasi dengan peringkat <strong>Unggul</strong> dari
+                    Lembaga Akreditasi Mandiri Program Studi Keteknikan atau
+                    <strong>LAM Teknik</strong>.
 
                 </p>
 
@@ -191,18 +171,46 @@
                     data-aos="fade-up"
                     data-aos-delay="600">
 
-                    Predikat ini menunjukkan komitmen Program Studi dalam
-                    menjaga mutu pendidikan, penelitian, pengabdian kepada
-                    masyarakat, serta menghasilkan lulusan yang kompeten,
-                    profesional, dan siap bersaing di dunia industri.
+                    Akreditasi ini ditetapkan berdasarkan Keputusan LAM Teknik Nomor
+                    <strong>0136/SK/LAM Teknik/VD3/XII/2022</strong>. Sertifikat akreditasi
+                    berlaku mulai tanggal <strong>21 Desember 2022</strong> sampai dengan
+                    <strong>20 Desember 2027</strong>.
 
                 </p>
 
+                <p
+                    class="mt-6 text-gray-600 leading-8 text-justify"
+                    data-aos="fade-up"
+                    data-aos-delay="700">
+
+                    Capaian akreditasi Unggul menjadi bentuk pengakuan terhadap mutu
+                    penyelenggaraan pendidikan vokasi di Program Studi D-III Teknik Mesin,
+                    baik dari aspek pembelajaran, kurikulum, sumber daya manusia, sarana
+                    prasarana, maupun relevansi lulusan dengan kebutuhan dunia industri.
+
+                </p>
+
+                {{-- INFO AKREDITASI --}}
+                <div
+                    class="grid sm:grid-cols-2 gap-4 mt-8"
+                    data-aos="fade-up"
+                    data-aos-delay="800">
+
+                    <div class="p-5 rounded-2xl bg-blue-50 border border-blue-100">
+                        <p class="text-sm text-gray-500 mb-1">Peringkat</p>
+                        <p class="text-xl font-bold text-blue-700">Unggul</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-yellow-50 border border-yellow-100">
+                        <p class="text-sm text-gray-500 mb-1">Lembaga</p>
+                        <p class="text-xl font-bold text-yellow-700">LAM Teknik</p>
+                    </div>
+
+                </div>
+
                 <a href="/about"
-
                     data-aos="zoom-in"
-                    data-aos-delay="800"
-
+                    data-aos-delay="900"
                     class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-blue-700 text-white font-semibold transition-all duration-300 hover:bg-blue-800 hover:-translate-y-1 hover:shadow-xl">
 
                     Lihat Detail

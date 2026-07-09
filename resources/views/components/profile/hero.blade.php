@@ -28,7 +28,7 @@
             <span>/</span>
 
             <span class="text-yellow-400">
-                Profile TOE
+                Profile Teknik Mesin
             </span>
 
         </nav>
@@ -43,17 +43,15 @@
         <h1
             class="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight">
 
-            Teknik Otomotif
-            <br>
-            Elektronik
+            D-III Teknik Mesin    
 
         </h1>
 
         <p
             class="mt-6 max-w-2xl text-lg text-white/90 leading-8">
 
-            Mengenal lebih dekat Program Studi Sarjana Terapan
-            Teknik Otomotif Elektronik Politeknik Negeri Malang.
+            Mengenal lebih dekat Program Studi D-III
+            Teknik Mesin Politeknik Negeri Malang.
 
         </p>
 
