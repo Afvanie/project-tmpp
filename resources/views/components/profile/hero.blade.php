@@ -6,7 +6,7 @@
         <img
             src="{{ asset('assets/images/profile-banner.jpg') }}"
             class="w-full h-full object-cover"
-            alt="">
+            alt="Profil Program Studi D-III Teknik Mesin">
 
         <div class="absolute inset-0 bg-gradient-to-r from-[#003B73]/90 via-[#005BAC]/75 to-[#003B73]/90"></div>
 
@@ -28,7 +28,7 @@
             <span>/</span>
 
             <span class="text-yellow-400">
-                Profile Teknik Mesin
+                Profil D-III Teknik Mesin
             </span>
 
         </nav>
@@ -43,15 +43,16 @@
         <h1
             class="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight">
 
-            D-III Teknik Mesin    
+            D-III Teknik Mesin
 
         </h1>
 
         <p
             class="mt-6 max-w-2xl text-lg text-white/90 leading-8">
 
-            Mengenal lebih dekat Program Studi D-III
-            Teknik Mesin Politeknik Negeri Malang.
+            Mengenal lebih dekat Program Studi D-III Teknik Mesin
+            Politeknik Negeri Malang sebagai penyelenggara pendidikan vokasi
+            di bidang teknik mesin yang berorientasi pada kompetensi industri.
 
         </p>
 

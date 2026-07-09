@@ -38,28 +38,10 @@
                     Dashboard
                 </a>
 
-                <a href="{{ route('admin.academic-documents.index') }}"
+                <a href="{{ route('admin.profile-contents.index') }}"
                 class="block px-4 py-3 rounded-xl transition
-                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
-                    Visi & Misi
-                </a>
-
-                <a href="{{ route('admin.academic-documents.index') }}"
-                class="block px-4 py-3 rounded-xl transition
-                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
-                    Tujuan
-                </a>
-
-                <a href="{{ route('admin.academic-documents.index') }}"
-                class="block px-4 py-3 rounded-xl transition
-                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
-                    Profil Profesional Mandiri
-                </a>
-
-                <a href="{{ route('admin.academic-documents.index') }}"
-                class="block px-4 py-3 rounded-xl transition
-                {{ request()->routeIs('admin.academic-documents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
-                    CP Lulusan
+                {{ request()->routeIs('admin.profile-contents.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    Konten Profil
                 </a>
 
                 <a href="{{ route('admin.lecturer-staff.index') }}"

@@ -1,225 +1,163 @@
-<section class="relative py-20 overflow-hidden bg-white">
+@if(isset($section) && $section)
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 -z-10">
+@php
+    $visi = $section->items->where('item_group', 'visi')->first();
+    $misi = $section->items->where('item_group', 'misi');
+@endphp
 
-        <div class="absolute -top-40 right-0 w-[480px] h-[480px] rounded-full bg-blue-200/20 blur-[140px]"></div>
+<section class="relative py-24 bg-slate-50 overflow-hidden">
 
-        <div class="absolute bottom-0 -left-40 w-[420px] h-[420px] rounded-full bg-yellow-200/20 blur-[140px]"></div>
+        {{-- ===================================================== --}}
+        {{-- ORNAMENT BACKGROUND --}}
+        {{-- ===================================================== --}}
+        <div class="absolute inset-0 pointer-events-none">
 
-        <div
-            class="absolute inset-0 opacity-[0.03]"
-            style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-            linear-gradient(to right,#0f172a 1px,transparent 1px);
-            background-size:70px 70px;">
+            {{-- Blur Biru --}}
+            <div class="absolute -left-40 top-20 w-[520px] h-[520px] rounded-full bg-blue-300/25 blur-[150px]"></div>
+
+            {{-- Blur Kuning --}}
+            <div class="absolute -right-40 bottom-20 w-[520px] h-[520px] rounded-full bg-yellow-300/25 blur-[150px]"></div>
+
+            {{-- Grid Halus --}}
+            <div class="absolute inset-0 opacity-[0.04]"
+                style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
+                linear-gradient(to right,#0f172a 1px,transparent 1px);
+                background-size:70px 70px;">
+            </div>
+
+            {{-- Watermark Text --}}
+            <div class="absolute top-20 right-10 text-[120px] md:text-[180px] font-black text-blue-900/[0.035] leading-none select-none">
+                POLINEMA
+            </div>
+
+            {{-- Logo Polinema Besar --}}
+            <img
+                src="{{ asset('assets/images/logo.png') }}"
+                alt=""
+                class="absolute -right-24 top-1/2 -translate-y-1/2 w-[360px] md:w-[520px] opacity-[0.045] grayscale select-none">
+
+            {{-- Logo Polinema Kecil --}}
+            <img
+                src="{{ asset('assets/images/logo.png') }}"
+                alt=""
+                class="absolute left-10 bottom-14 w-28 md:w-36 opacity-[0.06] grayscale select-none">
+
+            {{-- Abstract Circle --}}
+            <div class="absolute bottom-16 left-10 w-72 h-72 rounded-full border-[30px] border-blue-700/[0.04]"></div>
+
+            
+
         </div>
 
-    </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
 
-    <div class="max-w-7xl mx-auto px-6">
-
-        {{-- Heading --}}
-        <div class="text-center max-w-3xl mx-auto mb-14" data-aos="fade-up">
+        {{-- ===================================================== --}}
+        {{-- HEADING --}}
+        {{-- ===================================================== --}}
+        <div class="text-center mb-16" data-aos="fade-up">
 
             <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-                Arah Pengembangan
+                {{ $section->subtitle ?? 'Arah Pengembangan Program Studi' }}
             </span>
 
             <h2 class="mt-3 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                Visi & Misi Program Studi
+                {{ $section->title }}
             </h2>
 
             <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
 
-            <p class="mt-7 text-slate-600 leading-8">
-                Visi dan misi Program Studi Teknik Otomotif Elektronik menjadi dasar
-                pengembangan pendidikan vokasi yang unggul, adaptif, dan relevan
-                dengan kebutuhan industri otomotif modern.
-            </p>
+            @if($section->description)
+                <p class="mt-6 max-w-3xl mx-auto text-slate-600 leading-8">
+                    {{ $section->description }}
+                </p>
+            @endif
 
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-8 items-stretch">
+        {{-- ===================================================== --}}
+        {{-- CONTENT --}}
+        {{-- ===================================================== --}}
+        <div class="grid lg:grid-cols-2 gap-10 items-start">
 
             {{-- VISI --}}
-            <div
-                data-aos="fade-right"
-                class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-700 to-blue-900 text-white shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-
-                {{-- Pattern --}}
+            @if($visi)
                 <div
-                    class="absolute inset-0 opacity-[0.08]"
-                    style="background-image: linear-gradient(#ffffff 1px, transparent 1px),
-                    linear-gradient(to right,#ffffff 1px,transparent 1px);
-                    background-size:50px 50px;">
-                </div>
+                    class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-800 via-blue-700 to-blue-900 p-8 md:p-10 text-white shadow-2xl"
+                    data-aos="fade-right">
 
-                {{-- Glow --}}
-                <div class="absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-24 -left-20 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl"></div>
+                    {{-- Card Ornament --}}
+                    <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-2xl"></div>
+                    <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-yellow-400/20 blur-3xl"></div>
 
-                <div class="relative p-8 md:p-10">
+                    <div class="relative">
 
-                    <div class="w-20 h-20 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition duration-500">
+                        <span class="inline-flex items-center px-4 py-1 rounded-full bg-white/15 border border-white/20 text-yellow-300 text-sm font-semibold mb-6">
+                            Visi Program Studi
+                        </span>
 
-                        {{-- Icon Target --}}
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-10 h-10 text-yellow-300"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor">
+                        <h3 class="text-2xl md:text-3xl font-bold mb-6">
+                            {{ $visi->title }}
+                        </h3>
 
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M12 12l9-4.5M12 12v10M12 12L3 7.5M21 7.5L12 3 3 7.5m18 0v9L12 21 3 16.5v-9" />
-
-                        </svg>
+                        <p class="leading-9 text-blue-50 text-justify text-lg">
+                            “{{ $visi->content }}”
+                        </p>
 
                     </div>
 
-                    <span class="inline-flex px-4 py-2 rounded-full bg-yellow-400/20 text-yellow-300 font-semibold text-sm">
-                        Visi Program Studi
-                    </span>
-
-                    <h3 class="mt-6 text-3xl font-bold leading-tight">
-                        Menjadi Program Studi Vokasi Unggul
-                    </h3>
-
-                    <p class="mt-6 text-white/85 leading-8 text-justify">
-                        Menjadi Program Studi Teknik Otomotif Elektronik yang unggul
-                        dalam pendidikan vokasi, inovasi teknologi otomotif,
-                        dan pengembangan sumber daya manusia profesional
-                        yang berdaya saing nasional maupun internasional.
-                    </p>
-
                 </div>
-
-            </div>
+            @endif
 
             {{-- MISI --}}
             <div
-                data-aos="fade-left"
-                data-aos-delay="150"
-                class="relative rounded-3xl bg-white border border-slate-100 shadow-xl p-8 md:p-10 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                class="relative bg-white/90 backdrop-blur rounded-[2rem] p-8 md:p-10 shadow-2xl border border-slate-100 overflow-hidden"
+                data-aos="fade-left">
 
-                {{-- Top Accent --}}
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-blue-700 to-yellow-400"></div>
+                {{-- Card Ornament --}}
+                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-300/20 rounded-bl-full"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-300/10 rounded-tr-full"></div>
 
-                <div class="flex items-center gap-5 mb-8">
+                <div class="relative">
 
-                    <div class="w-20 h-20 rounded-2xl bg-yellow-100 flex items-center justify-center">
+                    <span class="inline-flex items-center px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold mb-6">
+                        Misi Program Studi
+                    </span>
 
-                        {{-- Icon Checklist --}}
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-10 h-10 text-yellow-600"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor">
+                    <h3 class="text-2xl md:text-3xl font-bold text-slate-800 mb-8">
+                        Komitmen dalam Penyelenggaraan Pendidikan
+                    </h3>
 
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <div class="space-y-6">
 
-                        </svg>
+                        @foreach($misi as $item)
+                            <div class="flex gap-4 group">
 
-                    </div>
+                                <div class="shrink-0 w-11 h-11 rounded-2xl bg-blue-700 text-white flex items-center justify-center font-bold group-hover:bg-yellow-400 transition">
+                                    {{ $loop->iteration }}
+                                </div>
 
-                    <div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 mb-2">
+                                        {{ $item->title }}
+                                    </h4>
 
-                        <span class="inline-flex px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-                            Misi Program Studi
-                        </span>
+                                    <p class="text-slate-600 leading-8 text-justify">
+                                        {{ $item->content }}
+                                    </p>
+                                </div>
 
-                        <h3 class="mt-3 text-3xl font-bold text-slate-800">
-                            Komitmen Pengembangan TOE
-                        </h3>
-
-                    </div>
-
-                </div>
-
-                <div class="space-y-5">
-
-                    <div class="flex gap-4">
-
-                        <div class="mt-1 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-                            1
-                        </div>
-
-                        <p class="text-slate-600 leading-7">
-                            Menyelenggarakan pendidikan vokasi berkualitas di bidang
-                            Teknik Otomotif Elektronik yang relevan dengan kebutuhan
-                            industri dan perkembangan teknologi.
-                        </p>
-
-                    </div>
-
-                    <div class="flex gap-4">
-
-                        <div class="mt-1 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-                            2
-                        </div>
-
-                        <p class="text-slate-600 leading-7">
-                            Mengembangkan penelitian terapan dan inovasi teknologi
-                            otomotif, kendaraan listrik, sistem kontrol elektronik,
-                            serta smart mobility.
-                        </p>
-
-                    </div>
-
-                    <div class="flex gap-4">
-
-                        <div class="mt-1 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-                            3
-                        </div>
-
-                        <p class="text-slate-600 leading-7">
-                            Melaksanakan pengabdian kepada masyarakat berbasis
-                            kompetensi teknologi otomotif dan elektronika kendaraan.
-                        </p>
-
-                    </div>
-
-                    <div class="flex gap-4">
-
-                        <div class="mt-1 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-                            4
-                        </div>
-
-                        <p class="text-slate-600 leading-7">
-                            Menjalin kerja sama dengan dunia usaha, dunia industri,
-                            lembaga penelitian, dan institusi pendidikan untuk
-                            meningkatkan kualitas pembelajaran.
-                        </p>
-
-                    </div>
-
-                    <div class="flex gap-4">
-
-                        <div class="mt-1 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
-                            5
-                        </div>
-
-                        <p class="text-slate-600 leading-7">
-                            Menghasilkan lulusan yang kompeten, profesional,
-                            berintegritas, adaptif, dan mampu bersaing di era
-                            transformasi otomotif modern.
-                        </p>
+                            </div>
+                        @endforeach
 
                     </div>
 
                 </div>
 
             </div>
-
-        </div>
-
 
         </div>
 
     </div>
 
 </section>
+@endif

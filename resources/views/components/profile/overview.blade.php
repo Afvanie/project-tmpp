@@ -25,19 +25,14 @@
         {{-- ===================================================== --}}
         {{-- Heading --}}
         {{-- ===================================================== --}}
-
         <div class="text-center mb-20" data-aos="fade-up">
 
             <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-
                 Tentang Kami
-
             </span>
 
-            <h2 class="mt-3 text-5xl font-bold text-slate-800">
-
+            <h2 class="mt-3 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
                 Mengenal Program Studi D-III Teknik Mesin
-
             </h2>
 
             <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
@@ -47,118 +42,29 @@
         {{-- ===================================================== --}}
         {{-- Content --}}
         {{-- ===================================================== --}}
-
         <div class="grid lg:grid-cols-2 gap-14 items-start">
 
             {{-- ===================================================== --}}
             {{-- LEFT SIDE --}}
             {{-- ===================================================== --}}
-
             <div data-aos="fade-right">
 
                 {{-- IMAGE --}}
-                <div class="overflow-hidden rounded-3xl shadow-2xl">
+                <div class="overflow-hidden rounded-3xl shadow-2xl bg-white">
 
                     <img
                         src="{{ asset('assets/images/about.png') }}"
-                        alt="Program Studi TOE"
+                        alt="Program Studi D-III Teknik Mesin"
                         class="w-full h-[470px] object-cover hover:scale-105 duration-700">
 
                 </div>
 
                 {{-- ===================================================== --}}
-                {{-- STATISTIC CARD --}}
-                {{-- Part 2 dimulai dari sini --}}
-                                <div class="grid grid-cols-2 gap-5 mt-8">
+                {{-- INFO CARD --}}
+                {{-- ===================================================== --}}
+                <div class="grid grid-cols-2 gap-5 mt-8">
 
-                    {{-- Tahun Berdiri --}}
-                    <div
-                        class="group bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-
-                        <div
-                            class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-5 group-hover:bg-blue-600 transition">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-8 h-8 text-blue-600 group-hover:text-white transition"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
-
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-
-                            </svg>
-
-                        </div>
-
-                        <h3 class="text-4xl font-bold text-blue-700">
-
-                            2004
-
-                        </h3>
-
-                        <h4 class="mt-2 font-semibold text-slate-800">
-
-                            Tahun Berdiri
-
-                        </h4>
-
-                        <p class="mt-2 text-sm text-slate-500 leading-6">
-
-                            Mulai dikembangkan pada
-                            tahun akademik 2004/2005.
-
-                        </p>
-
-                    </div>
-
-                    {{-- Akreditasi --}}
-                    <div
-                        class="group bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-
-                        <div
-                            class="w-16 h-16 rounded-full bg-yellow-50 flex items-center justify-center mb-5 group-hover:bg-yellow-400 transition">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-8 h-8 text-yellow-500 group-hover:text-white transition"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor">
-
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M12 8c-1.657 0-3 1.343-3 3a3 3 0 006 0c0-1.657-1.343-3-3-3zm0 0V4m0 8l4 8m-4-8l-4 8"/>
-
-                            </svg>
-
-                        </div>
-
-                        <h3 class="text-4xl font-bold text-yellow-500">
-
-                            UNGGUL
-
-                        </h3>
-
-                        <h4 class="mt-2 font-semibold text-slate-800">
-
-                            Akreditasi
-
-                        </h4>
-
-                        <p class="mt-2 text-sm text-slate-500 leading-6">
-
-                            Telah memperoleh
-                            Akreditasi Unggul dari
-                            lembaga akreditasi nasional.
-
-                        </p>
-
-                    </div>
-
-                    {{-- Gelar --}}
+                    {{-- Jenjang Pendidikan --}}
                     <div
                         class="group bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
 
@@ -181,22 +87,87 @@
                         </div>
 
                         <h3 class="text-4xl font-bold text-blue-700">
-
-                            A.Md.T
-
+                            D-III
                         </h3>
 
                         <h4 class="mt-2 font-semibold text-slate-800">
-
-                            Gelar Lulusan
-
+                            Jenjang Pendidikan
                         </h4>
 
                         <p class="mt-2 text-sm text-slate-500 leading-6">
+                            Program Diploma Tiga bidang Teknik Mesin.
+                        </p>
 
-                            Ahli Madya Teknik
-                            (A.Md.T.)
+                    </div>
 
+                    {{-- Akreditasi --}}
+                    <div
+                        class="group bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+
+                        <div
+                            class="w-16 h-16 rounded-full bg-yellow-50 flex items-center justify-center mb-5 group-hover:bg-yellow-400 transition">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="w-8 h-8 text-yellow-500 group-hover:text-white transition"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+
+                            </svg>
+
+                        </div>
+
+                        <h3 class="text-4xl font-bold text-yellow-500">
+                            UNGGUL
+                        </h3>
+
+                        <h4 class="mt-2 font-semibold text-slate-800">
+                            Akreditasi
+                        </h4>
+
+                        <p class="mt-2 text-sm text-slate-500 leading-6">
+                            Terakreditasi Unggul oleh LAM Teknik.
+                        </p>
+
+                    </div>
+
+                    {{-- Gelar --}}
+                    <div
+                        class="group bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+
+                        <div
+                            class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-5 group-hover:bg-blue-600 transition">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="w-8 h-8 text-blue-600 group-hover:text-white transition"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M5.121 17.804A4 4 0 018 16h8a4 4 0 012.879 1.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"/>
+
+                            </svg>
+
+                        </div>
+
+                        <h3 class="text-4xl font-bold text-blue-700">
+                            A.Md.T.
+                        </h3>
+
+                        <h4 class="mt-2 font-semibold text-slate-800">
+                            Gelar Lulusan
+                        </h4>
+
+                        <p class="mt-2 text-sm text-slate-500 leading-6">
+                            Ahli Madya Teknik setelah menyelesaikan studi.
                         </p>
 
                     </div>
@@ -224,23 +195,15 @@
                         </div>
 
                         <h3 class="text-4xl font-bold text-blue-700">
-
-                            4 Tahun
-
+                            3 Tahun
                         </h3>
 
                         <h4 class="mt-2 font-semibold text-slate-800">
-
                             Masa Studi
-
                         </h4>
 
                         <p class="mt-2 text-sm text-slate-500 leading-6">
-
-                            Waktu tempuh pendidikan
-                            selama 4 tahun
-                            (8 semester).
-
+                            Waktu tempuh pendidikan selama 6 semester.
                         </p>
 
                     </div>
@@ -251,23 +214,17 @@
 
             {{-- ===================================================== --}}
             {{-- RIGHT SIDE --}}
-            {{-- Part 3 dimulai dari sini --}}
-                        <div data-aos="fade-left">
+            {{-- ===================================================== --}}
+            <div data-aos="fade-left">
 
                 {{-- Title --}}
                 <span class="uppercase tracking-[4px] text-blue-700 font-semibold">
-
-                    Profile Singkat
-
+                    Profil Singkat
                 </span>
 
-                <!-- <h3 class="mt-3 text-4xl font-bold text-slate-800 leading-tight">
-
-                    Membangun Engineer Otomotif
-                    yang Siap Menghadapi
-                    Transformasi Industri
-
-                </h3> -->
+                <h3 class="mt-3 text-3xl md:text-4xl font-bold text-slate-800 leading-tight">
+                    Pendidikan Vokasi Teknik Mesin yang Berorientasi pada Kebutuhan Industri
+                </h3>
 
                 <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6 mb-10"></div>
 
@@ -275,13 +232,32 @@
                 <div class="space-y-7 text-slate-600 leading-9 text-justify">
 
                     <p>
-
-                        Program studi D-III Teknik Mesin merupakan salah satu dari program studi di Jurusan Teknik Mesin dirancang secara khusus guna menghasilkan tenaga sarjana sains terapan yang memiliki kemampuan dalam merancang jix and fixtures, press tool, dan plastic mould menggunakan CAD/CAM/CAE. Tidak hanya itu, mahasiswa juga dibekali kemampuan untukmerancang mesin dan komponen mekanik di industry manufaktur; merancang proses otomasi di industri manufaktur; kemampuan praktis dan teoritis untuk proses manufaktur logam dan non logam; berjiwa kepemimpinan yang jujur dan tanggung jawab serta berjiwa technopreneur bidang perancangan mesin, memiliki etika pekerjaan 
-
-
+                        Program Studi D-III Teknik Mesin Politeknik Negeri Malang merupakan
+                        program pendidikan vokasi di bawah Jurusan Teknik Mesin yang berfokus
+                        pada penguasaan kompetensi teknis, keterampilan praktik, dan pemahaman
+                        teoritis di bidang teknik mesin.
                     </p>
 
-                    
+                    <p>
+                        Program studi ini dirancang untuk menghasilkan lulusan Ahli Madya Teknik
+                        yang memiliki kemampuan dalam bidang manufaktur, perawatan dan perbaikan
+                        mesin, perancangan komponen mekanik, proses produksi, serta penerapan
+                        teknologi pendukung seperti CAD/CAM dalam kegiatan industri.
+                    </p>
+
+                    <p>
+                        Melalui proses pembelajaran berbasis praktik, mahasiswa dibekali dengan
+                        kemampuan analitis, keterampilan kerja, kedisiplinan, tanggung jawab,
+                        etika profesi, serta kemampuan beradaptasi terhadap perkembangan teknologi
+                        dan kebutuhan dunia kerja.
+                    </p>
+
+                    <p>
+                        Dengan capaian akreditasi <strong>Unggul</strong> dari LAM Teknik,
+                        Program Studi D-III Teknik Mesin terus berkomitmen menyelenggarakan
+                        pendidikan vokasi yang berkualitas, relevan dengan industri, dan mampu
+                        menghasilkan lulusan yang kompeten, profesional, serta siap bersaing.
+                    </p>
 
                 </div>
 

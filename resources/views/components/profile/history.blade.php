@@ -1,162 +1,148 @@
-<section class="relative py-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50">
+{{-- ===================================================== --}}
+{{-- PERJALANAN PROGRAM STUDI --}}
+{{-- ===================================================== --}}
 
-    {{-- Background Decoration --}}
+<section class="relative py-24 bg-slate-50 overflow-hidden">
+
     <div class="absolute inset-0 -z-10">
-
-        <div class="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-200/30 blur-[140px]"></div>
-
-        <div class="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full bg-yellow-200/30 blur-[140px]"></div>
-
-        <div
-            class="absolute inset-0 opacity-[0.03]"
-            style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-            linear-gradient(to right,#0f172a 1px,transparent 1px);
-            background-size:70px 70px;">
-        </div>
-
+        <div class="absolute -left-40 top-10 w-[450px] h-[450px] rounded-full bg-blue-200/30 blur-[140px]"></div>
+        <div class="absolute -right-40 bottom-10 w-[450px] h-[450px] rounded-full bg-yellow-200/30 blur-[140px]"></div>
     </div>
 
     <div class="max-w-7xl mx-auto px-6">
 
         {{-- Heading --}}
-        <div class="text-center max-w-3xl mx-auto mb-14" data-aos="fade-up">
+        <div class="text-center mb-16" data-aos="fade-up">
 
             <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
                 Perjalanan Program Studi
             </span>
 
             <h2 class="mt-3 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                Sejarah Perkembangan TOE
+                Tumbuh Bersama Kebutuhan Industri
             </h2>
 
             <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
 
-            <p class="mt-7 text-slate-600 leading-8">
-                Perkembangan Program Studi Teknik Otomotif Elektronik Politeknik Negeri Malang
-                dari awal pengembangan hingga menjadi program studi terakreditasi unggul.
+            <p class="mt-6 max-w-3xl mx-auto text-slate-600 leading-8">
+                Program Studi D-III Teknik Mesin terus berkembang sebagai penyelenggara
+                pendidikan vokasi yang berorientasi pada kompetensi, praktik, dan
+                kebutuhan dunia industri.
             </p>
 
         </div>
 
-        @php
-            $histories = [
-                [
-                    'year' => '2004/2005',
-                    'title' => 'Awal Pengembangan',
-                    'description' => 'TOE mulai dikembangkan sebagai bagian dari pendidikan vokasi bidang otomotif di Polinema.',
-                    'color' => 'blue',
-                ],
-                [
-                    'year' => '2005',
-                    'title' => 'Izin Resmi',
-                    'description' => 'Mendapat izin penyelenggaraan melalui SK Dirjen DIKTI Nomor 2964/D/T/2005.',
-                    'color' => 'yellow',
-                ],
-                [
-                    'year' => '2007',
-                    'title' => 'Mahasiswa Reguler',
-                    'description' => 'Mulai menerima mahasiswa baru program reguler sebanyak satu kelas.',
-                    'color' => 'blue',
-                ],
-                [
-                    'year' => '2008',
-                    'title' => 'Pengembangan Kelas',
-                    'description' => 'Jumlah kelas reguler bertambah menjadi dua kelas.',
-                    'color' => 'yellow',
-                ],
-                [
-                    'year' => '2010',
-                    'title' => 'Perluasan Kapasitas',
-                    'description' => 'Program studi berkembang dengan membuka tiga kelas reguler.',
-                    'color' => 'blue',
-                ],
-                [
-                    'year' => '2019',
-                    'title' => 'Empat Kelas',
-                    'description' => 'TOE berkembang menjadi empat kelas reguler untuk meningkatkan daya tampung.',
-                    'color' => 'yellow',
-                ],
-                [
-                    'year' => '2023',
-                    'title' => 'Akreditasi Unggul',
-                    'description' => 'Memperoleh predikat Akreditasi Unggul sebagai pengakuan mutu pendidikan.',
-                    'color' => 'blue',
-                ],
-                [
-                    'year' => 'Sekarang',
-                    'title' => 'Smart Mobility',
-                    'description' => 'Beradaptasi dengan kendaraan listrik, IoT, autonomous vehicle, dan teknologi otomotif modern.',
-                    'color' => 'yellow',
-                ],
-            ];
-        @endphp
+        {{-- Content --}}
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
 
-        {{-- Compact Timeline Grid --}}
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{-- Left Text --}}
+            <div class="space-y-7 text-slate-600 leading-9 text-justify" data-aos="fade-right">
 
-            @foreach ($histories as $index => $history)
+                <p>
+                    Program Studi D-III Teknik Mesin merupakan bagian dari Jurusan Teknik Mesin
+                    Politeknik Negeri Malang yang berperan dalam menyelenggarakan pendidikan
+                    vokasi di bidang teknik mesin. Program studi ini dikembangkan untuk menjawab
+                    kebutuhan dunia industri terhadap tenaga ahli madya yang memiliki kemampuan
+                    teknis, keterampilan praktik, serta pemahaman teoritis dalam bidang manufaktur,
+                    perawatan, perbaikan, dan proses produksi.
+                </p>
 
-                <div
-                    data-aos="fade-up"
-                    data-aos-delay="{{ $index * 80 }}"
-                    class="group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-xl border border-slate-100 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+                <p>
+                    Seiring perkembangan teknologi industri, Program Studi D-III Teknik Mesin
+                    terus menyesuaikan proses pembelajaran dengan kebutuhan dunia kerja melalui
+                    penguatan praktik laboratorium, bengkel, pembelajaran berbasis kompetensi,
+                    serta penerapan teknologi pendukung seperti CAD/CAM dan sistem manufaktur.
+                </p>
 
-                    {{-- Top Accent --}}
-                    <div
-                        class="absolute top-0 left-0 w-full h-1
-                        {{ $history['color'] === 'blue'
-                            ? 'bg-gradient-to-r from-blue-700 to-blue-400'
-                            : 'bg-gradient-to-r from-yellow-400 to-yellow-300' }}">
-                    </div>
+                <p>
+                    Komitmen program studi dalam menjaga mutu pendidikan diwujudkan melalui
+                    pencapaian akreditasi <strong>Unggul</strong> dari LAM Teknik. Capaian ini
+                    menjadi bukti bahwa Program Studi D-III Teknik Mesin terus berupaya
+                    meningkatkan kualitas pembelajaran, relevansi kurikulum, sumber daya manusia,
+                    serta sarana prasarana untuk menghasilkan lulusan yang kompeten dan siap
+                    bersaing di dunia industri.
+                </p>
 
-                    <div class="p-6">
+            </div>
 
-                        {{-- Year Badge --}}
-                        <div
-                            class="inline-flex items-center px-4 py-2 rounded-full font-bold text-sm
-                            {{ $history['color'] === 'blue'
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-yellow-100 text-yellow-700' }}">
+            {{-- Right Timeline --}}
+            <div class="relative" data-aos="fade-left">
 
-                            {{ $history['year'] }}
+                <div class="absolute left-6 top-0 bottom-0 w-1 bg-blue-100 rounded-full"></div>
 
+                <div class="space-y-8">
+
+                    {{-- Item 1 --}}
+                    <div class="relative pl-20">
+                        <div class="absolute left-0 top-1 w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold shadow-lg">
+                            1
                         </div>
 
-                        {{-- Dot --}}
-                        <div class="flex items-center gap-3 mt-6 mb-5">
-
-                            <div
-                                class="w-4 h-4 rounded-full
-                                {{ $history['color'] === 'blue'
-                                    ? 'bg-blue-700'
-                                    : 'bg-yellow-400' }}">
-                            </div>
-
-                            <div class="flex-1 h-[2px] bg-slate-100"></div>
-
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-800">
+                                Bagian dari Jurusan Teknik Mesin
+                            </h3>
+                            <p class="mt-3 text-slate-600 leading-7">
+                                Program Studi D-III Teknik Mesin berada di lingkungan Jurusan
+                                Teknik Mesin Politeknik Negeri Malang.
+                            </p>
                         </div>
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            {{ $history['title'] }}
-                        </h3>
-
-                        <p class="mt-4 text-slate-600 leading-7 text-sm">
-                            {{ $history['description'] }}
-                        </p>
-
                     </div>
 
-                    {{-- Hover Glow --}}
-                    <div
-                        class="absolute -right-16 -bottom-16 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 blur-3xl transition duration-700
-                        {{ $history['color'] === 'blue'
-                            ? 'bg-blue-300/30'
-                            : 'bg-yellow-300/30' }}">
+                    {{-- Item 2 --}}
+                    <div class="relative pl-20">
+                        <div class="absolute left-0 top-1 w-12 h-12 rounded-full bg-yellow-400 text-white flex items-center justify-center font-bold shadow-lg">
+                            2
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-800">
+                                Penguatan Kompetensi Vokasi
+                            </h3>
+                            <p class="mt-3 text-slate-600 leading-7">
+                                Pembelajaran diarahkan pada keterampilan praktik, penguasaan
+                                teknologi manufaktur, perawatan mesin, dan proses produksi.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Item 3 --}}
+                    <div class="relative pl-20">
+                        <div class="absolute left-0 top-1 w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold shadow-lg">
+                            3
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-800">
+                                Terakreditasi Unggul
+                            </h3>
+                            <p class="mt-3 text-slate-600 leading-7">
+                                Program Studi D-III Teknik Mesin memperoleh akreditasi Unggul
+                                dari LAM Teknik sebagai bentuk pengakuan terhadap mutu pendidikan.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Item 4 --}}
+                    <div class="relative pl-20">
+                        <div class="absolute left-0 top-1 w-12 h-12 rounded-full bg-yellow-400 text-white flex items-center justify-center font-bold shadow-lg">
+                            4
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-800">
+                                Berorientasi pada Industri
+                            </h3>
+                            <p class="mt-3 text-slate-600 leading-7">
+                                Program studi terus menyesuaikan kurikulum dan pembelajaran
+                                dengan kebutuhan industri serta perkembangan teknologi teknik mesin.
+                            </p>
+                        </div>
                     </div>
 
                 </div>
 
-            @endforeach
+            </div>
 
         </div>
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\LecturerStaffController;
 use App\Http\Controllers\Admin\LecturerStaffController as AdminLecturerStaffController;
 use App\Http\Controllers\Admin\AcademicDocumentController as AdminAcademicDocumentController;
+use App\Http\Controllers\Admin\ProfileContentController;
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
@@ -55,6 +56,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::resource('academic-documents', AdminAcademicDocumentController::class)
             ->except(['show']);
+    Route::get('/profile-contents', [ProfileContentController::class, 'index'])
+    ->name('profile-contents.index');
+
+    Route::get('/profile-contents/{profileSection}/edit', [ProfileContentController::class, 'edit'])
+        ->name('profile-contents.edit');
+
+    Route::put('/profile-contents/{profileSection}', [ProfileContentController::class, 'update'])
+        ->name('profile-contents.update');
+
+    Route::post('/profile-contents/{profileSection}/items', [ProfileContentController::class, 'storeItem'])
+        ->name('profile-contents.items.store');
+
+    Route::put('/profile-items/{profileItem}', [ProfileContentController::class, 'updateItem'])
+        ->name('profile-contents.items.update');
+
+    Route::delete('/profile-items/{profileItem}', [ProfileContentController::class, 'destroyItem'])
+        ->name('profile-contents.items.destroy');
 
     });
 

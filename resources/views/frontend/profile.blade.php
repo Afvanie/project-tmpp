@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profile TOE')
+@section('title', 'Profil D-III Teknik Mesin')
 
 @section('content')
 
@@ -10,13 +10,22 @@
 
 @include('components.profile.history')
 
-@include('components.profile.vision-mission')
+@include('components.profile.vision-mission', [
+    'section' => $profileSections['visi-misi'] ?? null
+])
 
-@include('components.profile.ppm')
+@include('components.profile.tujuan-prodi', [
+    'section' => $profileSections['tujuan-prodi'] ?? null
+])
 
-@include('components.profile.cpl')
+@include('components.profile.ppm', [
+    'section' => $profileSections['ppm'] ?? null
+])
+
+@include('components.profile.cpl', [
+    'section' => $profileSections['cpl'] ?? null
+])
 
 @include('components.profile.accreditation')
-
 
 @endsection
