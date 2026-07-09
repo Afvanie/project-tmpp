@@ -56,6 +56,12 @@
                     Akademik
                 </a>
 
+                <a href="{{ route('admin.facilities.index') }}"
+                class="block px-4 py-3 rounded-xl transition
+                {{ request()->routeIs('admin.facilities.*') ? 'bg-blue-700 text-white' : 'hover:bg-white/10 text-slate-300' }}">
+                    Dokumentasi Fasilitas
+                </a>
+
 
                 <a href="/"
                 class="block px-4 py-3 rounded-xl hover:bg-white/10 text-slate-300 transition">
