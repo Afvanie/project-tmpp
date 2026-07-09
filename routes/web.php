@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
+use App\Http\Controllers\Admin\AdminUserController;
+
 
 Route::get('/dosen-staff', [LecturerController::class, 'index'])
     ->name('lecturers');
@@ -46,6 +48,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
 
+    Route::resource('admin-users', AdminUserController::class)
+    ->except(['show']);
+    
     Route::middleware('admin.auth')->group(function () {
 
         Route::get('/', function () {

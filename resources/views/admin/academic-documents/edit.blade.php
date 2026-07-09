@@ -1,192 +1,162 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Dokumen Akademik')
+@section('title', 'Edit Admin')
 
 @section('content')
 
-<div class="p-6 max-w-4xl">
+<div class="space-y-8">
 
-    <h1 class="text-3xl font-bold text-slate-800 mb-2">
-        Edit Dokumen Akademik
-    </h1>
-
-    <p class="text-slate-500 mb-8">
-        Perbarui dokumen akademik yang tampil pada halaman website.
-    </p>
-
-    <form action="{{ route('admin.academic-documents.update', $academicDocument->id) }}"
-          method="POST"
-          enctype="multipart/form-data"
-          class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 space-y-6">
-
-        @csrf
-        @method('PUT')
+    {{-- Header --}}
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
         <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                Judul
-            </label>
-
-            <input type="text"
-                   name="title"
-                   value="{{ old('title', $academicDocument->title) }}"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                   required>
-
-            @error('title')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                Kategori
-            </label>
-
-            <select name="category"
-                    class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    required>
-
-                @foreach ($categories as $key => $label)
-
-                    <option value="{{ $key }}" {{ old('category', $academicDocument->category) === $key ? 'selected' : '' }}>
-                        {{ $label }}
-                    </option>
-
-                @endforeach
-
-            </select>
-
-            @error('category')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                Deskripsi
-            </label>
-
-            <textarea name="description"
-                      rows="5"
-                      class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">{{ old('description', $academicDocument->description) }}</textarea>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-
-            <div>
-                <label class="block mb-2 font-semibold text-slate-700">
-                    Tahun Akademik
-                </label>
-
-                <input type="text"
-                       name="academic_year"
-                       value="{{ old('academic_year', $academicDocument->academic_year) }}"
-                       placeholder="Contoh: 2025/2026"
-                       class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-                <label class="block mb-2 font-semibold text-slate-700">
-                    Urutan
-                </label>
-
-                <input type="number"
-                       name="sort_order"
-                       value="{{ old('sort_order', $academicDocument->sort_order) }}"
-                       class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-        </div>
-
-        <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                File Saat Ini
-            </label>
-
-            @if ($academicDocument->file_path)
-
-                <a href="{{ asset('storage/' . $academicDocument->file_path) }}"
-                   target="_blank"
-                   class="inline-flex px-5 py-3 rounded-xl bg-blue-50 text-blue-700 font-semibold hover:bg-blue-100 transition">
-                    Lihat File Saat Ini
-                </a>
-
-            @else
-
-                <p class="text-slate-500">
-                    Belum ada file.
-                </p>
-
-            @endif
-
-        </div>
-
-        <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                Ganti File
-            </label>
-
-            <input type="file"
-                   name="file_path"
-                   accept=".pdf,.jpg,.jpeg,.png,.webp"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-
-            <p class="text-sm text-slate-500 mt-2">
-                Kosongkan jika tidak ingin mengganti file.
-            </p>
-
-            @error('file_path')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div>
-            <label class="block mb-2 font-semibold text-slate-700">
-                Link Eksternal
-            </label>
-
-            <input type="url"
-                   name="external_link"
-                   value="{{ old('external_link', $academicDocument->external_link) }}"
-                   placeholder="https://contoh.com/dokumen"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-
-            @error('external_link')
-                <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="flex items-center gap-3">
-
-            <input type="checkbox"
-                   name="is_active"
-                   value="1"
-                   id="is_active"
-                   class="w-5 h-5 rounded border-slate-300"
-                   {{ old('is_active', $academicDocument->is_active) ? 'checked' : '' }}>
-
-            <label for="is_active" class="font-semibold text-slate-700">
-                Tampilkan dokumen di website
-            </label>
-
-        </div>
-
-        <div class="flex gap-3">
-
-            <button type="submit"
-                    class="px-6 py-3 rounded-xl bg-blue-700 text-white font-semibold hover:bg-blue-800 transition">
-                Update
-            </button>
-
-            <a href="{{ route('admin.academic-documents.index') }}"
-               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition">
-                Batal
+            <a href="{{ route('admin.admin-users.index') }}"
+                class="inline-block text-sm text-blue-700 font-semibold hover:underline mb-3">
+                ← Kembali ke Pengelola Admin
             </a>
 
+            <h1 class="text-3xl font-black text-slate-800">
+                Edit Admin
+            </h1>
+
+            <p class="mt-2 text-slate-500">
+                Perbarui data akun admin pengelola website.
+            </p>
         </div>
 
-    </form>
+    </div>
+
+    {{-- Error --}}
+    @if ($errors->any())
+        <div class="rounded-2xl bg-red-50 border border-red-200 text-red-700 px-6 py-4">
+            <ul class="list-disc list-inside space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Form --}}
+    <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl overflow-hidden">
+
+        <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
+
+        <form action="{{ route('admin.admin-users.update', $adminUser) }}" method="POST" class="p-7 md:p-8 space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="flex items-center gap-4">
+
+                <div class="w-16 h-16 rounded-2xl bg-blue-700 text-white flex items-center justify-center text-2xl font-black shadow-lg">
+                    {{ strtoupper(substr($adminUser->name, 0, 1)) }}
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        {{ $adminUser->name }}
+                    </h2>
+
+                    <p class="mt-1 text-slate-500">
+                        {{ $adminUser->email }}
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Nama Admin
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        value="{{ old('name', $adminUser->name) }}"
+                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ old('email', $adminUser->email) }}"
+                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required>
+                </div>
+
+            </div>
+
+            <div class="rounded-3xl bg-slate-50 border border-slate-100 p-6">
+
+                <h3 class="text-xl font-bold text-slate-800">
+                    Ubah Password
+                </h3>
+
+                <p class="mt-2 text-slate-500">
+                    Kosongkan password jika tidak ingin mengubah password lama.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Password Baru
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Minimal 6 karakter"
+                            class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
+                            Konfirmasi Password Baru
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password_confirmation"
+                            placeholder="Ulangi password baru"
+                            class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-4">
+
+                @if (auth('admin')->id() === $adminUser->id)
+                    <span class="inline-flex px-4 py-2 rounded-full bg-yellow-50 text-yellow-700 text-sm font-bold">
+                        Ini adalah akun yang sedang login
+                    </span>
+                @else
+                    <span class="text-sm text-slate-500">
+                        Data admin akan diperbarui setelah tombol simpan ditekan.
+                    </span>
+                @endif
+
+                <button
+                    type="submit"
+                    class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 
