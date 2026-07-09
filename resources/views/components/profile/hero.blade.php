@@ -8,7 +8,11 @@
             class="w-full h-full object-cover"
             alt="Profil Program Studi D-III Teknik Mesin">
 
-        <div class="absolute inset-0 bg-gradient-to-r from-[#003B73]/90 via-[#005BAC]/75 to-[#003B73]/90"></div>
+        {{-- Overlay --}}
+        <div class="absolute inset-0 bg-gradient-to-r from-[#003B73]/95 via-[#005BAC]/75 to-[#003B73]/90"></div>
+
+        {{-- Dark layer agar teks tetap terbaca --}}
+        <div class="absolute inset-0 bg-slate-950/20"></div>
 
     </div>
 
