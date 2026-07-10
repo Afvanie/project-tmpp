@@ -11,5 +11,6 @@
 @include('components.contact.map')
 
 @include('components.contact.form')
+@include('components.contact.instagram')
 
 @endsection
