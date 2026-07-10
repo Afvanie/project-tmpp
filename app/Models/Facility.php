@@ -26,6 +26,10 @@ class Facility extends Model
             'laboratorium' => 'Ruang Laboratorium',
             'workshop' => 'Ruang Workshop',
             'ruang_kelas' => 'Ruang Kelas',
+            'ruang_dosen' => 'Ruang Dosen',
+            'tata_usaha' => 'Ruang Tata Usaha',
+            'fasilitas_kesehatan' => 'Fasilitas Kesehatan',
+            'masjid' => 'Masjid',
             'galeri' => 'Galeri Aktivitas Mahasiswa',
         ];
     }

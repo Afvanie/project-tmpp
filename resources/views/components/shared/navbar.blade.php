@@ -21,8 +21,6 @@
                     {{-- Mobile Text --}}
                     <h1 class="md:hidden font-extrabold text-[13px] uppercase tracking-tight leading-[1.15]">
                         D-III Teknik Mesin
-                        
-                        
                     </h1>
 
                     {{-- Desktop Text --}}
@@ -42,54 +40,55 @@
             <div class="hidden md:flex items-center gap-8 font-semibold">
 
                 <a href="{{ route('home') }}"
-                   class="hover:text-yellow-400 transition">
+                    class="transition {{ request()->routeIs('home') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
                     Beranda
                 </a>
 
                 <a href="{{ route('profile') }}"
-                   class="hover:text-yellow-400 transition">
+                    class="transition {{ request()->routeIs('profile') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
                     Profil TM
                 </a>
 
                 <a href="{{ route('lecturers') }}"
-                   class="hover:text-yellow-400 transition">
+                    class="transition {{ request()->routeIs('lecturers') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
                     Dosen & Staff
                 </a>
 
                 {{-- Akademik Dropdown --}}
                 <div class="relative group">
 
-                    <button type="button" class="flex items-center gap-1 hover:text-yellow-400 transition">
+                    <button type="button"
+                        class="flex items-center gap-1 transition {{ request()->routeIs('academic.*') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
                         Akademik
                         <i class="fa-solid fa-chevron-down text-xs"></i>
                     </button>
 
                     <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
 
-                        <div class="w-56 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-100 overflow-hidden">
+                        <div class="w-60 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-100 overflow-hidden">
 
                             <a href="{{ route('academic.page', 'pedoman-akademik') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
+                                class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
                                 Pedoman Akademik
                             </a>
 
                             <a href="{{ route('academic.page', 'kalender-akademik') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
+                                class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
                                 Kalender Akademik
                             </a>
 
                             <a href="{{ route('academic.page', 'kurikulum') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
+                                class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
                                 Kurikulum
                             </a>
 
                             <a href="{{ route('academic.page', 'jadwal-kuliah') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
+                                class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
                                 Jadwal Kuliah
                             </a>
 
                             <a href="{{ route('academic.page', 'laporan-ketercapaian') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
+                                class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
                                 Laporan Ketercapaian
                             </a>
 
@@ -99,41 +98,14 @@
 
                 </div>
 
-                {{-- Fasilitas Dropdown --}}
-                <div class="relative group">
-
-                    <button type="button" class="flex items-center gap-1 hover:text-yellow-400 transition">
-                        Fasilitas
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
-                    </button>
-
-                    <div class="absolute left-0 top-full pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-
-                        <div class="w-56 rounded-xl bg-white text-slate-800 shadow-xl border border-slate-100 overflow-hidden">
-
-                            <a href="{{ url('/facilities') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
-                                Laboratorium
-                            </a>
-
-                            <a href="{{ url('/facilities') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
-                                Bengkel / Workshop
-                            </a>
-
-                            <a href="{{ url('/facilities') }}"
-                               class="block px-5 py-3 hover:bg-blue-50 hover:text-blue-700">
-                                Peralatan Praktikum
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                {{-- Fasilitas Button --}}
+                <a href="{{ url('/facilities') }}"
+                    class="transition {{ request()->is('facilities*') || request()->is('fasilitas*') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
+                    Fasilitas
+                </a>
 
                 <a href="{{ url('/contact') }}"
-                   class="hover:text-yellow-400 transition">
+                    class="transition {{ request()->is('contact*') || request()->is('kontak*') ? 'text-yellow-400' : 'hover:text-yellow-400' }}">
                     Kontak
                 </a>
 
@@ -229,11 +201,11 @@
     {{-- Content --}}
     <div class="px-5 py-6">
 
-
+        {{-- Main Mobile Menu --}}
         <div class="space-y-2">
 
             <a href="{{ route('home') }}"
-               class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
+                class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
 
                 <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
                     <i class="fa-solid fa-house"></i>
@@ -243,7 +215,7 @@
             </a>
 
             <a href="{{ route('profile') }}"
-               class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
+                class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
 
                 <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
                     <i class="fa-solid fa-building-columns"></i>
@@ -253,13 +225,23 @@
             </a>
 
             <a href="{{ route('lecturers') }}"
-               class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
+                class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
 
                 <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
                     <i class="fa-solid fa-users"></i>
                 </span>
 
                 Dosen & Staff
+            </a>
+
+            <a href="{{ url('/facilities') }}"
+                class="mobile-nav-link flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-700 font-semibold hover:bg-blue-50 hover:text-blue-700 transition">
+
+                <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                </span>
+
+                Fasilitas
             </a>
 
         </div>
@@ -274,56 +256,28 @@
             <div class="rounded-3xl bg-slate-50 border border-slate-100 p-3 space-y-1">
 
                 <a href="{{ route('academic.page', 'pedoman-akademik') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
+                    class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
                     Pedoman Akademik
                 </a>
 
                 <a href="{{ route('academic.page', 'kalender-akademik') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
+                    class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
                     Kalender Akademik
                 </a>
 
                 <a href="{{ route('academic.page', 'kurikulum') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
+                    class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
                     Kurikulum
                 </a>
 
                 <a href="{{ route('academic.page', 'jadwal-kuliah') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
+                    class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
                     Jadwal Kuliah
                 </a>
 
                 <a href="{{ route('academic.page', 'laporan-ketercapaian') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
+                    class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
                     Laporan Ketercapaian
-                </a>
-
-            </div>
-
-        </div>
-
-        {{-- Fasilitas --}}
-        <div class="mt-8">
-
-            <p class="text-xs font-bold tracking-[4px] text-blue-700 uppercase mb-4">
-                Fasilitas
-            </p>
-
-            <div class="rounded-3xl bg-slate-50 border border-slate-100 p-3 space-y-1">
-
-                <a href="{{ url('/facilities') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
-                    Laboratorium
-                </a>
-
-                <a href="{{ url('/facilities') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
-                    Bengkel / Workshop
-                </a>
-
-                <a href="{{ url('/facilities') }}"
-                   class="mobile-nav-link block px-4 py-3 rounded-2xl text-slate-700 font-semibold hover:bg-white hover:text-blue-700 hover:shadow transition">
-                    Peralatan Praktikum
                 </a>
 
             </div>
@@ -334,7 +288,7 @@
         <div class="mt-8">
 
             <a href="{{ url('/contact') }}"
-               class="mobile-nav-link flex items-center justify-center gap-3 w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-blue-700 to-blue-600 text-white font-bold shadow-lg hover:shadow-xl transition">
+                class="mobile-nav-link flex items-center justify-center gap-3 w-full px-5 py-4 rounded-2xl bg-gradient-to-r from-blue-700 to-blue-600 text-white font-bold shadow-lg hover:shadow-xl transition">
 
                 <i class="fa-solid fa-envelope"></i>
                 Kontak Kami
@@ -346,7 +300,7 @@
         <div class="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-white">
 
             <p class="font-bold">
-                Program Studi D_III Teknik Mesin
+                Program Studi D-III Teknik Mesin
             </p>
 
             <p class="text-sm text-slate-300 mt-2 leading-6">
