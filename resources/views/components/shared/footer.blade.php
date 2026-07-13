@@ -188,21 +188,21 @@
 
                 <div class="flex gap-4">
 
-                    <a href="#"
+                    <a href="https://www.instagram.com/polinema.jtm/"
                     class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-blue-600 transition duration-300">
 
                         <i class="fab fa-instagram"></i>
 
                     </a>
 
-                    <a href="#"
+                    <a href="https://www.youtube.com/@jtmpolinema455"
                     class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 transition duration-300">
 
                         <i class="fab fa-youtube"></i>
 
                     </a>
 
-                    <a href="#"
+                    <!-- <a href="#"
                     class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-blue-500 transition duration-300">
 
                         <i class="fab fa-facebook-f"></i>
@@ -212,7 +212,7 @@
                     <a href="#"
                     class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-sky-500 transition duration-300">
 
-                        <i class="fab fa-linkedin-in"></i>
+                        <i class="fab fa-linkedin-in"></i> -->
 
                     </a>
 
@@ -233,7 +233,7 @@
 
                         <br>
 
-                        07.30 - 16.00 WIB
+                        07.00 - 16.00 WIB
 
                     </p>
 
