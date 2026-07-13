@@ -187,6 +187,16 @@
                         Konten Profil
                     </a>
 
+                    <a href="{{ route('admin.home-content.index') }}"
+                        class="admin-menu-link {{ request()->routeIs('admin.home-content.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+                        <span class="admin-menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                            </svg>
+                        </span>
+                        Konten Beranda
+                    </a>
+
                     <a href="{{ route('admin.accreditations.index') }}"
                         class="admin-menu-link {{ request()->routeIs('admin.accreditations.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
 

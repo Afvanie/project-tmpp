@@ -1,4 +1,26 @@
 @php
+    /*
+    |--------------------------------------------------------------------------
+    | Konten Deskripsi Program Studi
+    |--------------------------------------------------------------------------
+    */
+
+    $programDescription = $homeContent
+        ?? \App\Models\HomeContent::where('section_key', 'program_description')
+            ->where('is_active', true)
+            ->first();
+
+    $descriptionImageUrl = $programDescription && $programDescription->image
+        ? asset('storage/' . $programDescription->image)
+        : asset('assets/images/about.png');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Konten Akreditasi
+    |--------------------------------------------------------------------------
+    */
+
     $homeAccreditations = \App\Models\Accreditation::where('is_active', true)
         ->orderBy('sort_order')
         ->orderByDesc('created_at')
@@ -74,12 +96,14 @@
             {{-- TEXT --}}
             <div data-aos="fade-up" data-aos-duration="1000">
 
-                <span class="inline-flex items-center px-4 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
-                    Program Studi
-                </span>
+                @if ($programDescription?->badge)
+                    <span class="inline-flex items-center px-4 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+                        {{ $programDescription->badge }}
+                    </span>
+                @endif
 
-                <h2 class="mt-5 text-4xl font-bold text-gray-800">
-                    Deskripsi Program Studi
+                <h2 class="mt-5 text-4xl font-bold text-gray-800 leading-tight">
+                    {{ $programDescription?->title ?? 'Deskripsi Program Studi' }}
                 </h2>
 
                 <div class="w-24 h-1 bg-yellow-400 rounded-full mt-5 mb-8"
@@ -91,41 +115,33 @@
                     data-aos="fade-up"
                     data-aos-delay="300">
 
-                    Program Studi D-III Teknik Mesin merupakan salah satu program studi
-                    di Jurusan Teknik Mesin yang dirancang secara khusus untuk menghasilkan
-                    tenaga ahli madya yang memiliki kemampuan dalam bidang perancangan,
-                    manufaktur, pemeliharaan, dan pengembangan teknologi teknik mesin.
-
-                    Mahasiswa dibekali kemampuan dalam merancang mesin dan komponen mekanik,
-                    memahami proses manufaktur logam maupun non-logam, mengoperasikan
-                    teknologi CAD/CAM/CAE, serta menerapkan pengetahuan praktis dan teoritis
-                    yang relevan dengan kebutuhan industri. Lulusan juga diarahkan untuk
-                    memiliki etika kerja profesional, jiwa kepemimpinan, tanggung jawab,
-                    serta kemampuan beradaptasi terhadap perkembangan teknologi.
+                    {{ $programDescription?->description ?? 'Deskripsi program studi belum tersedia.' }}
 
                 </p>
 
-                <a href="{{ url('/profile') }}"
-                    data-aos="fade-up"
-                    data-aos-delay="700"
-                    class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-blue-700 text-white font-semibold transition-all duration-300 hover:bg-blue-800 hover:-translate-y-1 hover:shadow-xl">
+                @if ($programDescription?->button_text && $programDescription?->button_url)
+                    <a href="{{ url($programDescription->button_url) }}"
+                        data-aos="fade-up"
+                        data-aos-delay="700"
+                        class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl bg-blue-700 text-white font-semibold transition-all duration-300 hover:bg-blue-800 hover:-translate-y-1 hover:shadow-xl">
 
-                    Selengkapnya
-                    <span>→</span>
+                        {{ $programDescription->button_text }}
+                        <span>→</span>
 
-                </a>
+                    </a>
+                @endif
 
             </div>
 
             {{-- IMAGE --}}
             <div data-aos="fade-left" data-aos-duration="1200">
 
-                <div class="overflow-hidden rounded-3xl shadow-2xl">
+                <div class="overflow-hidden rounded-3xl shadow-2xl bg-white border border-slate-100">
 
                     <img
-                        src="{{ asset('assets/images/about.png') }}"
-                        class="w-full transition duration-700 hover:scale-105"
-                        alt="About Teknik Mesin">
+                        src="{{ $descriptionImageUrl }}"
+                        class="w-full h-[360px] object-cover transition duration-700 hover:scale-105"
+                        alt="Deskripsi Program Studi">
 
                 </div>
 
@@ -538,6 +554,7 @@
             </div>
 
         @endif
+
     </div>
 
 </section>
@@ -559,12 +576,34 @@
                 const target = button.getAttribute('data-accreditation-tab');
 
                 buttons.forEach(function (btn) {
-                    btn.classList.remove('bg-blue-700', 'text-white', 'shadow-lg', 'shadow-blue-700/20');
-                    btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+                    btn.classList.remove(
+                        'bg-blue-700',
+                        'text-white',
+                        'shadow-xl',
+                        'shadow-blue-700/25'
+                    );
+
+                    btn.classList.add(
+                        'bg-white',
+                        'text-slate-700',
+                        'border',
+                        'border-slate-200'
+                    );
                 });
 
-                button.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-                button.classList.add('bg-blue-700', 'text-white', 'shadow-lg', 'shadow-blue-700/20');
+                button.classList.remove(
+                    'bg-white',
+                    'text-slate-700',
+                    'border',
+                    'border-slate-200'
+                );
+
+                button.classList.add(
+                    'bg-blue-700',
+                    'text-white',
+                    'shadow-xl',
+                    'shadow-blue-700/25'
+                );
 
                 panels.forEach(function (panel) {
                     if (panel.getAttribute('data-accreditation-panel') === target) {

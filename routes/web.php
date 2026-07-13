@@ -32,7 +32,7 @@ use App\Http\Controllers\Admin\AcademicDocumentController as AdminAcademicDocume
 use App\Http\Controllers\Admin\ProfileContentController;
 use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 use App\Http\Controllers\Admin\AccreditationController as AdminAccreditationController;
-
+use App\Http\Controllers\Admin\HomeContentController as AdminHomeContentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -201,6 +201,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::delete('/facility-photos/{facilityPhoto}', [AdminFacilityController::class, 'destroyPhoto'])
             ->name('facilities.photos.destroy');
+
+        
+
+        Route::get('/home-content', [AdminHomeContentController::class, 'index'])
+            ->name('home-content.index');
+
+        Route::put('/home-content', [AdminHomeContentController::class, 'update'])
+            ->name('home-content.update');
 
     });
 

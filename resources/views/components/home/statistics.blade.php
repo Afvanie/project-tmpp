@@ -1,39 +1,40 @@
+@php
+    $stats = $homeStats ?? collect();
+@endphp
+
 <section class="py-20 bg-white">
 
-    <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6 text-center">
 
-        {{-- TITLE --}}
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-800">
-                Statistik Program Studi
-            </h2>
-            <p class="text-gray-500 mt-2">
-                Data singkat Teknik Mesin Polinema
-            </p>
-        </div>
+        <h2 class="text-3xl font-bold text-slate-800">
+            Statistik Program Studi
+        </h2>
 
-        {{-- GRID --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <p class="mt-2 text-slate-500">
+            Data singkat Teknik Mesin Polinema
+        </p>
 
-            <div class="p-6 bg-gray-50 rounded-xl shadow-sm">
-                <h3 class="text-4xl font-bold text-blue-700">540</h3>
-                <p class="mt-2 text-gray-600">Mahasiswa</p>
-            </div>
+        <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-5">
 
-            <div class="p-6 bg-gray-50 rounded-xl shadow-sm">
-                <h3 class="text-4xl font-bold text-blue-700">65</h3>
-                <p class="mt-2 text-gray-600">Dosen</p>
-            </div>
+            @forelse ($stats as $stat)
 
-            <div class="p-6 bg-gray-50 rounded-xl shadow-sm">
-                <h3 class="text-4xl font-bold text-blue-700">21</h3>
-                <p class="mt-2 text-gray-600">Laboratorium</p>
-            </div>
+                <div class="bg-slate-50 border border-slate-100 rounded-xl py-6 shadow-sm">
+                    <h3 class="text-4xl font-extrabold text-blue-700">
+                        {{ $stat->value }}
+                    </h3>
 
-            <div class="p-6 bg-gray-50 rounded-xl shadow-sm">
-                <h3 class="text-4xl font-bold text-blue-700">1982</h3>
-                <p class="mt-2 text-gray-600">Tahun Berdiri</p>
-            </div>
+                    <p class="mt-2 text-slate-500">
+                        {{ $stat->label }}
+                    </p>
+                </div>
+
+            @empty
+
+                <div class="col-span-4 text-slate-500">
+                    Data statistik belum tersedia.
+                </div>
+
+            @endforelse
 
         </div>
 
