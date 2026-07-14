@@ -1,15 +1,51 @@
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | IDENTITAS LAYOUT
+    |--------------------------------------------------------------------------
+    */
+
+    $logoRelativePath = 'assets/images/logo.png';
+
+    $logoAvailable = file_exists(
+        public_path($logoRelativePath)
+    );
+@endphp
+
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Panel') - D-III Teknik Mesin</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900" rel="stylesheet" />
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        @yield('title', 'Admin Panel') - D-IV TMPP Polinema
+    </title>
+
+    @vite([
+        'resources/css/app.css',
+        'resources/js/app.js',
+    ])
+
+    <link
+        rel="preconnect"
+        href="https://fonts.bunny.net"
+    >
+
+    <link
+        href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900"
+        rel="stylesheet"
+    >
 
     <style>
         body {
@@ -24,18 +60,24 @@
             border-radius: 18px;
             font-size: 14px;
             font-weight: 700;
-            transition: all 0.25s ease;
+            transition:
+                background-color 0.25s ease,
+                color 0.25s ease,
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
         }
 
         .admin-menu-icon {
+            display: flex;
             width: 38px;
             height: 38px;
-            border-radius: 14px;
-            display: flex;
+            flex-shrink: 0;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.25s ease;
+            border-radius: 14px;
+            transition:
+                background-color 0.25s ease,
+                color 0.25s ease;
         }
 
         .admin-menu-default {
@@ -59,7 +101,11 @@
         }
 
         .admin-menu-active {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background: linear-gradient(
+                135deg,
+                #2563eb,
+                #1d4ed8
+            );
             color: white;
             box-shadow: 0 18px 35px rgba(37, 99, 235, 0.38);
         }
@@ -68,413 +114,1026 @@
             background: rgba(255, 255, 255, 0.18);
             color: white;
         }
+
+        .admin-menu-link:focus-visible,
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid rgba(250, 204, 21, 0.75);
+            outline-offset: 3px;
+        }
     </style>
+
+    @stack('styles')
 </head>
 
-<body class="bg-slate-100 text-slate-800">
+<body class="bg-slate-100 text-slate-800 antialiased">
 
-    <div class="min-h-screen relative overflow-hidden">
+    <div class="relative min-h-screen overflow-hidden">
 
-        {{-- Background Ornament --}}
-        <div class="fixed inset-0 pointer-events-none">
-            <div class="absolute -top-40 left-1/3 w-[560px] h-[560px] rounded-full bg-blue-200/35 blur-[160px]"></div>
-            <div class="absolute -bottom-40 right-0 w-[560px] h-[560px] rounded-full bg-yellow-200/35 blur-[160px]"></div>
+        {{-- ===================================================== --}}
+        {{-- BACKGROUND --}}
+        {{-- ===================================================== --}}
 
-            <div class="absolute inset-0 opacity-[0.035]"
-                style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-                linear-gradient(to right,#0f172a 1px,transparent 1px);
-                background-size:70px 70px;">
-            </div>
+        <div
+            class="pointer-events-none fixed inset-0"
+            aria-hidden="true"
+        >
+            <div
+                class="absolute -top-40 left-1/3
+                       h-[560px] w-[560px]
+                       rounded-full bg-blue-200/35
+                       blur-[160px]"
+            ></div>
+
+            <div
+                class="absolute -bottom-40 right-0
+                       h-[560px] w-[560px]
+                       rounded-full bg-yellow-200/35
+                       blur-[160px]"
+            ></div>
+
+            <div
+                class="absolute inset-0 opacity-[0.035]"
+                style="
+                    background-image:
+                        linear-gradient(
+                            #0f172a 1px,
+                            transparent 1px
+                        ),
+                        linear-gradient(
+                            to right,
+                            #0f172a 1px,
+                            transparent 1px
+                        );
+                    background-size: 70px 70px;
+                "
+            ></div>
         </div>
 
-        {{-- Mobile Overlay --}}
+
+        {{-- ===================================================== --}}
+        {{-- MOBILE OVERLAY --}}
+        {{-- ===================================================== --}}
+
         <div
             id="adminOverlay"
-            class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden lg:hidden">
-        </div>
+            class="fixed inset-0 z-40 hidden
+                   bg-slate-950/60 backdrop-blur-sm
+                   lg:hidden"
+            aria-hidden="true"
+        ></div>
 
-        {{-- Sidebar --}}
+
+        {{-- ===================================================== --}}
+        {{-- SIDEBAR --}}
+        {{-- ===================================================== --}}
+
         <aside
             id="adminSidebar"
-            class="fixed inset-y-0 left-0 z-50 w-72 bg-[#06172E] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+            class="fixed inset-y-0 left-0 z-50
+                   w-72 -translate-x-full
+                   bg-[#06172E] text-white
+                   shadow-2xl transition-transform
+                   duration-300 ease-in-out
+                   lg:translate-x-0"
+            aria-label="Navigasi admin"
+        >
+            {{-- Ornamen Sidebar --}}
+            <div
+                class="pointer-events-none absolute
+                       inset-0 overflow-hidden"
+                aria-hidden="true"
+            >
+                <div
+                    class="absolute -right-28 -top-28
+                           h-72 w-72 rounded-full
+                           bg-blue-500/20 blur-3xl"
+                ></div>
 
-            <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                <div class="absolute -top-28 -right-28 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl"></div>
-                <div class="absolute -bottom-28 -left-28 w-72 h-72 rounded-full bg-yellow-400/15 blur-3xl"></div>
+                <div
+                    class="absolute -bottom-28 -left-28
+                           h-72 w-72 rounded-full
+                           bg-yellow-400/15 blur-3xl"
+                ></div>
             </div>
 
-            <div class="relative h-full flex flex-col">
 
-                {{-- Brand --}}
-                <div class="px-6 py-6 border-b border-white/10">
+            <div class="relative flex h-full flex-col">
 
-                    <div class="flex items-center justify-between gap-4">
+                {{-- ================================================= --}}
+                {{-- BRAND --}}
+                {{-- ================================================= --}}
 
-                        <div class="flex items-center gap-4">
-
-                            <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-xl">
-                                <img
-                                    src="{{ asset('assets/images/logo.png') }}"
-                                    alt="Logo Polinema"
-                                    class="w-10 h-10 object-contain">
+                <div
+                    class="border-b border-white/10
+                           px-6 py-6"
+                >
+                    <div
+                        class="flex items-center
+                               justify-between gap-4"
+                    >
+                        <div
+                            class="flex min-w-0
+                                   items-center gap-4"
+                        >
+                            <div
+                                class="flex h-14 w-14 shrink-0
+                                       items-center justify-center
+                                       rounded-2xl bg-white
+                                       shadow-xl"
+                            >
+                                @if ($logoAvailable)
+                                    <img
+                                        src="{{ asset($logoRelativePath) }}"
+                                        alt="Logo Politeknik Negeri Malang"
+                                        class="h-10 w-10 object-contain"
+                                    >
+                                @else
+                                    <span
+                                        class="font-black
+                                               text-blue-800"
+                                    >
+                                        TM
+                                    </span>
+                                @endif
                             </div>
 
-                            <div>
-                                <h1 class="text-lg font-black leading-tight">
+                            <div class="min-w-0">
+                                <h1
+                                    class="text-lg font-black
+                                           leading-tight"
+                                >
                                     Admin Panel
                                 </h1>
 
-                                <p class="text-xs text-blue-100/70 mt-1">
-                                    D-III Teknik Mesin
+                                <p
+                                    class="mt-1 text-xs
+                                           leading-5 text-blue-100/70"
+                                >
+                                    D-IV Teknik Mesin Produksi
+                                    dan Perawatan
                                 </p>
                             </div>
-
                         </div>
+
 
                         <button
                             type="button"
                             id="closeAdminSidebar"
-                            class="lg:hidden w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-6 h-6"
+                            class="flex h-10 w-10 shrink-0
+                                   items-center justify-center
+                                   rounded-xl bg-white/10
+                                   transition hover:bg-white/20
+                                   lg:hidden"
+                            aria-label="Tutup menu admin"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
-
                         </button>
-
                     </div>
 
-                    <div class="mt-6 rounded-3xl bg-white/8 border border-white/10 p-4">
+
+                    <div
+                        class="mt-6 rounded-3xl
+                               border border-white/10
+                               bg-white/[0.08] p-4"
+                    >
                         <p class="text-xs text-slate-300">
                             Website Program Studi
                         </p>
 
-                        <p class="mt-1 text-sm font-bold text-white leading-relaxed">
+                        <p
+                            class="mt-1 text-sm font-bold
+                                   leading-relaxed text-white"
+                        >
                             Politeknik Negeri Malang
                         </p>
                     </div>
-
                 </div>
 
-                {{-- Navigation --}}
-                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.dashboard') ? 'admin-menu-active' : 'admin-menu-default' }}">
+                {{-- ================================================= --}}
+                {{-- NAVIGATION --}}
+                {{-- ================================================= --}}
+
+                <nav
+                    class="flex-1 space-y-2
+                           overflow-y-auto px-4 py-6"
+                >
+                    {{-- Dashboard --}}
+                    <a
+                        href="{{ route('admin.dashboard') }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs('admin.dashboard'),
+                            'admin-menu-default' =>
+                                !request()->routeIs('admin.dashboard'),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10h6v-6h4v6h6V10" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M3 12l9-9 9 9M4 10v10h6v-6h4v6h6V10"
+                                />
                             </svg>
                         </span>
+
                         Dashboard
                     </a>
 
-                    <a href="{{ route('admin.profile-contents.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.profile-contents.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+
+                    {{-- Konten Profil --}}
+                    <a
+                        href="{{ route(
+                            'admin.profile-contents.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.profile-contents.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.profile-contents.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
+                                />
                             </svg>
                         </span>
+
                         Konten Profil
                     </a>
 
-                    <a href="{{ route('admin.home-content.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.home-content.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+
+                    {{-- Konten Beranda --}}
+                    <a
+                        href="{{ route(
+                            'admin.home-content.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.home-content.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.home-content.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M3 11.5L12 4l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-8.5z"
+                                />
                             </svg>
                         </span>
+
                         Konten Beranda
                     </a>
 
-                    <a href="{{ route('admin.accreditations.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.accreditations.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
 
+                    {{-- Akreditasi --}}
+                    <a
+                        href="{{ route(
+                            'admin.accreditations.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.accreditations.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.accreditations.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M9 12l2 2 4-4M12 3l7 4v5c0 5-3 9-7 9s-7-4-7-9V7l7-4z" />
+                                    d="M9 12l2 2 4-4M12 3l7 4v5c0 5-3 9-7 9s-7-4-7-9V7l7-4z"
+                                />
                             </svg>
                         </span>
 
                         Akreditasi
-
                     </a>
 
-                    <a href="{{ route('admin.lecturer-staff.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.lecturer-staff.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+
+                    {{-- Dosen dan Staf --}}
+                    <a
+                        href="{{ route(
+                            'admin.lecturer-staff.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.lecturer-staff.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.lecturer-staff.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"
+                                />
                             </svg>
                         </span>
-                        Dosen & Staff
+
+                        Dosen dan Staf
                     </a>
 
-                    <a href="{{ route('admin.academic-documents.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.academic-documents.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+
+                    {{-- Akademik --}}
+                    <a
+                        href="{{ route(
+                            'admin.academic-documents.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.academic-documents.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.academic-documents.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"
+                                />
                             </svg>
                         </span>
+
                         Akademik
                     </a>
 
-                    <a href="{{ route('admin.facilities.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.facilities.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
+
+                    {{-- Dokumentasi Fasilitas --}}
+                    <a
+                        href="{{ route(
+                            'admin.facilities.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.facilities.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.facilities.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
                             </svg>
                         </span>
+
                         Dokumentasi Fasilitas
                     </a>
 
-                    <a href="{{ route('admin.admin-users.index') }}"
-                        class="admin-menu-link {{ request()->routeIs('admin.admin-users.*') ? 'admin-menu-active' : 'admin-menu-default' }}">
 
+                    {{-- Pengelola Admin --}}
+                    <a
+                        href="{{ route(
+                            'admin.admin-users.index'
+                        ) }}"
+                        @class([
+                            'admin-menu-link',
+                            'admin-menu-active' =>
+                                request()->routeIs(
+                                    'admin.admin-users.*'
+                                ),
+                            'admin-menu-default' =>
+                                !request()->routeIs(
+                                    'admin.admin-users.*'
+                                ),
+                        ])
+                    >
                         <span class="admin-menu-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z" />
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2" />
+                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zM5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2"
+                                />
                             </svg>
                         </span>
 
                         Pengelola Admin
                     </a>
 
-                    <div class="pt-5 mt-5 border-t border-white/10">
 
-                        <a href="{{ url('/') }}"
+                    {{-- Website Publik --}}
+                    <div
+                        class="mt-5 border-t
+                               border-white/10 pt-5"
+                    >
+                        <a
+                            href="{{ route('home') }}"
                             target="_blank"
-                            class="admin-menu-link admin-menu-default">
+                            rel="noopener noreferrer"
+                            class="admin-menu-link
+                                   admin-menu-default"
+                        >
                             <span class="admin-menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7v7M10 14L21 3M5 5h5M5 10h5M5 15h14M5 20h14" />
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M14 3h7v7M10 14L21 3M5 5h5M5 10h5M5 15h14M5 20h14"
+                                    />
                                 </svg>
                             </span>
+
                             Lihat Website
                         </a>
-
                     </div>
-
                 </nav>
 
-                {{-- Footer Sidebar --}}
-                <div class="px-4 py-5 border-t border-white/10">
 
-                    <div class="rounded-3xl bg-white/8 border border-white/10 p-4 mb-4">
+                {{-- ================================================= --}}
+                {{-- SIDEBAR FOOTER --}}
+                {{-- ================================================= --}}
 
+                <div
+                    class="border-t border-white/10
+                           px-4 py-5"
+                >
+                    <div
+                        class="mb-4 rounded-3xl
+                               border border-white/10
+                               bg-white/[0.08] p-4"
+                    >
                         <div class="flex items-center gap-3">
 
-                            <div class="w-11 h-11 rounded-2xl bg-yellow-400 text-slate-900 flex items-center justify-center font-black shadow-lg">
+                            <div
+                                class="flex h-11 w-11
+                                       items-center justify-center
+                                       rounded-2xl bg-yellow-400
+                                       font-black text-slate-900
+                                       shadow-lg"
+                            >
                                 A
                             </div>
 
                             <div>
-                                <p class="text-sm font-bold text-white">
+                                <p
+                                    class="text-sm font-bold
+                                           text-white"
+                                >
                                     Administrator
                                 </p>
 
-                                <p class="text-xs text-slate-400 mt-1">
+                                <p
+                                    class="mt-1 text-xs
+                                           text-slate-400"
+                                >
                                     Pengelola Website
                                 </p>
                             </div>
-
                         </div>
-
                     </div>
 
+
                     @if (Route::has('admin.logout'))
-                        <form action="{{ route('admin.logout') }}" method="POST">
+                        <form
+                            action="{{ route('admin.logout') }}"
+                            method="POST"
+                        >
                             @csrf
 
                             <button
                                 type="submit"
-                                class="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-2xl bg-red-500/10 text-red-300 hover:bg-red-500 hover:text-white transition font-bold">
-
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="w-5 h-5"
+                                class="flex w-full items-center
+                                       justify-center gap-3
+                                       rounded-2xl bg-red-500/10
+                                       px-4 py-3 font-bold
+                                       text-red-300 transition
+                                       hover:bg-red-500
+                                       hover:text-white"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5"
                                     fill="none"
                                     viewBox="0 0 24 24"
-                                    stroke="currentColor">
-
-                                    <path stroke-linecap="round"
+                                    stroke="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
                                         stroke-linejoin="round"
                                         stroke-width="2"
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+                                    />
                                 </svg>
 
-                                Logout
+                                Keluar
                             </button>
                         </form>
                     @endif
-
                 </div>
 
             </div>
-
         </aside>
 
-        {{-- Main Content --}}
-        <div class="relative lg:pl-72 min-h-screen">
 
-            {{-- Topbar --}}
-            <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-2xl border-b border-white/70 shadow-sm">
+        {{-- ===================================================== --}}
+        {{-- MAIN CONTENT --}}
+        {{-- ===================================================== --}}
 
-                <div class="h-20 px-5 md:px-8 flex items-center justify-between gap-4">
+        <div class="relative min-h-screen lg:pl-72">
 
-                    <div class="flex items-center gap-4 min-w-0">
+            {{-- ================================================= --}}
+            {{-- TOPBAR --}}
+            {{-- ================================================= --}}
 
+            <header
+                class="sticky top-0 z-30
+                       border-b border-white/70
+                       bg-white/80 shadow-sm
+                       backdrop-blur-2xl"
+            >
+                <div
+                    class="flex h-20 items-center
+                           justify-between gap-4
+                           px-5 md:px-8"
+                >
+                    <div
+                        class="flex min-w-0
+                               items-center gap-4"
+                    >
                         <button
                             type="button"
                             id="openAdminSidebar"
-                            class="lg:hidden w-11 h-11 rounded-2xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition shrink-0">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-6 h-6"
+                            class="flex h-11 w-11 shrink-0
+                                   items-center justify-center
+                                   rounded-2xl bg-slate-100
+                                   transition hover:bg-slate-200
+                                   lg:hidden"
+                            aria-label="Buka menu admin"
+                            aria-controls="adminSidebar"
+                            aria-expanded="false"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
                             </svg>
-
                         </button>
 
+
                         <div class="min-w-0">
-                            <p class="hidden md:block text-xs font-bold text-blue-700 uppercase tracking-[3px]">
+                            <p
+                                class="hidden text-xs font-bold
+                                       uppercase tracking-[3px]
+                                       text-blue-700 md:block"
+                            >
                                 Admin Website
                             </p>
 
-                            <h2 class="text-lg md:text-2xl font-black text-slate-800 truncate">
+                            <h2
+                                class="truncate text-lg
+                                       font-black text-slate-800
+                                       md:text-2xl"
+                            >
                                 @yield('title', 'Admin Panel')
                             </h2>
                         </div>
-
                     </div>
 
-                    <div class="flex items-center gap-3 shrink-0">
 
-                        <a href="{{ url('/') }}"
+                    <div
+                        class="flex shrink-0
+                               items-center gap-3"
+                    >
+                        <a
+                            href="{{ route('home') }}"
                             target="_blank"
-                            class="hidden md:inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
+                            rel="noopener noreferrer"
+                            class="hidden items-center
+                                   justify-center rounded-2xl
+                                   bg-blue-700 px-5 py-3
+                                   font-bold text-white
+                                   shadow-lg
+                                   shadow-blue-700/20
+                                   transition hover:bg-blue-800
+                                   md:inline-flex"
+                        >
                             Lihat Website
                         </a>
 
-                        <div class="hidden sm:flex items-center gap-3 rounded-2xl bg-white border border-slate-200 px-4 py-3 shadow-sm">
-
-                            <div class="w-9 h-9 rounded-xl bg-yellow-400 text-slate-900 flex items-center justify-center font-black">
+                        <div
+                            class="hidden items-center gap-3
+                                   rounded-2xl border
+                                   border-slate-200 bg-white
+                                   px-4 py-3 shadow-sm
+                                   sm:flex"
+                        >
+                            <div
+                                class="flex h-9 w-9
+                                       items-center justify-center
+                                       rounded-xl bg-yellow-400
+                                       font-black text-slate-900"
+                            >
                                 A
                             </div>
 
                             <div>
-                                <p class="text-sm font-bold text-slate-800">
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-800"
+                                >
                                     Admin
                                 </p>
 
-                                <p class="text-xs text-slate-500">
-                                    D-III Teknik Mesin
+                                <p
+                                    class="max-w-52 truncate
+                                           text-xs text-slate-500"
+                                >
+                                    D-IV Teknik Mesin Produksi
+                                    dan Perawatan
                                 </p>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </header>
 
-            {{-- Page --}}
+
+            {{-- ================================================= --}}
+            {{-- PAGE CONTENT --}}
+            {{-- ================================================= --}}
+
             <main class="p-5 md:p-8">
-
-                <div class="max-w-7xl mx-auto">
-
+                <div class="mx-auto max-w-7xl">
                     @yield('content')
-
                 </div>
-
             </main>
 
         </div>
-
     </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- SIDEBAR SCRIPT --}}
+    {{-- ========================================================= --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const sidebar = document.getElementById('adminSidebar');
-            const overlay = document.getElementById('adminOverlay');
-            const openButton = document.getElementById('openAdminSidebar');
-            const closeButton = document.getElementById('closeAdminSidebar');
+            const desktopBreakpoint = 1024;
+
+            const sidebar = document.getElementById(
+                'adminSidebar'
+            );
+
+            const overlay = document.getElementById(
+                'adminOverlay'
+            );
+
+            const openButton = document.getElementById(
+                'openAdminSidebar'
+            );
+
+            const closeButton = document.getElementById(
+                'closeAdminSidebar'
+            );
+
+            const navigationLinks = sidebar
+                ? sidebar.querySelectorAll('nav a')
+                : [];
+
+            let mobileSidebarOpen = false;
+
+
+            function isDesktop() {
+                return window.innerWidth >= desktopBreakpoint;
+            }
+
+
+            function updateAriaState(isOpen) {
+                if (openButton) {
+                    openButton.setAttribute(
+                        'aria-expanded',
+                        isOpen ? 'true' : 'false'
+                    );
+                }
+
+                if (overlay) {
+                    overlay.setAttribute(
+                        'aria-hidden',
+                        isOpen ? 'false' : 'true'
+                    );
+                }
+            }
+
 
             function openSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
+                if (!sidebar || isDesktop()) {
+                    return;
+                }
+
+                mobileSidebarOpen = true;
+
+                sidebar.classList.remove(
+                    '-translate-x-full'
+                );
+
+                if (overlay) {
+                    overlay.classList.remove('hidden');
+                }
+
+                document.body.classList.add(
+                    'overflow-hidden'
+                );
+
+                updateAriaState(true);
+
+                if (closeButton) {
+                    closeButton.focus();
+                }
             }
 
-            function closeSidebar() {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
+
+            function closeSidebar(restoreFocus = false) {
+                if (!sidebar || isDesktop()) {
+                    return;
+                }
+
+                mobileSidebarOpen = false;
+
+                sidebar.classList.add(
+                    '-translate-x-full'
+                );
+
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
+
+                document.body.classList.remove(
+                    'overflow-hidden'
+                );
+
+                updateAriaState(false);
+
+                if (restoreFocus && openButton) {
+                    openButton.focus();
+                }
             }
+
+
+            function synchronizeSidebar() {
+                if (!sidebar) {
+                    return;
+                }
+
+                if (isDesktop()) {
+                    mobileSidebarOpen = false;
+
+                    sidebar.classList.remove(
+                        '-translate-x-full'
+                    );
+
+                    if (overlay) {
+                        overlay.classList.add('hidden');
+                    }
+
+                    document.body.classList.remove(
+                        'overflow-hidden'
+                    );
+
+                    updateAriaState(false);
+
+                    return;
+                }
+
+                if (mobileSidebarOpen) {
+                    sidebar.classList.remove(
+                        '-translate-x-full'
+                    );
+
+                    if (overlay) {
+                        overlay.classList.remove('hidden');
+                    }
+
+                    document.body.classList.add(
+                        'overflow-hidden'
+                    );
+
+                    updateAriaState(true);
+                } else {
+                    sidebar.classList.add(
+                        '-translate-x-full'
+                    );
+
+                    if (overlay) {
+                        overlay.classList.add('hidden');
+                    }
+
+                    document.body.classList.remove(
+                        'overflow-hidden'
+                    );
+
+                    updateAriaState(false);
+                }
+            }
+
 
             if (openButton) {
-                openButton.addEventListener('click', openSidebar);
+                openButton.addEventListener(
+                    'click',
+                    openSidebar
+                );
             }
+
 
             if (closeButton) {
-                closeButton.addEventListener('click', closeSidebar);
+                closeButton.addEventListener(
+                    'click',
+                    function () {
+                        closeSidebar(true);
+                    }
+                );
             }
+
 
             if (overlay) {
-                overlay.addEventListener('click', closeSidebar);
+                overlay.addEventListener(
+                    'click',
+                    function () {
+                        closeSidebar(true);
+                    }
+                );
             }
 
-            window.addEventListener('resize', function () {
-                if (window.innerWidth >= 1024) {
-                    sidebar.classList.remove('-translate-x-full');
-                    overlay.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                }
+
+            navigationLinks.forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (!isDesktop()) {
+                        closeSidebar(false);
+                    }
+                });
             });
+
+
+            document.addEventListener(
+                'keydown',
+                function (event) {
+                    if (
+                        event.key === 'Escape'
+                        && mobileSidebarOpen
+                    ) {
+                        closeSidebar(true);
+                    }
+                }
+            );
+
+
+            window.addEventListener(
+                'resize',
+                synchronizeSidebar
+            );
+
+
+            synchronizeSidebar();
         });
     </script>
 
+    @stack('scripts')
 </body>
 
 </html>

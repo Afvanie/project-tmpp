@@ -4,8 +4,17 @@
 
 @section('content')
 
-@include('components.academic.hero')
+    {{-- ========================================================= --}}
+    {{-- HERO HALAMAN AKADEMIK --}}
+    {{-- ========================================================= --}}
 
-@include('components.academic.documents')
+    @include('components.academic.hero')
+
+
+    {{-- ========================================================= --}}
+    {{-- DAFTAR DOKUMEN AKADEMIK --}}
+    {{-- ========================================================= --}}
+
+    @include('components.academic.documents')
 
 @endsection

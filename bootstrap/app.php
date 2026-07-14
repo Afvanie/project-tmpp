@@ -1,23 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Middleware\AdminAuthMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
-return Application::configure(basePath: dirname(__DIR__))
+return Application::configure(
+    basePath: dirname(__DIR__)
+)
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->alias([
-        'admin.auth' => \App\Http\Middleware\AdminAuthMiddleware::class,
-        ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
-        );
-    })->create();
+    ->withMiddleware(
+        function (Middleware $middleware): void {
+            /*
+            |--------------------------------------------------------------------------
+            | ALIAS MIDDLEWARE
+            |--------------------------------------------------------------------------
+            */
+
+            $middleware->alias([
+                'admin.auth' => AdminAuthMiddleware::class,
+            ]);
+        }
+    )
+    ->withExceptions(
+        function (Exceptions $exceptions): void {
+            /*
+            |--------------------------------------------------------------------------
+            | RESPONS JSON UNTUK API
+            |--------------------------------------------------------------------------
+            */
+
+            $exceptions->shouldRenderJsonWhen(
+                static fn (Request $request): bool =>
+                    $request->is('api/*')
+            );
+        }
+    )
+    ->create();

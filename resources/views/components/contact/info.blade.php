@@ -8,7 +8,7 @@
         ],
         [
             'title' => 'Email',
-            'value' => 'd3teknikmesin@polinema.ac.id',
+            'value' => 'tmpp@polinema.ac.id',
             'description' => 'Silakan sesuaikan dengan email resmi program studi.',
             'icon' => 'email',
         ],
@@ -60,7 +60,7 @@
             <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
 
             <p class="mt-7 text-slate-600 leading-8">
-                Program Studi D-III Teknik Mesin Politeknik Negeri Malang terbuka untuk
+                Program Studi D-IV Teknik Mesin Produksi dan Perawatan Politeknik Negeri Malang terbuka untuk
                 informasi akademik, layanan administrasi, kerja sama, dan kebutuhan komunikasi lainnya.
             </p>
 

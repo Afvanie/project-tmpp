@@ -1,202 +1,649 @@
-<section class="relative py-24 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50">
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI HALAMAN
+    |--------------------------------------------------------------------------
+    */
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 -z-10">
+    $pageTitle = trim((string) ($page['title'] ?? 'Dokumen Akademik'));
+    $pageSubtitle = trim((string) ($page['subtitle'] ?? ''));
 
-        <div class="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-blue-200/30 blur-[140px]"></div>
+    /*
+    |--------------------------------------------------------------------------
+    | DAFTAR DOKUMEN
+    |--------------------------------------------------------------------------
+    */
 
-        <div class="absolute bottom-0 -right-40 w-[520px] h-[520px] rounded-full bg-yellow-200/30 blur-[140px]"></div>
+    $academicDocuments = collect($documents ?? []);
+    $academicPages = collect($pages ?? []);
+@endphp
+
+
+<section
+    id="academic-documents"
+    class="relative overflow-hidden
+           bg-gradient-to-br
+           from-slate-50 via-white to-blue-50
+           py-20 md:py-24"
+>
+    {{-- ========================================================= --}}
+    {{-- BACKGROUND DECORATION --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+    >
+        <div
+            class="absolute -left-40 -top-40
+                   h-[520px] w-[520px]
+                   rounded-full bg-blue-200/30
+                   blur-[140px]"
+        ></div>
+
+        <div
+            class="absolute -right-40 bottom-0
+                   h-[520px] w-[520px]
+                   rounded-full bg-yellow-200/30
+                   blur-[140px]"
+        ></div>
 
         <div
             class="absolute inset-0 opacity-[0.03]"
-            style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-            linear-gradient(to right,#0f172a 1px,transparent 1px);
-            background-size:70px 70px;">
-        </div>
+            style="
+                background-image:
+                    linear-gradient(
+                        #0f172a 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        to right,
+                        #0f172a 1px,
+                        transparent 1px
+                    );
+                background-size: 70px 70px;
+            "
+        ></div>
 
+        <div
+            class="absolute bottom-8 right-8
+                   select-none text-[70px]
+                   font-black leading-none
+                   text-blue-900/[0.025]
+                   md:text-[130px]"
+        >
+            AKADEMIK
+        </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-6">
 
-        {{-- Heading --}}
-        <div class="text-center max-w-3xl mx-auto mb-12" data-aos="fade-up">
+    <div
+        class="relative z-10 mx-auto
+               max-w-7xl px-6"
+    >
+        {{-- ===================================================== --}}
+        {{-- HEADING --}}
+        {{-- ===================================================== --}}
 
-            <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
+        <div
+            class="mx-auto mb-12 max-w-3xl text-center"
+            data-aos="fade-up"
+        >
+            <span
+                class="text-sm font-semibold uppercase
+                       tracking-[5px] text-blue-700"
+            >
                 Dokumen Akademik
             </span>
 
-            <h2 class="mt-4 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                {{ $page['title'] }}
+            <h2
+                class="mt-4 text-3xl font-bold
+                       leading-tight text-slate-800
+                       sm:text-4xl md:text-5xl"
+            >
+                {{ $pageTitle }}
             </h2>
 
-            <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
+            <div
+                class="mx-auto mt-6 h-1 w-24
+                       rounded-full bg-yellow-400"
+            ></div>
 
-            <p class="mt-7 text-slate-600 leading-8">
-                {{ $page['subtitle'] }}
-            </p>
-
+            @if ($pageSubtitle !== '')
+                <p
+                    class="mt-7 leading-8
+                           text-slate-600"
+                >
+                    {{ $pageSubtitle }}
+                </p>
+            @endif
         </div>
 
-        {{-- Shortcut antar menu akademik --}}
-        <div class="mb-12 rounded-3xl bg-white border border-slate-100 shadow-lg p-5" data-aos="fade-up">
 
-            <div class="flex flex-wrap justify-center gap-3">
+        {{-- ===================================================== --}}
+        {{-- NAVIGASI AKADEMIK --}}
+        {{-- ===================================================== --}}
 
-                @foreach ($pages as $pageSlug => $item)
+        @if ($academicPages->isNotEmpty())
+            <nav
+                aria-label="Navigasi dokumen akademik"
+                class="mb-12 rounded-3xl
+                       border border-slate-100
+                       bg-white p-4 shadow-lg
+                       sm:p-5"
+                data-aos="fade-up"
+            >
+                <div
+                    class="flex flex-wrap
+                           justify-center gap-3"
+                >
+                    @foreach ($academicPages as $pageSlug => $item)
 
-                    <a href="{{ route('academic.page', $pageSlug) }}"
-                       class="px-5 py-3 rounded-xl font-semibold transition
-                       {{ $slug === $pageSlug
-                            ? 'bg-blue-700 text-white'
-                            : 'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700' }}">
+                        @php
+                            $menuTitle = trim(
+                                (string) ($item['title'] ?? '')
+                            );
+                        @endphp
 
-                        {{ $item['title'] }}
+                        @if ($menuTitle !== '')
+                            <a
+                                href="{{ route(
+                                    'academic.page',
+                                    $pageSlug
+                                ) }}"
+                                @class([
+                                    'inline-flex items-center justify-center',
+                                    'rounded-xl px-4 py-3',
+                                    'text-center text-sm font-semibold',
+                                    'transition duration-300',
+                                    'sm:px-5',
+                                    'bg-blue-700 text-white shadow-md' =>
+                                        $slug === $pageSlug,
+                                    'bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700' =>
+                                        $slug !== $pageSlug,
+                                ])
+                                @if ($slug === $pageSlug)
+                                    aria-current="page"
+                                @endif
+                            >
+                                {{ $menuTitle }}
+                            </a>
+                        @endif
 
-                    </a>
+                    @endforeach
+                </div>
+            </nav>
+        @endif
 
-                @endforeach
 
-            </div>
+        {{-- ===================================================== --}}
+        {{-- DAFTAR DOKUMEN --}}
+        {{-- ===================================================== --}}
 
-        </div>
+        @if ($academicDocuments->isNotEmpty())
 
-        {{-- Documents --}}
-        @if ($documents->count() > 0)
+            <div class="space-y-8 md:space-y-10">
 
-            <div class="space-y-10">
-
-                @foreach ($documents as $document)
+                @foreach ($academicDocuments as $document)
 
                     @php
-                        $fileUrl = $document->file_path ? asset('storage/' . $document->file_path) : null;
-                        $extension = $document->file_path ? strtolower(pathinfo($document->file_path, PATHINFO_EXTENSION)) : null;
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DATA DOKUMEN
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $documentTitle = trim(
+                            (string) $document->title
+                        );
+
+                        $description = trim(
+                            (string) $document->description
+                        );
+
+                        $academicYear = trim(
+                            (string) $document->academic_year
+                        );
+
+                        $categoryLabel = trim(
+                            (string) ($document->category_label ?? '')
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | FILE DOKUMEN
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $filePath = trim(
+                            (string) $document->file_path
+                        );
+
+                        $fileExists = $filePath !== ''
+                            && \Illuminate\Support\Facades\Storage::disk(
+                                'public'
+                            )->exists($filePath);
+
+                        $fileUrl = $fileExists
+                            ? asset('storage/' . $filePath)
+                            : null;
+
+                        $extension = $fileExists
+                            ? strtolower(
+                                pathinfo(
+                                    $filePath,
+                                    PATHINFO_EXTENSION
+                                )
+                            )
+                            : null;
+
+                        $isPdf = $extension === 'pdf';
+
+                        $isImage = in_array(
+                            $extension,
+                            [
+                                'jpg',
+                                'jpeg',
+                                'png',
+                                'webp',
+                            ],
+                            true
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | TAUTAN EKSTERNAL
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $externalLink = trim(
+                            (string) $document->external_link
+                        );
+
+                        $hasSafeExternalLink =
+                            $externalLink !== ''
+                            && (
+                                str_starts_with(
+                                    strtolower($externalLink),
+                                    'https://'
+                                )
+                                || str_starts_with(
+                                    strtolower($externalLink),
+                                    'http://'
+                                )
+                            );
                     @endphp
 
-                    <div
+
+                    <article
+                        class="overflow-hidden rounded-3xl
+                               border border-slate-100
+                               bg-white shadow-xl
+                               transition duration-300
+                               hover:shadow-2xl"
                         data-aos="fade-up"
-                        data-aos-delay="{{ $loop->index * 70 }}"
-                        class="overflow-hidden rounded-3xl bg-white border border-slate-100 shadow-xl">
+                        data-aos-delay="{{ min(
+                            $loop->index * 70,
+                            350
+                        ) }}"
+                    >
+                        {{-- ========================================= --}}
+                        {{-- HEADER DOKUMEN --}}
+                        {{-- ========================================= --}}
 
-                        {{-- Header --}}
-                        <div class="p-7 md:p-8 border-b border-slate-100">
+                        <div
+                            class="border-b border-slate-100
+                                   p-6 sm:p-7 md:p-8"
+                        >
+                            <div
+                                class="flex flex-col gap-6
+                                       lg:flex-row
+                                       lg:items-start
+                                       lg:justify-between"
+                            >
+                                <div class="min-w-0 flex-1">
 
-                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                                    @if ($categoryLabel !== '')
+                                        <span
+                                            class="inline-flex items-center
+                                                   rounded-full
+                                                   bg-yellow-100
+                                                   px-4 py-2
+                                                   text-sm font-semibold
+                                                   text-yellow-700"
+                                        >
+                                            {{ $categoryLabel }}
+                                        </span>
+                                    @endif
 
-                                <div>
 
-                                    <span class="inline-block px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold">
-                                        {{ $document->category_label }}
-                                    </span>
-
-                                    <h3 class="mt-5 text-3xl font-bold text-slate-800 leading-snug">
-                                        {{ $document->title }}
+                                    <h3
+                                        class="{{ $categoryLabel !== ''
+                                            ? 'mt-5'
+                                            : '' }}
+                                               break-words text-2xl
+                                               font-bold leading-snug
+                                               text-slate-800
+                                               md:text-3xl"
+                                    >
+                                        {{ $documentTitle !== ''
+                                            ? $documentTitle
+                                            : $pageTitle }}
                                     </h3>
 
-                                    @if ($document->academic_year)
 
-                                        <p class="mt-3 text-sm font-semibold text-blue-700">
-                                            Tahun Akademik {{ $document->academic_year }}
+                                    @if ($academicYear !== '')
+                                        <p
+                                            class="mt-3 text-sm
+                                                   font-semibold
+                                                   text-blue-700"
+                                        >
+                                            Tahun Akademik
+                                            {{ $academicYear }}
                                         </p>
-
                                     @endif
 
-                                    @if ($document->description)
 
-                                        <p class="mt-5 text-slate-600 leading-8 text-justify">
-                                            {{ $document->description }}
+                                    @if ($description !== '')
+                                        <p
+                                            class="mt-5 text-justify
+                                                   leading-8
+                                                   text-slate-600"
+                                        >
+                                            {!! nl2br(e($description)) !!}
                                         </p>
-
                                     @endif
-
                                 </div>
 
-                                <div class="flex flex-wrap gap-3 lg:justify-end">
 
-                                    @if ($fileUrl)
+                                {{-- Tombol --}}
+                                @if ($fileUrl || $hasSafeExternalLink)
+                                    <div
+                                        class="flex shrink-0
+                                               flex-col gap-3
+                                               sm:flex-row
+                                               lg:justify-end"
+                                    >
+                                        @if ($fileUrl)
+                                            <a
+                                                href="{{ $fileUrl }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex
+                                                       items-center
+                                                       justify-center
+                                                       rounded-xl
+                                                       bg-blue-700
+                                                       px-5 py-3
+                                                       text-sm font-semibold
+                                                       text-white
+                                                       transition
+                                                       hover:bg-blue-800"
+                                            >
+                                                Buka File
+                                            </a>
+                                        @endif
 
-                                        <a href="{{ $fileUrl }}"
-                                           target="_blank"
-                                           class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-blue-700 text-white font-semibold hover:bg-blue-800 transition">
-                                            Buka File
-                                        </a>
 
-                                    @endif
-
-                                    @if ($document->external_link)
-
-                                        <a href="{{ $document->external_link }}"
-                                           target="_blank"
-                                           class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-yellow-400 text-slate-900 font-semibold hover:bg-yellow-500 transition">
-                                            Buka Link
-                                        </a>
-
-                                    @endif
-
-                                </div>
-
+                                        @if ($hasSafeExternalLink)
+                                            <a
+                                                href="{{ $externalLink }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex
+                                                       items-center
+                                                       justify-center
+                                                       rounded-xl
+                                                       bg-yellow-400
+                                                       px-5 py-3
+                                                       text-sm font-semibold
+                                                       text-slate-900
+                                                       transition
+                                                       hover:bg-yellow-500"
+                                            >
+                                                Buka Tautan
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
-
                         </div>
 
-                        {{-- File Preview --}}
-                        <div class="bg-slate-100 p-4 md:p-6">
 
-                            @if ($fileUrl && $extension === 'pdf')
+                        {{-- ========================================= --}}
+                        {{-- PREVIEW DOKUMEN --}}
+                        {{-- ========================================= --}}
 
-                                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+                        <div
+                            class="bg-slate-100
+                                   p-4 md:p-6"
+                        >
+                            @if ($fileUrl && $isPdf)
 
+                                {{-- Preview PDF Desktop --}}
+                                <div
+                                    class="hidden overflow-hidden
+                                           rounded-2xl border
+                                           border-slate-200
+                                           bg-white shadow-lg
+                                           md:block"
+                                >
                                     <iframe
                                         src="{{ $fileUrl }}#toolbar=1&navpanes=0&scrollbar=1"
-                                        class="w-full h-[780px]"
-                                        title="{{ $document->title }}">
-                                    </iframe>
-
+                                        class="h-[720px] w-full"
+                                        title="Pratinjau {{ $documentTitle }}"
+                                        loading="lazy"
+                                    ></iframe>
                                 </div>
 
-                            @elseif ($fileUrl && in_array($extension, ['jpg', 'jpeg', 'png', 'webp']))
 
-                                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+                                {{-- Tampilan PDF Mobile --}}
+                                <div
+                                    class="rounded-2xl border
+                                           border-slate-200
+                                           bg-white p-8
+                                           text-center shadow-sm
+                                           md:hidden"
+                                >
+                                    <div
+                                        class="mx-auto flex h-16 w-16
+                                               items-center justify-center
+                                               rounded-2xl bg-red-100
+                                               text-lg font-bold
+                                               text-red-600"
+                                    >
+                                        PDF
+                                    </div>
 
-                                    <img
-                                        src="{{ $fileUrl }}"
-                                        alt="{{ $document->title }}"
-                                        class="w-full h-auto">
-
-                                </div>
-
-                            @elseif ($document->external_link)
-
-                                <div class="rounded-2xl bg-white border border-slate-200 p-10 text-center">
-
-                                    <h4 class="text-2xl font-bold text-slate-800">
-                                        Dokumen tersedia melalui link eksternal
+                                    <h4
+                                        class="mt-5 text-xl font-bold
+                                               text-slate-800"
+                                    >
+                                        Dokumen PDF
                                     </h4>
 
-                                    <p class="mt-3 text-slate-500">
-                                        Klik tombol “Buka Link” untuk melihat dokumen.
+                                    <p
+                                        class="mt-3 leading-7
+                                               text-slate-500"
+                                    >
+                                        Buka dokumen untuk melihat
+                                        isi lengkap melalui pembaca
+                                        PDF perangkat Anda.
                                     </p>
 
+                                    <a
+                                        href="{{ $fileUrl }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mt-6 inline-flex
+                                               items-center justify-center
+                                               rounded-xl bg-blue-700
+                                               px-5 py-3
+                                               text-sm font-semibold
+                                               text-white transition
+                                               hover:bg-blue-800"
+                                    >
+                                        Buka Dokumen
+                                    </a>
                                 </div>
+
+
+                            @elseif ($fileUrl && $isImage)
+
+                                <div
+                                    class="overflow-hidden rounded-2xl
+                                           border border-slate-200
+                                           bg-white shadow-lg"
+                                >
+                                    <a
+                                        href="{{ $fileUrl }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <img
+                                            src="{{ $fileUrl }}"
+                                            alt="{{ $documentTitle }}"
+                                            class="h-auto w-full
+                                                   object-contain"
+                                            loading="lazy"
+                                        >
+                                    </a>
+                                </div>
+
+
+                            @elseif ($fileUrl)
+
+                                <div
+                                    class="rounded-2xl border
+                                           border-slate-200
+                                           bg-white p-8
+                                           text-center md:p-10"
+                                >
+                                    <div
+                                        class="mx-auto flex h-16 w-16
+                                               items-center justify-center
+                                               rounded-2xl bg-blue-100
+                                               text-sm font-bold uppercase
+                                               text-blue-700"
+                                    >
+                                        {{ $extension ?: 'FILE' }}
+                                    </div>
+
+                                    <h4
+                                        class="mt-5 text-xl font-bold
+                                               text-slate-800
+                                               md:text-2xl"
+                                    >
+                                        File Siap Dibuka
+                                    </h4>
+
+                                    <p
+                                        class="mt-3 leading-7
+                                               text-slate-500"
+                                    >
+                                        Format file ini tidak dapat
+                                        ditampilkan langsung pada
+                                        halaman website.
+                                    </p>
+
+                                    <a
+                                        href="{{ $fileUrl }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="mt-6 inline-flex
+                                               items-center justify-center
+                                               rounded-xl bg-blue-700
+                                               px-5 py-3
+                                               text-sm font-semibold
+                                               text-white transition
+                                               hover:bg-blue-800"
+                                    >
+                                        Buka File
+                                    </a>
+                                </div>
+
+
+                            @elseif ($hasSafeExternalLink)
+
+                                <div
+                                    class="rounded-2xl border
+                                           border-slate-200
+                                           bg-white p-8
+                                           text-center md:p-10"
+                                >
+                                    <div
+                                        class="mx-auto flex h-16 w-16
+                                               items-center justify-center
+                                               rounded-2xl bg-yellow-100
+                                               text-yellow-700"
+                                    >
+                                        <i
+                                            class="fa-solid fa-arrow-up-right-from-square text-xl"
+                                            aria-hidden="true"
+                                        ></i>
+                                    </div>
+
+                                    <h4
+                                        class="mt-5 text-xl font-bold
+                                               text-slate-800
+                                               md:text-2xl"
+                                    >
+                                        Dokumen Tersedia melalui
+                                        Tautan Eksternal
+                                    </h4>
+
+                                    <p
+                                        class="mt-3 leading-7
+                                               text-slate-500"
+                                    >
+                                        Gunakan tombol Buka Tautan
+                                        untuk melihat dokumen pada
+                                        halaman sumber.
+                                    </p>
+                                </div>
+
 
                             @else
 
-                                <div class="rounded-2xl bg-white border border-slate-200 p-10 text-center">
+                                <div
+                                    class="rounded-2xl border
+                                           border-slate-200
+                                           bg-white p-8
+                                           text-center md:p-10"
+                                >
+                                    <div
+                                        class="mx-auto flex h-16 w-16
+                                               items-center justify-center
+                                               rounded-2xl bg-slate-100
+                                               text-slate-500"
+                                    >
+                                        <i
+                                            class="fa-regular fa-file-lines text-xl"
+                                            aria-hidden="true"
+                                        ></i>
+                                    </div>
 
-                                    <h4 class="text-2xl font-bold text-slate-800">
-                                        Dokumen belum tersedia
+                                    <h4
+                                        class="mt-5 text-xl font-bold
+                                               text-slate-800
+                                               md:text-2xl"
+                                    >
+                                        Dokumen Belum Tersedia
                                     </h4>
 
-                                    <p class="mt-3 text-slate-500">
-                                        File belum diunggah melalui halaman admin.
+                                    <p
+                                        class="mt-3 leading-7
+                                               text-slate-500"
+                                    >
+                                        File atau tautan dokumen
+                                        belum ditambahkan melalui
+                                        halaman admin.
                                     </p>
-
                                 </div>
 
                             @endif
-
                         </div>
-
-                    </div>
+                    </article>
 
                 @endforeach
 
@@ -204,20 +651,46 @@
 
         @else
 
-            <div data-aos="fade-up" class="rounded-3xl bg-white border border-slate-100 p-12 text-center shadow-lg">
+            {{-- ================================================= --}}
+            {{-- EMPTY STATE --}}
+            {{-- ================================================= --}}
 
-                <h3 class="text-2xl font-bold text-slate-800">
-                    Dokumen belum tersedia
+            <div
+                class="rounded-3xl border
+                       border-slate-100 bg-white
+                       p-8 text-center shadow-lg
+                       sm:p-10 md:p-12"
+                data-aos="fade-up"
+            >
+                <div
+                    class="mx-auto flex h-16 w-16
+                           items-center justify-center
+                           rounded-2xl bg-blue-50
+                           text-blue-700"
+                >
+                    <i
+                        class="fa-regular fa-folder-open text-xl"
+                        aria-hidden="true"
+                    ></i>
+                </div>
+
+                <h3
+                    class="mt-5 text-2xl font-bold
+                           text-slate-800"
+                >
+                    Dokumen Belum Tersedia
                 </h3>
 
-                <p class="mt-3 text-slate-500">
-                    Data {{ strtolower($page['title']) }} belum ditambahkan melalui halaman admin.
+                <p
+                    class="mx-auto mt-3 max-w-xl
+                           leading-7 text-slate-500"
+                >
+                    Data {{ strtolower($pageTitle) }} belum
+                    ditambahkan oleh pengelola melalui halaman
+                    admin.
                 </p>
-
             </div>
 
         @endif
-
     </div>
-
 </section>

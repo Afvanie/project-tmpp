@@ -1,24 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
+use Illuminate\Contracts\View\View;
 
 class FacilityController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan fasilitas aktif beserta foto aktifnya.
+     */
+    public function index(): View
     {
-        $facilities = Facility::with([
-            'photos' => function ($query) {
-                $query->where('is_active', true)
-                    ->orderBy('sort_order');
-            }
-        ])
-        ->where('is_active', true)
-        ->orderBy('sort_order')
-        ->get();
+        $facilities = Facility::query()
+            ->active()
+            ->ordered()
+            ->with([
+                'photos' => function ($query): void {
+                    $query
+                        ->active()
+                        ->ordered();
+                },
+            ])
+            ->get();
 
-        return view('frontend.facilities', compact('facilities'));
+        return view('frontend.facilities', [
+            'facilities' => $facilities,
+        ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,33 +10,98 @@ use App\Models\Admin;
 use App\Models\FacilityPhoto;
 use App\Models\LecturerStaff;
 use App\Models\ProfileSection;
+use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /**
+     * Menampilkan dashboard pengelolaan website.
+     */
+    public function index(): View
     {
         $stats = [
-            'lecturers' => LecturerStaff::where('type', 'dosen')->count(),
-            'staff' => LecturerStaff::where('type', 'staff')->count(),
-            'academic_documents' => AcademicDocument::count(),
-            'facility_photos' => FacilityPhoto::count(),
-            'admins' => Admin::count(),
-            'profile_sections' => ProfileSection::count(),
+            'lecturers' => LecturerStaff::query()
+                ->where(
+                    'type',
+                    LecturerStaff::TYPE_DOSEN
+                )
+                ->count(),
+
+            'staff' => LecturerStaff::query()
+                ->where(
+                    'type',
+                    LecturerStaff::TYPE_STAFF
+                )
+                ->count(),
+
+            'academic_documents' => AcademicDocument::query()
+                ->count(),
+
+            'facility_photos' => FacilityPhoto::query()
+                ->count(),
+
+            'admins' => Admin::query()
+                ->count(),
+
+            'profile_sections' => ProfileSection::query()
+                ->count(),
         ];
 
-        $latestDocuments = AcademicDocument::latest()
-            ->take(5)
+        /*
+        |--------------------------------------------------------------------------
+        | DOKUMEN AKADEMIK TERBARU
+        |--------------------------------------------------------------------------
+        |
+        | Menampilkan seluruh status dokumen karena halaman ini digunakan
+        | oleh admin, termasuk dokumen yang belum dipublikasikan.
+        |
+        */
+
+        $latestDocuments = AcademicDocument::query()
+            ->select([
+                'id',
+                'title',
+                'category',
+                'academic_year',
+                'is_active',
+                'created_at',
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(5)
             ->get();
 
-        $latestPhotos = FacilityPhoto::with('facility')
-            ->latest()
-            ->take(5)
+        /*
+        |--------------------------------------------------------------------------
+        | FOTO FASILITAS TERBARU
+        |--------------------------------------------------------------------------
+        |
+        | Relasi fasilitas dimuat sekaligus agar tidak terjadi N+1 query.
+        | Seluruh status foto tetap ditampilkan untuk kebutuhan admin.
+        |
+        */
+
+        $latestPhotos = FacilityPhoto::query()
+            ->select([
+                'id',
+                'facility_id',
+                'title',
+                'photo',
+                'is_active',
+                'created_at',
+            ])
+            ->with([
+                'facility:id,title',
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(5)
             ->get();
 
-        return view('admin.index', compact(
-            'stats',
-            'latestDocuments',
-            'latestPhotos'
-        ));
+        return view('admin.index', [
+            'stats' => $stats,
+            'latestDocuments' => $latestDocuments,
+            'latestPhotos' => $latestPhotos,
+        ]);
     }
 }

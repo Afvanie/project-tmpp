@@ -1,68 +1,101 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicDocument;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class AcademicController extends Controller
 {
-    private array $pages = [
+    /**
+     * Daftar halaman akademik yang tersedia.
+     *
+     * Slug digunakan pada URL, sedangkan category digunakan
+     * untuk mengambil dokumen dari database.
+     */
+    private const PAGES = [
         'pedoman-akademik' => [
             'category' => 'pedoman_akademik',
             'title' => 'Pedoman Akademik',
-            'subtitle' => 'Dokumen pedoman akademik Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Dokumen pedoman akademik Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
 
         'kalender-akademik' => [
             'category' => 'kalender_akademik',
             'title' => 'Kalender Akademik',
-            'subtitle' => 'Informasi kalender kegiatan akademik Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Informasi kalender kegiatan akademik Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
 
         'kurikulum' => [
             'category' => 'kurikulum',
             'title' => 'Kurikulum',
-            'subtitle' => 'Struktur kurikulum dan informasi mata kuliah Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Struktur kurikulum dan informasi mata kuliah Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
 
         'jadwal-kuliah' => [
             'category' => 'jadwal_kuliah',
             'title' => 'Jadwal Kuliah',
-            'subtitle' => 'Informasi jadwal perkuliahan Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Informasi jadwal perkuliahan Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
 
         'laporan-ketercapaian' => [
             'category' => 'laporan_ketercapaian',
             'title' => 'Laporan Ketercapaian',
-            'subtitle' => 'Dokumen laporan ketercapaian pembelajaran Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Dokumen laporan ketercapaian pembelajaran Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
 
         'panduan-laporan-tugas-akhir' => [
             'category' => 'panduan_laporan_tugas_akhir',
             'title' => 'Panduan Laporan Tugas Akhir',
-            'subtitle' => 'Dokumen panduan penyusunan laporan tugas akhir mahasiswa Program Studi D-III Teknik Mesin.',
+            'subtitle' => 'Dokumen panduan penyusunan laporan tugas akhir mahasiswa Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Panduan Magang Industri
+        |--------------------------------------------------------------------------
+        |
+        | Slug dan category lama tetap dipertahankan agar kompatibel
+        | dengan route, menu, database, dan dokumen yang sudah ada.
+        |
+        */
 
         'panduan-laporan-pkl' => [
             'category' => 'panduan_laporan_pkl',
-            'title' => 'Panduan Laporan PKL',
-            'subtitle' => 'Dokumen panduan penyusunan laporan Praktik Kerja Lapangan mahasiswa Program Studi D-III Teknik Mesin.',
+            'title' => 'Panduan Magang Industri',
+            'subtitle' => 'Dokumen panduan pelaksanaan Magang Industri mahasiswa Program Studi D-IV Teknik Mesin Produksi dan Perawatan.',
         ],
     ];
 
-    public function index()
+    /**
+     * Mengarahkan halaman akademik utama ke Pedoman Akademik.
+     */
+    public function index(): RedirectResponse
     {
-        return redirect()->route('academic.page', 'pedoman-akademik');
+        return redirect()->route(
+            'academic.page',
+            'pedoman-akademik'
+        );
     }
 
-    public function page(string $slug)
+    /**
+     * Menampilkan halaman dokumen berdasarkan slug akademik.
+     */
+    public function page(string $slug): View
     {
-        abort_if(!array_key_exists($slug, $this->pages), 404);
+        abort_unless(
+            array_key_exists($slug, self::PAGES),
+            404
+        );
 
-        $page = $this->pages[$slug];
+        $page = self::PAGES[$slug];
 
-        $documents = AcademicDocument::where('is_active', true)
+        $documents = AcademicDocument::query()
+            ->where('is_active', true)
             ->where('category', $page['category'])
             ->orderBy('sort_order')
             ->orderByDesc('created_at')
@@ -71,7 +104,7 @@ class AcademicController extends Controller
         return view('frontend.academic', [
             'page' => $page,
             'slug' => $slug,
-            'pages' => $this->pages,
+            'pages' => self::PAGES,
             'documents' => $documents,
         ]);
     }

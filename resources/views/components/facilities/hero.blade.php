@@ -1,74 +1,254 @@
-<section class="relative h-[60vh] flex items-center overflow-hidden">
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | BANNER FASILITAS
+    |--------------------------------------------------------------------------
+    */
 
-    {{-- Background Image --}}
-    <div class="absolute inset-0 bg-[#003B73]">
+    $bannerRelativePath = 'assets/images/fasilitas-banner.jpg';
 
-        <div
-            class="absolute inset-0 bg-cover bg-center"
-            style="background-image: url('{{ asset('assets/images/fasilitas-banner.jpg') }}');">
-        </div>
+    $bannerAvailable = file_exists(
+        public_path($bannerRelativePath)
+    );
+@endphp
 
-        {{-- Overlay gradasi seperti screenshot --}}
+
+<section
+    class="relative flex min-h-[520px] items-center
+           overflow-hidden bg-blue-950 py-24
+           md:min-h-[600px] md:py-28"
+>
+    {{-- ========================================================= --}}
+    {{-- BACKGROUND --}}
+    {{-- ========================================================= --}}
+
+    <div class="absolute inset-0">
+
+        @if ($bannerAvailable)
+            <img
+                src="{{ asset($bannerRelativePath) }}"
+                alt="Fasilitas Program Studi D-IV Teknik Mesin Produksi dan Perawatan"
+                class="h-full w-full object-cover"
+            >
+        @else
+            <div
+                class="h-full w-full
+                       bg-gradient-to-br
+                       from-blue-900 via-blue-800
+                       to-slate-950"
+            ></div>
+        @endif
+
+
+        {{-- Overlay Horizontal --}}
         <div
             class="absolute inset-0"
-            style="background: linear-gradient(
-                90deg,
-                rgba(0, 59, 115, 0.28) 0%,
-                rgba(0, 91, 172, 0.58) 42%,
-                rgba(0, 59, 115, 0.90) 100%
-            );">
-        </div>
+            style="
+                background: linear-gradient(
+                    90deg,
+                    rgba(0, 35, 75, 0.88) 0%,
+                    rgba(0, 75, 145, 0.72) 45%,
+                    rgba(0, 35, 75, 0.94) 100%
+                );
+            "
+        ></div>
 
-        {{-- Layer biru lembut agar menyatu --}}
+
+        {{-- Overlay Vertikal --}}
         <div
             class="absolute inset-0"
-            style="background: linear-gradient(
-                180deg,
-                rgba(0, 43, 85, 0.08) 0%,
-                rgba(0, 43, 85, 0.20) 100%
-            );">
-        </div>
-
+            style="
+                background: linear-gradient(
+                    180deg,
+                    rgba(0, 25, 55, 0.10) 0%,
+                    rgba(0, 25, 55, 0.48) 100%
+                );
+            "
+        ></div>
     </div>
 
-    {{-- Grid Decoration --}}
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)] bg-[size:70px_70px]"></div>
 
-    {{-- Soft Blur --}}
-    <div class="absolute -left-32 bottom-0 w-96 h-96 rounded-full bg-yellow-400/20 blur-[120px]"></div>
+    {{-- ========================================================= --}}
+    {{-- ORNAMEN BACKGROUND --}}
+    {{-- ========================================================= --}}
 
-    {{-- Content --}}
-    <div class="relative z-10 max-w-7xl mx-auto px-6 w-full">
+    <div
+        class="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+    >
+        {{-- Grid --}}
+        <div
+            class="absolute inset-0
+                   bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)]
+                   bg-[size:70px_70px]"
+        ></div>
 
+        {{-- Blur Kuning --}}
+        <div
+            class="absolute -bottom-28 -left-32
+                   h-96 w-96 rounded-full
+                   bg-yellow-400/20 blur-[120px]"
+        ></div>
+
+        {{-- Blur Biru --}}
+        <div
+            class="absolute -right-40 top-0
+                   h-[430px] w-[430px]
+                   rounded-full bg-blue-400/20
+                   blur-[130px]"
+        ></div>
+
+        {{-- Watermark --}}
+        <div
+            class="absolute bottom-6 right-6
+                   select-none text-right
+                   text-[58px] font-black leading-none
+                   text-white/[0.035]
+                   sm:text-[72px]
+                   md:bottom-10 md:right-10
+                   md:text-[112px]"
+        >
+            FASILITAS
+        </div>
+
+        {{-- Logo Polinema --}}
+        <img
+            src="{{ asset('assets/images/logo.png') }}"
+            alt=""
+            class="absolute -bottom-20 -right-12
+                   hidden w-[350px] select-none
+                   grayscale opacity-[0.05]
+                   lg:block"
+        >
+    </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- CONTENT --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="relative z-10 mx-auto
+               w-full max-w-7xl px-6"
+    >
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-white/80 text-sm mb-6">
+        <nav
+            aria-label="Breadcrumb"
+            class="mb-6"
+        >
+            <ol
+                class="flex flex-wrap items-center
+                       gap-x-2 gap-y-2 text-sm
+                       text-white/80"
+            >
+                <li>
+                    <a
+                        href="{{ route('home') }}"
+                        class="transition
+                               hover:text-yellow-300"
+                    >
+                        Beranda
+                    </a>
+                </li>
 
-            <a href="{{ route('home') }}" class="hover:text-yellow-300 transition">
-                Beranda
-            </a>
+                <li aria-hidden="true">
+                    /
+                </li>
 
-            <span>/</span>
-
-            <span class="text-yellow-300 font-semibold">
-                Fasilitas
-            </span>
-
+                <li
+                    class="font-semibold text-yellow-300"
+                    aria-current="page"
+                >
+                    Fasilitas
+                </li>
+            </ol>
         </nav>
 
-        <span class="inline-block px-5 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-sm font-semibold">
-            FASILITAS PROGRAM STUDI
+
+        {{-- Label --}}
+        <span
+            class="inline-flex items-center
+                   rounded-full border
+                   border-yellow-300/40
+                   bg-yellow-400/15
+                   px-4 py-2 text-xs
+                   font-bold uppercase
+                   tracking-[0.16em]
+                   text-yellow-300
+                   backdrop-blur-sm
+                   sm:px-5 sm:text-sm"
+        >
+            Fasilitas Program Studi
         </span>
 
-        <h1 class="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight drop-shadow-lg">
-            Fasilitas D-III Teknik Mesin
+
+        {{-- Judul --}}
+        <h1
+            class="mt-6 max-w-4xl
+                   text-4xl font-extrabold
+                   leading-tight text-white
+                   drop-shadow-lg
+                   sm:text-5xl md:text-6xl"
+        >
+            Fasilitas D-IV TMPP
         </h1>
 
-        <p class="mt-6 max-w-2xl text-base md:text-lg text-white/90 leading-8 drop-shadow">
-            Fasilitas pembelajaran Program Studi D-III Teknik Mesin dirancang untuk
-            mendukung pendidikan vokasi berbasis praktik, penguasaan teknologi,
-            dan pengembangan kompetensi mahasiswa sesuai kebutuhan industri.
+
+        {{-- Deskripsi --}}
+        <p
+            class="mt-6 max-w-3xl
+                   text-base leading-8
+                   text-white/90 drop-shadow
+                   md:text-lg"
+        >
+            Informasi kategori dan dokumentasi fasilitas Program
+            Studi D-IV Teknik Mesin Produksi dan Perawatan
+            Politeknik Negeri Malang.
         </p>
 
-    </div>
 
+        {{-- Kategori Ringkas --}}
+        <div class="mt-8 flex flex-wrap gap-3">
+
+            <span
+                class="rounded-xl border
+                       border-white/15 bg-white/10
+                       px-4 py-2 text-sm
+                       font-semibold text-white
+                       backdrop-blur-sm"
+            >
+                Laboratorium
+            </span>
+
+            <span
+                class="rounded-xl border
+                       border-white/15 bg-white/10
+                       px-4 py-2 text-sm
+                       font-semibold text-white
+                       backdrop-blur-sm"
+            >
+                Workshop
+            </span>
+
+            <span
+                class="rounded-xl border
+                       border-white/15 bg-white/10
+                       px-4 py-2 text-sm
+                       font-semibold text-white
+                       backdrop-blur-sm"
+            >
+                Ruang Kelas
+            </span>
+
+            <span
+                class="rounded-xl border
+                       border-white/15 bg-white/10
+                       px-4 py-2 text-sm
+                       font-semibold text-white
+                       backdrop-blur-sm"
+            >
+                Galeri Aktivitas
+            </span>
+        </div>
+    </div>
 </section>

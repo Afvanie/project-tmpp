@@ -25,7 +25,7 @@
                 </h1>
 
                 <p class="mt-3 max-w-2xl text-blue-100 leading-7">
-                    Kelola statistik program studi, deskripsi program studi, tombol, dan gambar yang tampil pada halaman utama website D-III Teknik Mesin Polinema.
+                    Kelola statistik program studi, deskripsi program studi, tombol, dan gambar yang tampil pada halaman utama website D-IV TMPP Polinema.
                 </p>
 
             </div>

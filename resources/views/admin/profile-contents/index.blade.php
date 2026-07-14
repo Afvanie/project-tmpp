@@ -21,7 +21,7 @@
             </h1>
 
             <p class="mt-3 text-slate-500 leading-7 max-w-4xl">
-                Kelola konten profil Program Studi D-III Teknik Mesin, meliputi Visi Misi,
+                Kelola konten profil Program Studi D-IV Teknik Mesin Produksi dan Perawatan, meliputi Visi Misi,
                 Tujuan Prodi, Profil Profesional Mandiri, dan Capaian Pembelajaran Lulusan.
             </p>
         </div>

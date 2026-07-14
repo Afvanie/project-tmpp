@@ -4,11 +4,12 @@
 
 @section('content')
 
-@include('components.home.hero')
-@include('components.home.statistics')
-@include('components.home.about')
+    @include('components.home.hero')
 
-@include('components.home.video-profile')
+    @include('components.home.about')
 
+    @include('components.home.statistics')
+
+    @include('components.home.video-profile')
 
 @endsection

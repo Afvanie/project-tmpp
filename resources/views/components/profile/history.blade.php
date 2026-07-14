@@ -1,145 +1,262 @@
 @php
-    $historySection = \App\Models\ProfileSection::with([
+    /*
+    |--------------------------------------------------------------------------
+    | SEJARAH PROGRAM STUDI
+    |--------------------------------------------------------------------------
+    */
+
+    $historySection = \App\Models\ProfileSection::query()
+        ->with([
             'items' => function ($query) {
-                $query->where('is_active', true)->orderBy('sort_order');
-            }
+                $query
+                    ->where('is_active', true)
+                    ->orderBy('sort_order');
+            },
         ])
         ->where('slug', 'history')
         ->where('is_active', true)
         ->first();
 
+    /*
+    |--------------------------------------------------------------------------
+    | KELOMPOK KONTEN
+    |--------------------------------------------------------------------------
+    */
+
     $paragraphs = $historySection
-        ? $historySection->items->where('item_group', 'paragraph')->sortBy('sort_order')
+        ? $historySection->items
+            ->where('item_group', 'paragraph')
+            ->filter(function ($item) {
+                return trim((string) $item->content) !== '';
+            })
+            ->sortBy('sort_order')
+            ->values()
         : collect();
 
     $timelines = $historySection
-        ? $historySection->items->where('item_group', 'timeline')->sortBy('sort_order')
+        ? $historySection->items
+            ->where('item_group', 'timeline')
+            ->filter(function ($item) {
+                return trim((string) $item->title) !== ''
+                    || trim((string) $item->content) !== '';
+            })
+            ->sortBy('sort_order')
+            ->values()
         : collect();
+
+    $historyDescription = trim(
+        (string) ($historySection?->description ?? '')
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS KONTEN
+    |--------------------------------------------------------------------------
+    |
+    | Section hanya tampil jika pengelola sudah mengisi minimal:
+    |
+    | - Deskripsi section
+    | - Paragraf sejarah
+    | - Timeline perjalanan program studi
+    |
+    */
+
+    $hasHistoryContent = $historySection
+        && (
+            $historyDescription !== ''
+            || $paragraphs->isNotEmpty()
+            || $timelines->isNotEmpty()
+        );
+
+    $hasParagraphs = $paragraphs->isNotEmpty();
+    $hasTimelines = $timelines->isNotEmpty();
 @endphp
 
-{{-- ===================================================== --}}
-{{-- PERJALANAN PROGRAM STUDI --}}
-{{-- ===================================================== --}}
 
-<section class="relative py-24 bg-slate-50 overflow-hidden">
+@if ($hasHistoryContent)
 
-    <div class="absolute inset-0 -z-10">
-        <div class="absolute -left-40 top-10 w-[450px] h-[450px] rounded-full bg-blue-200/30 blur-[140px]"></div>
-        <div class="absolute -right-40 bottom-10 w-[450px] h-[450px] rounded-full bg-yellow-200/30 blur-[140px]"></div>
-    </div>
+    <section
+        id="profile-history"
+        class="relative overflow-hidden bg-slate-50 py-20 md:py-24"
+    >
+        {{-- ========================================================= --}}
+        {{-- BACKGROUND DECORATION --}}
+        {{-- ========================================================= --}}
 
-    <div class="max-w-7xl mx-auto px-6">
+        <div
+            class="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+        >
+            <div
+                class="absolute -left-40 top-10
+                       h-[450px] w-[450px]
+                       rounded-full bg-blue-200/30
+                       blur-[140px]"
+            ></div>
 
-        {{-- Heading --}}
-        <div class="text-center mb-16" data-aos="fade-up">
+            <div
+                class="absolute -right-40 bottom-10
+                       h-[450px] w-[450px]
+                       rounded-full bg-yellow-200/30
+                       blur-[140px]"
+            ></div>
 
-            <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-                {{ $historySection?->subtitle ?? 'Perjalanan Program Studi' }}
-            </span>
-
-            <h2 class="mt-3 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                {{ $historySection?->title ?? 'Tumbuh Bersama Kebutuhan Industri' }}
-            </h2>
-
-            <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
-
-            <p class="mt-6 max-w-3xl mx-auto text-slate-600 leading-8">
-                {{ $historySection?->description ?? 'Program Studi D-III Teknik Mesin terus berkembang sebagai penyelenggara pendidikan vokasi yang berorientasi pada kompetensi, praktik, dan kebutuhan dunia industri.' }}
-            </p>
-
+            <div
+                class="absolute inset-0 opacity-[0.025]
+                       bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)]
+                       bg-[size:70px_70px]"
+            ></div>
         </div>
 
-        {{-- Content --}}
-        <div class="grid lg:grid-cols-2 gap-14 items-center">
 
-            {{-- Left Text --}}
-            <div class="space-y-7 text-slate-600 leading-9 text-justify" data-aos="fade-right">
+        <div class="relative mx-auto max-w-7xl px-6">
 
-                @forelse ($paragraphs as $paragraph)
+            {{-- ===================================================== --}}
+            {{-- HEADING --}}
+            {{-- ===================================================== --}}
 
-                    <p>
-                        {!! nl2br(e($paragraph->content)) !!}
+            <div
+                class="mx-auto mb-14 max-w-4xl text-center md:mb-16"
+                data-aos="fade-up"
+            >
+                <span
+                    class="text-sm font-semibold uppercase
+                           tracking-[5px] text-blue-700"
+                >
+                    {{ $historySection->subtitle
+                        ?: 'Perjalanan Program Studi' }}
+                </span>
+
+                <h2
+                    class="mt-4 text-3xl font-bold
+                           leading-tight text-slate-800
+                           sm:text-4xl md:text-5xl"
+                >
+                    {{ $historySection->title
+                        ?: 'Sejarah Program Studi' }}
+                </h2>
+
+                <div
+                    class="mx-auto mt-6 h-1 w-24
+                           rounded-full bg-yellow-400"
+                ></div>
+
+                @if ($historyDescription !== '')
+                    <p
+                        class="mx-auto mt-6 max-w-3xl
+                               leading-8 text-slate-600"
+                    >
+                        {{ $historyDescription }}
                     </p>
-
-                @empty
-
-                    <p>
-                        Program Studi D-III Teknik Mesin merupakan bagian dari Jurusan Teknik Mesin
-                        Politeknik Negeri Malang yang berperan dalam menyelenggarakan pendidikan
-                        vokasi di bidang teknik mesin.
-                    </p>
-
-                    <p>
-                        Program studi ini terus menyesuaikan proses pembelajaran dengan kebutuhan dunia kerja
-                        melalui penguatan praktik laboratorium, bengkel, pembelajaran berbasis kompetensi,
-                        serta penerapan teknologi pendukung seperti CAD/CAM dan sistem manufaktur.
-                    </p>
-
-                @endforelse
-
+                @endif
             </div>
 
-            {{-- Right Timeline --}}
-            <div class="relative" data-aos="fade-left">
 
-                <div class="absolute left-6 top-0 bottom-0 w-1 bg-blue-100 rounded-full"></div>
+            {{-- ===================================================== --}}
+            {{-- CONTENT --}}
+            {{-- ===================================================== --}}
 
-                <div class="space-y-8">
+            <div
+                class="
+                    grid items-start gap-12 lg:gap-14
 
-                    @forelse ($timelines as $timeline)
+                    {{ $hasParagraphs && $hasTimelines
+                        ? 'lg:grid-cols-2'
+                        : 'mx-auto max-w-4xl grid-cols-1' }}
+                "
+            >
+                {{-- ================================================= --}}
+                {{-- PARAGRAF SEJARAH --}}
+                {{-- ================================================= --}}
 
-                        <div class="relative pl-20">
+                @if ($hasParagraphs)
+                    <div
+                        class="space-y-7 text-justify
+                               leading-9 text-slate-600"
+                        data-aos="fade-right"
+                    >
+                        @foreach ($paragraphs as $paragraph)
+                            <p>
+                                {!! nl2br(e($paragraph->content)) !!}
+                            </p>
+                        @endforeach
+                    </div>
+                @endif
 
-                            <div class="absolute left-0 top-1 w-12 h-12 rounded-full
-                                {{ $loop->iteration % 2 === 0 ? 'bg-yellow-400' : 'bg-blue-700' }}
-                                text-white flex items-center justify-center font-bold shadow-lg">
 
-                                {{ $loop->iteration }}
+                {{-- ================================================= --}}
+                {{-- TIMELINE --}}
+                {{-- ================================================= --}}
 
-                            </div>
+                @if ($hasTimelines)
+                    <div
+                        class="relative"
+                        data-aos="fade-left"
+                    >
+                        <div
+                            class="absolute bottom-0 left-6 top-0
+                                   w-1 rounded-full bg-blue-100"
+                            aria-hidden="true"
+                        ></div>
 
-                            <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+                        <div class="space-y-8">
 
-                                <h3 class="text-xl font-bold text-slate-800">
-                                    {{ $timeline->title }}
-                                </h3>
+                            @foreach ($timelines as $timeline)
+                                <article class="relative pl-20">
 
-                                <p class="mt-3 text-slate-600 leading-7">
-                                    {!! nl2br(e($timeline->content)) !!}
-                                </p>
+                                    {{-- Number --}}
+                                    <div
+                                        class="absolute left-0 top-1
+                                               flex h-12 w-12
+                                               items-center justify-center
+                                               rounded-full font-bold
+                                               text-white shadow-lg
+                                               {{ $loop->iteration % 2 === 0
+                                                    ? 'bg-yellow-400 text-slate-900'
+                                                    : 'bg-blue-700' }}"
+                                    >
+                                        {{ $loop->iteration }}
+                                    </div>
 
-                            </div>
+                                    {{-- Card --}}
+                                    <div
+                                        class="rounded-2xl border
+                                               border-slate-100 bg-white
+                                               p-6 shadow-lg
+                                               transition duration-300
+                                               hover:-translate-y-1
+                                               hover:shadow-xl"
+                                    >
+                                        @if (trim((string) $timeline->title) !== '')
+                                            <h3
+                                                class="text-xl font-bold
+                                                       text-slate-800"
+                                            >
+                                                {{ $timeline->title }}
+                                            </h3>
+                                        @endif
+
+                                        @if (trim((string) $timeline->content) !== '')
+                                            <p
+                                                class="{{ trim((string) $timeline->title) !== ''
+                                                    ? 'mt-3'
+                                                    : '' }}
+                                                       leading-7 text-slate-600"
+                                            >
+                                                {!! nl2br(e($timeline->content)) !!}
+                                            </p>
+                                        @endif
+                                    </div>
+
+                                </article>
+                            @endforeach
 
                         </div>
-
-                    @empty
-
-                        <div class="relative pl-20">
-
-                            <div class="absolute left-0 top-1 w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold shadow-lg">
-                                1
-                            </div>
-
-                            <div class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-                                <h3 class="text-xl font-bold text-slate-800">
-                                    Konten belum tersedia
-                                </h3>
-
-                                <p class="mt-3 text-slate-600 leading-7">
-                                    Silakan tambahkan konten perjalanan program studi melalui halaman admin.
-                                </p>
-                            </div>
-
-                        </div>
-
-                    @endforelse
-
-                </div>
-
+                    </div>
+                @endif
             </div>
 
         </div>
+    </section>
 
-    </div>
-
-</section>
+@endif

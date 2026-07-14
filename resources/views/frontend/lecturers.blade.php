@@ -1,11 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Dosen & Staff')
+@section(
+    'title',
+    'Dosen dan Staf D-IV Teknik Mesin Produksi dan Perawatan'
+)
 
 @section('content')
 
-@include('components.lecturers.hero')
+    {{-- ========================================================= --}}
+    {{-- HERO DOSEN DAN STAF --}}
+    {{-- ========================================================= --}}
 
-@include('components.lecturers.list')
+    @include('components.lecturers.hero')
+
+
+    {{-- ========================================================= --}}
+    {{-- DAFTAR DOSEN DAN STAF --}}
+    {{-- ========================================================= --}}
+
+    @include('components.lecturers.list')
 
 @endsection

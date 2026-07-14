@@ -5,7 +5,47 @@
 @section('content')
 
 @php
-    $bulanIndonesia = [
+    /*
+    |--------------------------------------------------------------------------
+    | DATA AKREDITASI
+    |--------------------------------------------------------------------------
+    */
+
+    $accreditationItems = collect(
+        $accreditations ?? []
+    );
+
+    $totalAccreditations = $accreditationItems->count();
+
+    $activeAccreditations = $accreditationItems
+        ->filter(
+            static fn ($item): bool =>
+                (bool) $item->is_active
+        )
+        ->count();
+
+    $nationalAccreditations = $accreditationItems
+        ->where(
+            'type',
+            \App\Models\Accreditation::TYPE_NATIONAL
+        )
+        ->count();
+
+    $internationalAccreditations = $accreditationItems
+        ->where(
+            'type',
+            \App\Models\Accreditation::TYPE_INTERNATIONAL
+        )
+        ->count();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMAT TANGGAL INDONESIA
+    |--------------------------------------------------------------------------
+    */
+
+    $indonesianMonths = [
         1 => 'Januari',
         2 => 'Februari',
         3 => 'Maret',
@@ -20,313 +60,808 @@
         12 => 'Desember',
     ];
 
-    $formatTanggalIndonesia = function ($date) use ($bulanIndonesia) {
-        if (!$date) {
-            return '-';
+    $formatIndonesianDate = static function (
+        mixed $date
+    ) use ($indonesianMonths): ?string {
+        if ($date === null) {
+            return null;
         }
 
-        return (int) $date->format('d') . ' ' .
-            $bulanIndonesia[(int) $date->format('m')] . ' ' .
-            $date->format('Y');
+        $monthNumber = (int) $date->format('m');
+
+        return (int) $date->format('d')
+            . ' '
+            . ($indonesianMonths[$monthNumber] ?? '')
+            . ' '
+            . $date->format('Y');
+    };
+
+    $formatValidityPeriod = static function (
+        mixed $validFrom,
+        mixed $validUntil
+    ) use ($formatIndonesianDate): string {
+        $from = $formatIndonesianDate($validFrom);
+        $until = $formatIndonesianDate($validUntil);
+
+        if ($from !== null && $until !== null) {
+            return $from . ' – ' . $until;
+        }
+
+        if ($from !== null) {
+            return 'Berlaku mulai ' . $from;
+        }
+
+        if ($until !== null) {
+            return 'Berlaku sampai ' . $until;
+        }
+
+        return 'Belum diisi';
     };
 @endphp
 
+
 <div class="space-y-8">
 
-    {{-- Header --}}
-    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 p-8 shadow-xl">
+    {{-- ========================================================= --}}
+    {{-- HEADER --}}
+    {{-- ========================================================= --}}
 
-        <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-yellow-300/20 blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
+    <section
+        class="relative overflow-hidden
+               rounded-[2rem]
+               bg-gradient-to-br
+               from-blue-700 via-blue-800
+               to-slate-950 p-7
+               shadow-xl sm:p-8"
+    >
+        <div
+            class="pointer-events-none absolute
+                   -right-24 -top-24
+                   h-72 w-72 rounded-full
+                   bg-yellow-300/20 blur-3xl"
+            aria-hidden="true"
+        ></div>
 
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div
+            class="pointer-events-none absolute
+                   -bottom-24 -left-24
+                   h-72 w-72 rounded-full
+                   bg-white/10 blur-3xl"
+            aria-hidden="true"
+        ></div>
 
+        <div
+            class="relative z-10 flex
+                   flex-col gap-6
+                   lg:flex-row lg:items-center
+                   lg:justify-between"
+        >
             <div>
-                <span class="inline-flex px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                <span
+                    class="inline-flex rounded-full
+                           border border-white/20
+                           bg-white/10 px-4 py-2
+                           text-xs font-bold uppercase
+                           tracking-widest text-white/90"
+                >
                     Admin Panel
                 </span>
 
-                <h1 class="mt-5 text-3xl md:text-4xl font-black text-white">
+                <h1
+                    class="mt-5 text-3xl font-black
+                           text-white md:text-4xl"
+                >
                     Akreditasi Program Studi
                 </h1>
 
-                <p class="mt-3 max-w-2xl text-white/75 leading-7">
-                    Kelola data akreditasi nasional dan internasional, termasuk lembaga,
-                    peringkat, masa berlaku, nomor sertifikat, dan file sertifikat.
+                <p
+                    class="mt-3 max-w-3xl
+                           leading-7 text-white/75"
+                >
+                    Kelola informasi akreditasi nasional maupun
+                    internasional beserta lembaga, peringkat, masa
+                    berlaku, nomor sertifikat, dan dokumen pendukung.
                 </p>
             </div>
 
-            <a href="{{ route('admin.accreditations.create') }}"
-                class="inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-yellow-400 text-slate-900 font-black hover:bg-yellow-300 transition shadow-lg shadow-yellow-400/20">
+            <a
+                href="{{ route(
+                    'admin.accreditations.create'
+                ) }}"
+                class="inline-flex items-center
+                       justify-center rounded-2xl
+                       bg-yellow-400 px-6 py-4
+                       font-black text-slate-900
+                       shadow-lg shadow-yellow-400/20
+                       transition hover:bg-yellow-300"
+            >
                 Tambah Akreditasi
             </a>
-
         </div>
+    </section>
 
-    </div>
 
+    {{-- ========================================================= --}}
+    {{-- ALERT --}}
+    {{-- ========================================================= --}}
 
-    {{-- Alert --}}
     @if (session('success'))
-        <div class="rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 px-5 py-4 font-semibold">
+        <div
+            class="rounded-2xl border
+                   border-emerald-200
+                   bg-emerald-50 px-6 py-4
+                   font-semibold text-emerald-700"
+            role="alert"
+        >
             {{ session('success') }}
         </div>
     @endif
 
+    @if (session('error'))
+        <div
+            class="rounded-2xl border
+                   border-red-200 bg-red-50
+                   px-6 py-4 font-semibold
+                   text-red-700"
+            role="alert"
+        >
+            {{ session('error') }}
+        </div>
+    @endif
 
-    {{-- Content --}}
-    @if ($accreditations->count())
 
-        <div class="grid xl:grid-cols-2 gap-6">
+    {{-- ========================================================= --}}
+    {{-- RINGKASAN --}}
+    {{-- ========================================================= --}}
 
-            @foreach ($accreditations as $accreditation)
+    <section class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
+        <div
+            class="rounded-3xl border
+                   border-slate-100 bg-white
+                   p-6 shadow-lg"
+        >
+            <p
+                class="text-xs font-bold uppercase
+                       tracking-wider text-slate-500"
+            >
+                Total Data
+            </p>
+
+            <p
+                class="mt-3 text-4xl font-black
+                       text-blue-700"
+            >
+                {{ $totalAccreditations }}
+            </p>
+        </div>
+
+
+        <div
+            class="rounded-3xl border
+                   border-slate-100 bg-white
+                   p-6 shadow-lg"
+        >
+            <p
+                class="text-xs font-bold uppercase
+                       tracking-wider text-slate-500"
+            >
+                Dipublikasikan
+            </p>
+
+            <p
+                class="mt-3 text-4xl font-black
+                       text-emerald-600"
+            >
+                {{ $activeAccreditations }}
+            </p>
+        </div>
+
+
+        <div
+            class="rounded-3xl border
+                   border-slate-100 bg-white
+                   p-6 shadow-lg"
+        >
+            <p
+                class="text-xs font-bold uppercase
+                       tracking-wider text-slate-500"
+            >
+                Nasional
+            </p>
+
+            <p
+                class="mt-3 text-4xl font-black
+                       text-blue-700"
+            >
+                {{ $nationalAccreditations }}
+            </p>
+        </div>
+
+
+        <div
+            class="rounded-3xl border
+                   border-slate-100 bg-white
+                   p-6 shadow-lg"
+        >
+            <p
+                class="text-xs font-bold uppercase
+                       tracking-wider text-slate-500"
+            >
+                Internasional
+            </p>
+
+            <p
+                class="mt-3 text-4xl font-black
+                       text-yellow-600"
+            >
+                {{ $internationalAccreditations }}
+            </p>
+        </div>
+
+    </section>
+
+
+    {{-- ========================================================= --}}
+    {{-- DAFTAR AKREDITASI --}}
+    {{-- ========================================================= --}}
+
+    @if ($accreditationItems->isNotEmpty())
+
+        <section class="grid gap-6 xl:grid-cols-2">
+
+            @foreach ($accreditationItems as $accreditation)
 
                 @php
-                    $fileUrl = $accreditation->file_path
-                        ? asset('storage/' . $accreditation->file_path)
+                    $filePath = trim(
+                        (string) $accreditation->file_path
+                    );
+
+                    $fileExists = $filePath !== ''
+                        && \Illuminate\Support\Facades\Storage::disk(
+                            'public'
+                        )->exists($filePath);
+
+                    $fileUrl = $fileExists
+                        ? asset('storage/' . $filePath)
                         : null;
 
-                    $extension = $accreditation->file_path
-                        ? strtolower(pathinfo($accreditation->file_path, PATHINFO_EXTENSION))
+                    $extension = $filePath !== ''
+                        ? strtolower(
+                            pathinfo(
+                                $filePath,
+                                PATHINFO_EXTENSION
+                            )
+                        )
                         : null;
 
-                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'webp']);
-                    $isPdf = $extension === 'pdf';
-                    $isInternational = $accreditation->type === 'internasional';
+                    $isImage = $fileExists
+                        && in_array(
+                            $extension,
+                            [
+                                'jpg',
+                                'jpeg',
+                                'png',
+                                'webp',
+                            ],
+                            true
+                        );
+
+                    $isPdf = $fileExists
+                        && $extension === 'pdf';
+
+                    $isInternational =
+                        $accreditation->type ===
+                        \App\Models\Accreditation::TYPE_INTERNATIONAL;
+
+                    $title = trim(
+                        (string) $accreditation->title
+                    );
+
+                    $institution = trim(
+                        (string) $accreditation->institution
+                    );
+
+                    $rank = trim(
+                        (string) $accreditation->rank
+                    );
+
+                    $certificateNumber = trim(
+                        (string) $accreditation
+                            ->certificate_number
+                    );
+
+                    $description = trim(
+                        (string) $accreditation->description
+                    );
+
+                    $validityPeriod =
+                        $formatValidityPeriod(
+                            $accreditation->valid_from,
+                            $accreditation->valid_until
+                        );
                 @endphp
 
-                <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl transition">
 
-                    {{-- Top Accent --}}
-                    <div class="h-2 {{ $isInternational ? 'bg-gradient-to-r from-yellow-400 via-blue-600 to-yellow-400' : 'bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700' }}"></div>
+                <article
+                    class="overflow-hidden rounded-[2rem]
+                           border border-slate-100
+                           bg-white shadow-sm
+                           transition hover:shadow-xl"
+                >
+                    <div
+                        @class([
+                            'h-2 bg-gradient-to-r',
+                            'from-yellow-400 via-blue-600 to-yellow-400' =>
+                                $isInternational,
+                            'from-blue-700 via-yellow-400 to-blue-700' =>
+                                !$isInternational,
+                        ])
+                    ></div>
+
 
                     <div class="p-5 md:p-6">
 
-                        <div class="grid md:grid-cols-12 gap-6">
+                        <div class="grid gap-6 md:grid-cols-12">
 
-                            {{-- Preview --}}
+                            {{-- ================================= --}}
+                            {{-- PREVIEW FILE --}}
+                            {{-- ================================= --}}
+
                             <div class="md:col-span-4">
 
-                                <div class="rounded-2xl bg-slate-50 border border-slate-100 overflow-hidden">
-
-                                    @if ($fileUrl && $isImage)
-
-                                        <a href="{{ $fileUrl }}" target="_blank">
+                                <div
+                                    class="overflow-hidden
+                                           rounded-2xl border
+                                           border-slate-100
+                                           bg-slate-50"
+                                >
+                                    @if ($isImage)
+                                        <a
+                                            href="{{ $fileUrl }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="block"
+                                        >
                                             <img
                                                 src="{{ $fileUrl }}"
-                                                alt="{{ $accreditation->title }}"
-                                                class="w-full h-56 md:h-48 object-contain bg-white p-3">
+                                                alt="Dokumen {{ $title }}"
+                                                class="h-56 w-full
+                                                       bg-white p-3
+                                                       object-contain
+                                                       md:h-48"
+                                                loading="lazy"
+                                            >
                                         </a>
 
-                                    @elseif ($fileUrl && $isPdf)
-
-                                        <div class="h-56 md:h-48 bg-white flex flex-col items-center justify-center text-center p-5">
-
-                                            <div class="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-black">
+                                    @elseif ($isPdf)
+                                        <div
+                                            class="flex h-56
+                                                   flex-col items-center
+                                                   justify-center
+                                                   bg-white p-5
+                                                   text-center md:h-48"
+                                        >
+                                            <div
+                                                class="flex h-16 w-16
+                                                       items-center
+                                                       justify-center
+                                                       rounded-2xl
+                                                       bg-red-100
+                                                       font-black
+                                                       text-red-600"
+                                            >
                                                 PDF
                                             </div>
 
-                                            <p class="mt-4 text-sm font-bold text-slate-800">
-                                                Sertifikat PDF
+                                            <p
+                                                class="mt-4 text-sm
+                                                       font-bold
+                                                       text-slate-800"
+                                            >
+                                                Dokumen PDF
                                             </p>
 
-                                            <a href="{{ $fileUrl }}"
+                                            <a
+                                                href="{{ $fileUrl }}"
                                                 target="_blank"
-                                                class="mt-2 text-xs font-bold text-blue-700 hover:underline">
-                                                Buka file
+                                                rel="noopener noreferrer"
+                                                class="mt-2 text-xs
+                                                       font-bold
+                                                       text-blue-700
+                                                       hover:underline"
+                                            >
+                                                Buka Dokumen
                                             </a>
+                                        </div>
 
+                                    @elseif ($filePath !== '' && !$fileExists)
+                                        <div
+                                            class="flex h-56
+                                                   flex-col items-center
+                                                   justify-center
+                                                   bg-white p-5
+                                                   text-center md:h-48"
+                                        >
+                                            <div
+                                                class="flex h-16 w-16
+                                                       items-center
+                                                       justify-center
+                                                       rounded-2xl
+                                                       bg-red-100
+                                                       font-black
+                                                       text-red-700"
+                                            >
+                                                !
+                                            </div>
+
+                                            <p
+                                                class="mt-4 text-sm
+                                                       font-bold
+                                                       text-red-700"
+                                            >
+                                                File Tidak Ditemukan
+                                            </p>
+
+                                            <p
+                                                class="mt-2 break-all
+                                                       text-xs
+                                                       text-slate-500"
+                                            >
+                                                {{ $filePath }}
+                                            </p>
                                         </div>
 
                                     @else
-
-                                        <div class="h-56 md:h-48 bg-white flex flex-col items-center justify-center text-center p-5">
-
-                                            <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center font-black">
+                                        <div
+                                            class="flex h-56
+                                                   flex-col items-center
+                                                   justify-center
+                                                   bg-white p-5
+                                                   text-center md:h-48"
+                                        >
+                                            <div
+                                                class="flex h-16 w-16
+                                                       items-center
+                                                       justify-center
+                                                       rounded-2xl
+                                                       bg-slate-100
+                                                       font-black
+                                                       text-slate-400"
+                                            >
                                                 A
                                             </div>
 
-                                            <p class="mt-4 text-sm font-bold text-slate-700">
-                                                Belum ada file
+                                            <p
+                                                class="mt-4 text-sm
+                                                       font-bold
+                                                       text-slate-700"
+                                            >
+                                                Belum Ada Dokumen
                                             </p>
-
                                         </div>
-
                                     @endif
-
                                 </div>
-
                             </div>
 
 
-                            {{-- Detail --}}
+                            {{-- ================================= --}}
+                            {{-- DETAIL --}}
+                            {{-- ================================= --}}
+
                             <div class="md:col-span-8">
 
-                                <div class="flex flex-wrap items-center gap-2">
-
-                                    <span class="inline-flex px-3 py-1.5 rounded-full text-xs font-black
-                                        {{ $isInternational ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700' }}">
+                                <div
+                                    class="flex flex-wrap
+                                           items-center gap-2"
+                                >
+                                    <span
+                                        @class([
+                                            'inline-flex rounded-full',
+                                            'px-3 py-1.5 text-xs',
+                                            'font-black',
+                                            'bg-yellow-100 text-yellow-700' =>
+                                                $isInternational,
+                                            'bg-blue-100 text-blue-700' =>
+                                                !$isInternational,
+                                        ])
+                                    >
                                         {{ $accreditation->type_label }}
                                     </span>
 
+
                                     @if ($accreditation->is_active)
-                                        <span class="inline-flex px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-black">
-                                            Tampil
+                                        <span
+                                            class="inline-flex
+                                                   rounded-full
+                                                   bg-emerald-100
+                                                   px-3 py-1.5
+                                                   text-xs font-black
+                                                   text-emerald-700"
+                                        >
+                                            Dipublikasikan
                                         </span>
                                     @else
-                                        <span class="inline-flex px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs font-black">
+                                        <span
+                                            class="inline-flex
+                                                   rounded-full
+                                                   bg-slate-100
+                                                   px-3 py-1.5
+                                                   text-xs font-black
+                                                   text-slate-500"
+                                        >
                                             Nonaktif
                                         </span>
                                     @endif
 
-                                    @if ($accreditation->rank)
-                                        <span class="inline-flex px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-black">
-                                            {{ $accreditation->rank }}
+
+                                    @if ($rank !== '')
+                                        <span
+                                            class="inline-flex
+                                                   rounded-full
+                                                   bg-slate-100
+                                                   px-3 py-1.5
+                                                   text-xs font-black
+                                                   text-slate-700"
+                                        >
+                                            {{ $rank }}
                                         </span>
                                     @endif
-
                                 </div>
 
-                                <h2 class="mt-4 text-2xl font-black text-slate-800 leading-snug">
-                                    {{ $accreditation->title }}
+
+                                <h2
+                                    class="mt-4 text-2xl
+                                           font-black leading-snug
+                                           text-slate-800"
+                                >
+                                    {{ $title !== ''
+                                        ? $title
+                                        : 'Akreditasi Program Studi' }}
                                 </h2>
 
-                                @if ($accreditation->institution)
-                                    <p class="mt-2 text-sm font-bold text-blue-700">
-                                        {{ $accreditation->institution }}
+
+                                @if ($institution !== '')
+                                    <p
+                                        class="mt-2 text-sm
+                                               font-bold text-blue-700"
+                                    >
+                                        {{ $institution }}
                                     </p>
                                 @endif
 
-                                @if ($accreditation->description)
-                                    <p class="mt-4 text-sm text-slate-500 leading-7">
-                                        {{ \Illuminate\Support\Str::limit($accreditation->description, 170) }}
+
+                                @if ($description !== '')
+                                    <p
+                                        class="mt-4 text-sm
+                                               leading-7
+                                               text-slate-500"
+                                    >
+                                        {{ \Illuminate\Support\Str::limit(
+                                            $description,
+                                            170
+                                        ) }}
                                     </p>
                                 @endif
 
 
-                                {{-- Info Grid --}}
-                                <div class="grid sm:grid-cols-2 gap-3 mt-5">
+                                {{-- ============================= --}}
+                                {{-- INFORMASI --}}
+                                {{-- ============================= --}}
 
-                                    <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
-
+                                <div
+                                    class="mt-5 grid gap-3
+                                           sm:grid-cols-2"
+                                >
+                                    <div
+                                        class="rounded-2xl border
+                                               border-slate-100
+                                               bg-slate-50 p-4"
+                                    >
                                         <p class="text-xs text-slate-500">
                                             Nomor Sertifikat / SK
                                         </p>
 
-                                        <p class="mt-1 text-sm font-bold text-slate-800 break-words">
-                                            {{ $accreditation->certificate_number ?? '-' }}
+                                        <p
+                                            class="mt-1 break-words
+                                                   text-sm font-bold
+                                                   text-slate-800"
+                                        >
+                                            {{ $certificateNumber !== ''
+                                                ? $certificateNumber
+                                                : 'Belum diisi' }}
                                         </p>
-
                                     </div>
 
-                                    <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4">
 
+                                    <div
+                                        class="rounded-2xl border
+                                               border-slate-100
+                                               bg-slate-50 p-4"
+                                    >
                                         <p class="text-xs text-slate-500">
                                             Urutan Tampil
                                         </p>
 
-                                        <p class="mt-1 text-sm font-bold text-slate-800">
-                                            {{ $accreditation->sort_order ?? 0 }}
+                                        <p
+                                            class="mt-1 text-sm
+                                                   font-bold
+                                                   text-slate-800"
+                                        >
+                                            {{ (int) $accreditation
+                                                ->sort_order }}
                                         </p>
-
                                     </div>
 
-                                    <div class="rounded-2xl bg-slate-50 border border-slate-100 p-4 sm:col-span-2">
 
+                                    <div
+                                        class="rounded-2xl border
+                                               border-slate-100
+                                               bg-slate-50 p-4
+                                               sm:col-span-2"
+                                    >
                                         <p class="text-xs text-slate-500">
                                             Masa Berlaku
                                         </p>
 
-                                        <p class="mt-1 text-sm font-bold text-slate-800">
-                                            @if ($accreditation->valid_from || $accreditation->valid_until)
-                                                {{ $formatTanggalIndonesia($accreditation->valid_from) }}
-                                                -
-                                                {{ $formatTanggalIndonesia($accreditation->valid_until) }}
-                                            @else
-                                                -
-                                            @endif
+                                        <p
+                                            class="mt-1 text-sm
+                                                   font-bold
+                                                   text-slate-800"
+                                        >
+                                            {{ $validityPeriod }}
                                         </p>
-
                                     </div>
-
                                 </div>
 
 
-                                {{-- Actions --}}
-                                <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                {{-- ============================= --}}
+                                {{-- AKSI --}}
+                                {{-- ============================= --}}
 
+                                <div
+                                    class="mt-6 flex flex-col
+                                           gap-3 sm:flex-row
+                                           sm:items-center
+                                           sm:justify-between"
+                                >
                                     <div class="flex flex-wrap gap-2">
 
-                                        @if ($fileUrl)
-                                            <a href="{{ $fileUrl }}"
+                                        @if ($fileUrl !== null)
+                                            <a
+                                                href="{{ $fileUrl }}"
                                                 target="_blank"
-                                                class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-black hover:bg-slate-200 transition">
-                                                Lihat File
+                                                rel="noopener noreferrer"
+                                                class="inline-flex
+                                                       items-center
+                                                       justify-center
+                                                       rounded-xl
+                                                       bg-slate-100
+                                                       px-4 py-2
+                                                       text-xs font-black
+                                                       text-slate-700
+                                                       transition
+                                                       hover:bg-slate-200"
+                                            >
+                                                Lihat Dokumen
                                             </a>
                                         @endif
 
-                                        <a href="{{ route('admin.accreditations.edit', $accreditation) }}"
-                                            class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-yellow-100 text-yellow-700 text-xs font-black hover:bg-yellow-200 transition">
+                                        <a
+                                            href="{{ route(
+                                                'admin.accreditations.edit',
+                                                $accreditation
+                                            ) }}"
+                                            class="inline-flex
+                                                   items-center
+                                                   justify-center
+                                                   rounded-xl
+                                                   bg-yellow-100
+                                                   px-4 py-2
+                                                   text-xs font-black
+                                                   text-yellow-700
+                                                   transition
+                                                   hover:bg-yellow-200"
+                                        >
                                             Edit
                                         </a>
-
                                     </div>
 
-                                    <form action="{{ route('admin.accreditations.destroy', $accreditation) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data akreditasi ini?')">
 
+                                    <form
+                                        action="{{ route(
+                                            'admin.accreditations.destroy',
+                                            $accreditation
+                                        ) }}"
+                                        method="POST"
+                                        onsubmit="return confirm(
+                                            'Yakin ingin menghapus data akreditasi ini? Dokumen yang tersimpan juga akan dihapus.'
+                                        )"
+                                    >
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit"
-                                            class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-red-100 text-red-700 text-xs font-black hover:bg-red-200 transition">
+                                        <button
+                                            type="submit"
+                                            class="inline-flex w-full
+                                                   items-center
+                                                   justify-center
+                                                   rounded-xl
+                                                   bg-red-100
+                                                   px-4 py-2
+                                                   text-xs font-black
+                                                   text-red-700
+                                                   transition
+                                                   hover:bg-red-600
+                                                   hover:text-white
+                                                   sm:w-auto"
+                                        >
                                             Hapus
                                         </button>
-
                                     </form>
-
                                 </div>
 
                             </div>
-
                         </div>
-
                     </div>
-
-                </div>
+                </article>
 
             @endforeach
-
-        </div>
+        </section>
 
     @else
 
-        {{-- Empty State --}}
-        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-10 text-center">
+        {{-- ===================================================== --}}
+        {{-- EMPTY STATE --}}
+        {{-- ===================================================== --}}
 
-            <div class="w-20 h-20 mx-auto rounded-3xl bg-blue-50 text-blue-700 flex items-center justify-center text-3xl font-black">
+        <section
+            class="rounded-[2rem] border
+                   border-slate-100 bg-white
+                   p-8 text-center shadow-sm
+                   sm:p-10"
+        >
+            <div
+                class="mx-auto flex h-20 w-20
+                       items-center justify-center
+                       rounded-3xl bg-blue-50
+                       text-3xl font-black
+                       text-blue-700"
+            >
                 A
             </div>
 
-            <h2 class="mt-6 text-2xl font-black text-slate-800">
-                Belum ada data akreditasi
+            <h2
+                class="mt-6 text-2xl font-black
+                       text-slate-800"
+            >
+                Belum Ada Data Akreditasi
             </h2>
 
-            <p class="mt-3 text-slate-500 leading-7">
-                Tambahkan data akreditasi nasional atau internasional agar dapat tampil
-                di halaman Beranda dan Profile.
+            <p
+                class="mx-auto mt-3 max-w-xl
+                       leading-7 text-slate-500"
+            >
+                Tambahkan informasi akreditasi setelah tersedia
+                data dan dokumen resmi yang dapat dipertanggungjawabkan.
             </p>
 
-            <a href="{{ route('admin.accreditations.create') }}"
-                class="mt-6 inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-blue-700 text-white font-black hover:bg-blue-800 transition">
+            <a
+                href="{{ route(
+                    'admin.accreditations.create'
+                ) }}"
+                class="mt-6 inline-flex
+                       items-center justify-center
+                       rounded-2xl bg-blue-700
+                       px-6 py-4 font-black
+                       text-white transition
+                       hover:bg-blue-800"
+            >
                 Tambah Akreditasi
             </a>
-
-        </div>
+        </section>
 
     @endif
-
 </div>
 
 @endsection

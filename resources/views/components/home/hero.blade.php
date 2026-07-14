@@ -1,56 +1,145 @@
-<section class="relative h-screen flex items-center justify-center">
-
-    {{-- BACKGROUND --}}
-    <!-- <div class="absolute inset-0">
-        <img src="{{ asset('assets/images/hero.jpg') }}"
-             class="w-full h-full object-cover"
-             alt="">
-
-        {{-- OVERLAY --}}
-        <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
-    </div> -->
+<section
+    id="beranda"
+    class="relative flex min-h-screen items-center justify-center overflow-hidden"
+>
+    {{-- BACKGROUND VIDEO --}}
     <div class="absolute inset-0">
-        {{-- VIDEO BACKGROUND --}}
-        <video class="w-full h-full object-cover" autoplay muted loop playsinline>
-            <source src="{{ asset('assets/videos/hero.mp4') }}" type="video/mp4">
+        <video
+            class="h-full w-full object-cover"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-hidden="true"
+        >
+            <source
+                src="{{ asset('assets/videos/hero.mp4') }}"
+                type="video/mp4"
+            >
         </video>
 
         {{-- OVERLAY --}}
-        <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+        <div class="absolute inset-0 bg-black/55"></div>
+
+        <div
+            class="absolute inset-0 bg-gradient-to-r
+                   from-black/80 via-black/45 to-black/70"
+        ></div>
+
+        <div
+            class="absolute inset-0 bg-gradient-to-t
+                   from-black/70 via-transparent to-black/25"
+        ></div>
     </div>
-    
 
     {{-- CONTENT --}}
-    <div class="relative z-10 text-center text-white px-6 max-w-4xl">
+    <div
+        class="relative z-10 mx-auto w-full max-w-5xl
+               px-6 pt-24 text-center text-white
+               sm:px-8 lg:px-10"
+    >
+        {{-- BADGE --}}
+        <div class="mb-5 flex justify-center">
+            <span
+                class="inline-flex items-center rounded-full
+                       border border-white/25 bg-white/10
+                       px-4 py-2 text-xs font-semibold
+                       uppercase tracking-[0.18em]
+                       text-white backdrop-blur-sm
+                       sm:text-sm"
+            >
+                Program Studi Sarjana Terapan
+            </span>
+        </div>
 
-        <h1 class="text-4xl md:text-6xl font-bold leading-tight">
-            D-III Teknik Mesin
+        {{-- TITLE --}}
+        <h1
+            class="text-4xl font-bold leading-tight
+                   sm:text-5xl md:text-6xl lg:text-7xl"
+        >
+            D-IV Teknik Mesin
+            <span class="block text-[#D4AF37]">
+                Produksi dan Perawatan
+            </span>
         </h1>
 
-        <p class="mt-5 text-lg md:text-xl text-white/80">
-            Program studi D-III Teknik Mesin merupakan salah satu dari program studi di Jurusan Teknik Mesin dirancang secara khusus guna menghasilkan tenaga sarjana sains terapan yang memiliki kemampuan dalam berbagai bidang mengenai Mesin. 
+        {{-- VISION TAGLINE --}}
+        <p
+            class="mx-auto mt-6 max-w-3xl
+                   text-base font-semibold leading-relaxed
+                   text-[#F1D77A]
+                   sm:text-lg md:text-xl"
+        >
+            Unggul dalam Autonomous Maintenance pada Persaingan Global Tahun 2030
+        </p>
+
+        {{-- DESCRIPTION --}}
+        <p
+            class="mx-auto mt-5 max-w-4xl
+                   text-sm leading-7 text-white/85
+                   sm:text-base sm:leading-8
+                   md:text-lg"
+        >
+            Program Studi D-IV Teknik Mesin Produksi dan Perawatan
+            merupakan program pendidikan vokasi di Jurusan Teknik Mesin
+            Politeknik Negeri Malang yang mempersiapkan lulusan
+            Sarjana Terapan dengan kompetensi dalam bidang produksi,
+            manufaktur, perawatan mesin, otomasi industri, dan
+            pengembangan teknologi sesuai kebutuhan dunia industri.
         </p>
 
         {{-- CTA --}}
-        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-
-            <a href="{{ route('profile') }}"
-               class="bg-[#D4AF37] hover:bg-yellow-500 text-black font-semibold px-6 py-3 rounded-lg transition">
-                Tentang Kami
+        <div
+            class="mt-9 flex flex-col justify-center gap-4
+                   sm:flex-row"
+        >
+            <a
+                href="{{ route('profile') }}"
+                class="inline-flex items-center justify-center
+                       rounded-lg bg-[#D4AF37]
+                       px-7 py-3.5 font-semibold text-black
+                       shadow-lg shadow-black/20
+                       transition duration-300
+                       hover:-translate-y-0.5
+                       hover:bg-[#E7C95F]"
+            >
+                Tentang TMPP
             </a>
 
-            <a href="{{ route('academic') }}"
-               class="border border-white px-6 py-3 rounded-lg hover:bg-white hover:text-black transition">
+            <a
+                href="{{ route('academic') }}"
+                class="inline-flex items-center justify-center
+                       rounded-lg border border-white/70
+                       bg-white/5 px-7 py-3.5
+                       font-semibold text-white
+                       backdrop-blur-sm
+                       transition duration-300
+                       hover:-translate-y-0.5
+                       hover:bg-white hover:text-black"
+            >
                 Lihat Akademik
             </a>
-
         </div>
-
     </div>
 
     {{-- SCROLL INDICATOR --}}
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 animate-bounce">
-        ↓ Scroll
-    </div>
+    <a
+        href="#program-description"
+        aria-label="Lihat bagian berikutnya"
+        class="absolute bottom-7 left-1/2 z-10
+               -translate-x-1/2 text-center
+               text-xs font-medium tracking-wider
+               text-white/75 transition
+               hover:text-white"
+    >
+        <span class="block">Scroll</span>
 
+        <span
+            class="mt-1 block animate-bounce
+                   text-xl leading-none"
+        >
+            ↓
+        </span>
+    </a>
 </section>

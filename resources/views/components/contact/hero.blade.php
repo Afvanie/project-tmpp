@@ -1,73 +1,121 @@
-<section class="relative h-[60vh] flex items-center overflow-hidden">
+@php
+    $bannerPath = 'assets/images/contact-banner.jpg';
 
-    {{-- Background Image --}}
+    $bannerAvailable = file_exists(
+        public_path($bannerPath)
+    );
+@endphp
+
+<section
+    class="relative flex min-h-[520px]
+           items-center overflow-hidden
+           py-24 md:min-h-[60vh]"
+>
     <div class="absolute inset-0">
 
-        <img
-            src="{{ asset('assets/images/contact-banner.jpg') }}"
-            class="w-full h-full object-cover"
-            alt="">
+        @if ($bannerAvailable)
+            <img
+                src="{{ asset($bannerPath) }}"
+                alt="Kontak Program Studi D-IV Teknik Mesin Produksi dan Perawatan"
+                class="h-full w-full object-cover"
+            >
+        @else
+            <div
+                class="h-full w-full
+                       bg-gradient-to-br
+                       from-blue-900 via-blue-700
+                       to-slate-900"
+            ></div>
+        @endif
 
-        {{-- Overlay gradasi seperti screenshot --}}
         <div
             class="absolute inset-0"
-            style="background: linear-gradient(
-                90deg,
-                rgba(0, 59, 115, 0.28) 0%,
-                rgba(0, 91, 172, 0.58) 42%,
-                rgba(0, 59, 115, 0.90) 100%
-            );">
-        </div>
+            style="
+                background: linear-gradient(
+                    90deg,
+                    rgba(0, 59, 115, 0.38) 0%,
+                    rgba(0, 91, 172, 0.68) 42%,
+                    rgba(0, 43, 85, 0.94) 100%
+                );
+            "
+        ></div>
 
-        {{-- Layer biru lembut agar menyatu --}}
         <div
             class="absolute inset-0"
-            style="background: linear-gradient(
-                180deg,
-                rgba(0, 43, 85, 0.08) 0%,
-                rgba(0, 43, 85, 0.20) 100%
-            );">
-        </div>
-
+            style="
+                background: linear-gradient(
+                    180deg,
+                    rgba(0, 43, 85, 0.08) 0%,
+                    rgba(0, 43, 85, 0.28) 100%
+                );
+            "
+        ></div>
     </div>
 
-    {{-- Grid Decoration --}}
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)] bg-[size:70px_70px]"></div>
+    <div
+        class="absolute inset-0
+               bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)]
+               bg-[size:70px_70px]"
+        aria-hidden="true"
+    ></div>
 
-    {{-- Soft Blur --}}
-    <div class="absolute -left-32 bottom-0 w-96 h-96 rounded-full bg-yellow-400/20 blur-[120px]"></div>
+    <div
+        class="absolute -left-32 bottom-0
+               h-96 w-96 rounded-full
+               bg-yellow-400/20 blur-[120px]"
+        aria-hidden="true"
+    ></div>
 
-    {{-- Content --}}
-    <div class="relative z-10 max-w-7xl mx-auto px-6 w-full">
-
-        <nav class="flex items-center gap-2 text-white/80 text-sm mb-6">
-
-            <a href="{{ route('home') }}" class="hover:text-yellow-300 transition">
+    <div
+        class="relative z-10 mx-auto
+               w-full max-w-7xl px-6"
+    >
+        <nav
+            class="mb-6 flex items-center gap-2
+                   text-sm text-white/80"
+            aria-label="Breadcrumb"
+        >
+            <a
+                href="{{ route('home') }}"
+                class="transition hover:text-yellow-300"
+            >
                 Beranda
             </a>
 
-            <span>/</span>
+            <span aria-hidden="true">/</span>
 
-            <span class="text-yellow-300 font-semibold">
+            <span class="font-semibold text-yellow-300">
                 Kontak
             </span>
-
         </nav>
 
-        <span class="inline-block px-5 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-sm font-semibold">
+        <span
+            class="inline-flex rounded-full
+                   border border-yellow-400/40
+                   bg-yellow-400/20 px-5 py-2
+                   text-sm font-semibold
+                   text-yellow-300"
+        >
             HUBUNGI KAMI
         </span>
 
-        <h1 class="mt-6 text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight drop-shadow-lg">
+        <h1
+            class="mt-6 max-w-4xl text-4xl
+                   font-extrabold leading-tight
+                   text-white drop-shadow-lg
+                   sm:text-5xl md:text-6xl"
+        >
             Kontak Program Studi
         </h1>
 
-        <p class="mt-6 max-w-2xl text-base md:text-lg text-white/90 leading-8 drop-shadow">
-            Hubungi Program Studi D-III Teknik Mesin Politeknik Negeri Malang
-            untuk informasi akademik, kerja sama, layanan administrasi, dan
-            kebutuhan komunikasi lainnya.
+        <p
+            class="mt-6 max-w-3xl text-base
+                   leading-8 text-white/90
+                   drop-shadow md:text-lg"
+        >
+            Informasi komunikasi Program Studi D-IV Teknik Mesin
+            Produksi dan Perawatan, Jurusan Teknik Mesin,
+            Politeknik Negeri Malang.
         </p>
-
     </div>
-
 </section>

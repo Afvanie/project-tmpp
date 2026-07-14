@@ -1,48 +1,152 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\LecturerStaff;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class LecturerStaffController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Menampilkan daftar dosen dan staf Program Studi D-IV TMPP.
+     */
+    public function index(Request $request): View
     {
-        $search = trim($request->get('search', ''));
-        $type = $request->get('type', 'all');
+        /*
+        |--------------------------------------------------------------------------
+        | PARAMETER PENCARIAN
+        |--------------------------------------------------------------------------
+        */
+
+        $search = trim(
+            (string) $request->query('search', '')
+        );
+
+        /*
+        | Membatasi panjang kata kunci agar query tetap wajar.
+        */
+
+        $search = mb_substr($search, 0, 100);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER JENIS
+        |--------------------------------------------------------------------------
+        */
+
+        $type = strtolower(
+            trim(
+                (string) $request->query('type', 'all')
+            )
+        );
+
+        $allowedTypes = [
+            'all',
+            'dosen',
+            'staff',
+        ];
+
+        if (!in_array($type, $allowedTypes, true)) {
+            $type = 'all';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | QUERY DOSEN DAN STAF
+        |--------------------------------------------------------------------------
+        */
 
         $query = LecturerStaff::query();
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('nip', 'like', '%' . $search . '%');
-            });
+            $query->where(
+                function (Builder $query) use ($search): void {
+                    $query
+                        ->where(
+                            'name',
+                            'like',
+                            '%' . $search . '%'
+                        )
+                        ->orWhere(
+                            'nip',
+                            'like',
+                            '%' . $search . '%'
+                        );
+                }
+            );
         }
 
         if (in_array($type, ['dosen', 'staff'], true)) {
             $query->where('type', $type);
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | URUTAN DAN PAGINATION
+        |--------------------------------------------------------------------------
+        |
+        | Dosen ditampilkan lebih dahulu, kemudian staf.
+        | CASE digunakan agar tidak bergantung pada fungsi FIELD milik MySQL.
+        |
+        */
+
         $lecturerStaff = $query
-            ->orderByRaw("FIELD(type, 'dosen', 'staff')")
+            ->orderByRaw(
+                "
+                CASE
+                    WHEN type = 'dosen' THEN 1
+                    WHEN type = 'staff' THEN 2
+                    ELSE 3
+                END
+                "
+            )
             ->orderBy('name')
             ->paginate(12)
             ->withQueryString();
 
-        $totalAll = LecturerStaff::count();
-        $totalDosen = LecturerStaff::where('type', 'dosen')->count();
-        $totalStaff = LecturerStaff::where('type', 'staff')->count();
 
-        return view('frontend.lecturers', compact(
-            'lecturerStaff',
-            'search',
-            'type',
-            'totalAll',
-            'totalDosen',
-            'totalStaff'
-        ));
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTIK
+        |--------------------------------------------------------------------------
+        |
+        | Statistik menampilkan jumlah seluruh data, bukan hanya hasil
+        | pencarian atau filter yang sedang digunakan.
+        |
+        */
+
+        $totalAll = LecturerStaff::query()->count();
+
+        $totalDosen = LecturerStaff::query()
+            ->where('type', 'dosen')
+            ->count();
+
+        $totalStaff = LecturerStaff::query()
+            ->where('type', 'staff')
+            ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VIEW
+        |--------------------------------------------------------------------------
+        */
+
+        return view('frontend.lecturers', [
+            'lecturerStaff' => $lecturerStaff,
+            'search' => $search,
+            'type' => $type,
+            'totalAll' => $totalAll,
+            'totalDosen' => $totalDosen,
+            'totalStaff' => $totalStaff,
+        ]);
     }
 }

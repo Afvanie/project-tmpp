@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 
             ProfileOverviewSeeder::class,
             ProfileHistorySeeder::class,
-            ProfileAdditionalSectionsSeeder::class,
+            ProfileContentSeeder::class,
 
             FacilitySeeder::class,
         ]);

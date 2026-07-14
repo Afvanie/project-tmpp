@@ -33,7 +33,7 @@
                 <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6 mb-8"></div>
 
                 <p class="text-slate-600 leading-8 text-justify">
-                    Silakan hubungi Program Studi D-III Teknik Mesin untuk informasi
+                    Silakan hubungi Program Studi D-IV Teknik Mesin Produksi dan Perawatan untuk informasi
                     mengenai akademik, administrasi, kerja sama, kegiatan mahasiswa,
                     maupun kebutuhan komunikasi lainnya.
                 </p>
@@ -115,7 +115,7 @@
                         </h3>
 
                         <p class="mt-3 text-slate-500 leading-7">
-                            Isi data berikut untuk mengirim pesan kepada Program Studi D-III Teknik Mesin.
+                            Isi data berikut untuk mengirim pesan kepada Program Studi D-IV Teknik Mesin Produksi dan Perawatan.
                         </p>
 
                         <form id="contactForm" class="mt-8 space-y-6">

@@ -30,11 +30,11 @@
                         </span>
 
                         <h2 class="mt-6 text-3xl md:text-4xl font-bold leading-tight">
-                            Kunjungi Program Studi D-III Teknik Mesin
+                            Kunjungi Program Studi D-IV Teknik Mesin Produksi dan Perawatan
                         </h2>
 
                         <p class="mt-6 text-white/85 leading-8">
-                            Program Studi D-III Teknik Mesin berada di lingkungan
+                            Program Studi D-IV Teknik Mesin Produksi dan Perawatan berada di lingkungan
                             Jurusan Teknik Mesin Politeknik Negeri Malang.
                         </p>
 
@@ -95,7 +95,7 @@
                                     </h3>
 
                                     <p class="mt-1 text-white/75 leading-7">
-                                        d3teknikmesin@polinema.ac.id
+                                        tmpp@polinema.ac.id
                                     </p>
                                 </div>
 
@@ -123,7 +123,7 @@
                                     </h3>
 
                                     <p class="mt-1 text-white/75 leading-7">
-                                        Senin - Jumat, 08.00 - 16.00 WIB
+                                        Senin - Jumat, 07.00 - 16.00 WIB
                                     </p>
                                 </div>
 

@@ -1,594 +1,1188 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Dosen & Staff')
+@section('title', 'Data Dosen dan Staf')
 
 @section('content')
 
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | DATA FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    $currentSearch = trim(
+        (string) ($search ?? request('search', ''))
+    );
+
+    $currentType = (string) (
+        $type ?? request('type', 'all')
+    );
+
+    $totalAll = (int) ($totalAll ?? 0);
+    $totalDosen = (int) ($totalDosen ?? 0);
+    $totalStaff = (int) ($totalStaff ?? 0);
+
+    $hasFilter = $currentSearch !== ''
+        || $currentType !== 'all';
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI PERSONEL
+    |--------------------------------------------------------------------------
+    */
+
+    $getPersonMeta = function ($person): array {
+        $name = trim((string) $person->name);
+        $nip = trim((string) $person->nip);
+        $photoPath = trim((string) $person->photo);
+
+        $photoExists = $photoPath !== ''
+            && \Illuminate\Support\Facades\Storage::disk('public')
+                ->exists($photoPath);
+
+        $photoUrl = $photoExists
+            ? asset('storage/' . $photoPath)
+            : null;
+
+        $initial = $name !== ''
+            ? mb_strtoupper(
+                mb_substr($name, 0, 1)
+            )
+            : 'T';
+
+        $isDosen = $person->type
+            === \App\Models\LecturerStaff::TYPE_DOSEN;
+
+        return [
+            'name' => $name,
+            'nip' => $nip,
+            'photo_path' => $photoPath,
+            'photo_exists' => $photoExists,
+            'photo_url' => $photoUrl,
+            'initial' => $initial,
+            'is_dosen' => $isDosen,
+            'type_label' => $person->type_label,
+        ];
+    };
+@endphp
+
+
 <div class="space-y-8">
 
-    {{-- Header --}}
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+    {{-- ========================================================= --}}
+    {{-- HEADER --}}
+    {{-- ========================================================= --}}
 
+    <div
+        class="flex flex-col gap-5
+               lg:flex-row lg:items-center
+               lg:justify-between"
+    >
         <div>
-            <h1 class="text-3xl md:text-4xl font-black text-slate-800">
-                Data Dosen & Staff
+            <h1
+                class="text-3xl font-black
+                       text-slate-800 md:text-4xl"
+            >
+                Data Dosen dan Staf
             </h1>
 
-            <p class="mt-3 text-slate-500 leading-7">
-                Kelola data dosen dan staff Program Studi D-III Teknik Mesin Politeknik Negeri Malang.
+            <p
+                class="mt-3 max-w-4xl
+                       leading-7 text-slate-500"
+            >
+                Kelola data dosen dan tenaga kependidikan Program
+                Studi D-IV Teknik Mesin Produksi dan Perawatan
+                Politeknik Negeri Malang.
             </p>
         </div>
 
-        <a href="{{ route('admin.lecturer-staff.create') }}"
-            class="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
-
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
+        <a
+            href="{{ route('admin.lecturer-staff.create') }}"
+            class="inline-flex items-center
+                   justify-center gap-3 rounded-2xl
+                   bg-blue-700 px-6 py-4
+                   font-bold text-white shadow-lg
+                   shadow-blue-700/20 transition
+                   hover:bg-blue-800"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor">
-
-                <path stroke-linecap="round"
+                stroke="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M12 4v16m8-8H4" />
+                    d="M12 4v16m8-8H4"
+                />
             </svg>
 
             Tambah Data
         </a>
-
     </div>
 
-    {{-- IMPORT DATA DOSEN & STAFF --}}
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-8">
 
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+    {{-- ========================================================= --}}
+    {{-- IMPORT DATA --}}
+    {{-- ========================================================= --}}
 
+    <section
+        class="rounded-3xl border
+               border-slate-100 bg-white
+               p-5 shadow-sm sm:p-6"
+    >
+        <div
+            class="flex flex-col gap-5
+                   lg:flex-row lg:items-center
+                   lg:justify-between"
+        >
             <div>
-                <h2 class="text-xl font-black text-slate-800">
-                    Import Data Dosen & Staff
+                <h2
+                    class="text-xl font-black
+                           text-slate-800"
+                >
+                    Import Data Dosen dan Staf
                 </h2>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Gunakan template Excel agar format data sesuai dengan sistem. Kolom yang dibaca hanya nama dan NIP.
+                <p
+                    class="mt-2 max-w-3xl
+                           text-sm leading-6
+                           text-slate-500"
+                >
+                    Gunakan template yang tersedia agar format data
+                    sesuai sistem. Kolom yang diproses adalah nama
+                    dan NIP.
                 </p>
             </div>
 
-            <a href="{{ route('admin.lecturer-staff.template') }}"
-                class="inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
-                Download Template
+            <a
+                href="{{ route('admin.lecturer-staff.template') }}"
+                class="inline-flex items-center
+                       justify-center rounded-2xl
+                       bg-slate-100 px-5 py-3
+                       font-bold text-slate-700
+                       transition hover:bg-slate-200"
+            >
+                Unduh Template
             </a>
-
         </div>
 
-        <div class="grid md:grid-cols-2 gap-5 mt-6">
+
+        <div class="mt-6 grid gap-5 md:grid-cols-2">
 
             {{-- Import Dosen --}}
-            <form action="{{ route('admin.lecturer-staff.import', 'dosen') }}"
+            <form
+                action="{{ route(
+                    'admin.lecturer-staff.import',
+                    \App\Models\LecturerStaff::TYPE_DOSEN
+                ) }}"
                 method="POST"
                 enctype="multipart/form-data"
-                class="rounded-2xl bg-blue-50 border border-blue-100 p-5">
-
+                class="rounded-2xl border
+                       border-blue-100 bg-blue-50
+                       p-5"
+            >
                 @csrf
 
-                <h3 class="text-lg font-black text-blue-700">
+                <h3
+                    class="text-lg font-black
+                           text-blue-700"
+                >
                     Import Dosen
                 </h3>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Upload file Excel untuk menambahkan data dosen.
+                <p
+                    class="mt-1 text-sm
+                           leading-6 text-slate-500"
+                >
+                    Pilih file Excel atau CSV yang berisi data dosen.
                 </p>
 
-                <input type="file"
-                    name="file"
-                    accept=".xlsx,.xls,.csv"
-                    required
-                    class="mt-4 w-full rounded-2xl border border-blue-100 bg-white p-3 text-sm text-slate-600">
+                <label
+                    for="dosenImportFile"
+                    class="sr-only"
+                >
+                    Pilih file data dosen
+                </label>
 
-                <button type="submit"
-                    class="mt-4 w-full px-5 py-3 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
+                <input
+                    type="file"
+                    id="dosenImportFile"
+                    name="file"
+                    accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"
+                    required
+                    class="mt-4 block w-full
+                           rounded-2xl border
+                           border-blue-100 bg-white
+                           p-3 text-sm text-slate-600"
+                >
+
+                <button
+                    type="submit"
+                    class="mt-4 w-full rounded-2xl
+                           bg-blue-700 px-5 py-3
+                           font-bold text-white
+                           transition hover:bg-blue-800"
+                >
                     Import Dosen
                 </button>
-
             </form>
 
 
-            {{-- Import Staff --}}
-            <form action="{{ route('admin.lecturer-staff.import', 'staff') }}"
+            {{-- Import Staf --}}
+            <form
+                action="{{ route(
+                    'admin.lecturer-staff.import',
+                    \App\Models\LecturerStaff::TYPE_STAFF
+                ) }}"
                 method="POST"
                 enctype="multipart/form-data"
-                class="rounded-2xl bg-yellow-50 border border-yellow-100 p-5">
-
+                class="rounded-2xl border
+                       border-yellow-100 bg-yellow-50
+                       p-5"
+            >
                 @csrf
 
-                <h3 class="text-lg font-black text-yellow-700">
-                    Import Staff
+                <h3
+                    class="text-lg font-black
+                           text-yellow-700"
+                >
+                    Import Staf
                 </h3>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Upload file Excel untuk menambahkan data staff.
+                <p
+                    class="mt-1 text-sm
+                           leading-6 text-slate-500"
+                >
+                    Pilih file Excel atau CSV yang berisi data staf.
                 </p>
 
-                <input type="file"
+                <label
+                    for="staffImportFile"
+                    class="sr-only"
+                >
+                    Pilih file data staf
+                </label>
+
+                <input
+                    type="file"
+                    id="staffImportFile"
                     name="file"
-                    accept=".xlsx,.xls,.csv"
+                    accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"
                     required
-                    class="mt-4 w-full rounded-2xl border border-yellow-100 bg-white p-3 text-sm text-slate-600">
+                    class="mt-4 block w-full
+                           rounded-2xl border
+                           border-yellow-100 bg-white
+                           p-3 text-sm text-slate-600"
+                >
 
-                <button type="submit"
-                    class="mt-4 w-full px-5 py-3 rounded-2xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition">
-                    Import Staff
+                <button
+                    type="submit"
+                    class="mt-4 w-full rounded-2xl
+                           bg-yellow-500 px-5 py-3
+                           font-bold text-slate-900
+                           transition hover:bg-yellow-600"
+                >
+                    Import Staf
                 </button>
-
             </form>
 
         </div>
+    </section>
 
-    </div>
 
+    {{-- ========================================================= --}}
+    {{-- ALERT --}}
+    {{-- ========================================================= --}}
 
-    {{-- Alert --}}
     @if (session('success'))
-        <div class="rounded-2xl bg-green-50 border border-green-200 text-green-700 px-6 py-4 font-semibold">
+        <div
+            class="rounded-2xl border
+                   border-green-200 bg-green-50
+                   px-6 py-4 font-semibold
+                   text-green-700"
+            role="alert"
+        >
             {{ session('success') }}
         </div>
     @endif
 
+    @if (session('error'))
+        <div
+            class="rounded-2xl border
+                   border-red-200 bg-red-50
+                   px-6 py-4 font-semibold
+                   text-red-700"
+            role="alert"
+        >
+            {{ session('error') }}
+        </div>
+    @endif
 
-    {{-- Statistik --}}
-    <div class="grid md:grid-cols-3 gap-6">
+    @if (session('warning'))
+        <div
+            class="rounded-2xl border
+                   border-yellow-200 bg-yellow-50
+                   px-6 py-4 font-semibold
+                   text-yellow-700"
+            role="alert"
+        >
+            {{ session('warning') }}
+        </div>
+    @endif
 
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
+    @if ($errors->any())
+        <div
+            class="rounded-2xl border
+                   border-red-200 bg-red-50
+                   px-6 py-4 text-red-700"
+            role="alert"
+        >
+            <p class="font-bold">
+                Terdapat data yang perlu diperbaiki.
+            </p>
 
-            <div class="flex items-center justify-between gap-4">
+            <ul class="mt-3 list-disc space-y-1 pl-5 text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
+
+    {{-- ========================================================= --}}
+    {{-- STATISTIK --}}
+    {{-- ========================================================= --}}
+
+    <div class="grid gap-6 md:grid-cols-3">
+
+        {{-- Total --}}
+        <div
+            class="rounded-[2rem] border
+                   border-slate-100 bg-white/95
+                   p-6 shadow-xl backdrop-blur"
+        >
+            <div
+                class="flex items-center
+                       justify-between gap-4"
+            >
                 <div>
-                    <p class="text-sm font-bold text-slate-500">
+                    <p
+                        class="text-sm font-bold
+                               text-slate-500"
+                    >
                         Total Data
                     </p>
 
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $totalAll ?? 0 }}
+                    <h2
+                        class="mt-3 text-4xl font-black
+                               text-slate-800"
+                    >
+                        {{ $totalAll }}
                     </h2>
                 </div>
 
-                <div class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
+                <div
+                    class="flex h-14 w-14
+                           items-center justify-center
+                           rounded-2xl bg-blue-700
+                           text-white shadow-lg"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-7 w-7"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                            d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"
+                        />
                     </svg>
                 </div>
-
             </div>
-
         </div>
 
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
 
-            <div class="flex items-center justify-between gap-4">
-
+        {{-- Dosen --}}
+        <div
+            class="rounded-[2rem] border
+                   border-slate-100 bg-white/95
+                   p-6 shadow-xl backdrop-blur"
+        >
+            <div
+                class="flex items-center
+                       justify-between gap-4"
+            >
                 <div>
-                    <p class="text-sm font-bold text-slate-500">
+                    <p
+                        class="text-sm font-bold
+                               text-slate-500"
+                    >
                         Total Dosen
                     </p>
 
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $totalDosen ?? 0 }}
+                    <h2
+                        class="mt-3 text-4xl font-black
+                               text-slate-800"
+                    >
+                        {{ $totalDosen }}
                     </h2>
                 </div>
 
-                <div class="w-14 h-14 rounded-2xl bg-yellow-400 text-slate-900 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
+                <div
+                    class="flex h-14 w-14
+                           items-center justify-center
+                           rounded-2xl bg-yellow-400
+                           text-slate-900 shadow-lg"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-7 w-7"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                            d="M12 14l9-5-9-5-9 5 9 5z"
+                        />
 
-                        <path stroke-linecap="round"
+                        <path
+                            stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z" />
+                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z"
+                        />
                     </svg>
                 </div>
-
             </div>
-
         </div>
 
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
 
-            <div class="flex items-center justify-between gap-4">
-
+        {{-- Staf --}}
+        <div
+            class="rounded-[2rem] border
+                   border-slate-100 bg-white/95
+                   p-6 shadow-xl backdrop-blur"
+        >
+            <div
+                class="flex items-center
+                       justify-between gap-4"
+            >
                 <div>
-                    <p class="text-sm font-bold text-slate-500">
-                        Total Staff
+                    <p
+                        class="text-sm font-bold
+                               text-slate-500"
+                    >
+                        Total Staf
                     </p>
 
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $totalStaff ?? 0 }}
+                    <h2
+                        class="mt-3 text-4xl font-black
+                               text-slate-800"
+                    >
+                        {{ $totalStaff }}
                     </h2>
                 </div>
 
-                <div class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
+                <div
+                    class="flex h-14 w-14
+                           items-center justify-center
+                           rounded-2xl bg-blue-700
+                           text-white shadow-lg"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-7 w-7"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M5.121 17.804A4 4 0 017.95 16.6h8.1a4 4 0 012.829 1.204M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            d="M5.121 17.804A4 4 0 017.95 16.6h8.1a4 4 0 012.829 1.204M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                     </svg>
                 </div>
-
             </div>
-
         </div>
 
     </div>
 
 
-    {{-- Main Card --}}
-    <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl overflow-hidden">
+    {{-- ========================================================= --}}
+    {{-- MAIN CARD --}}
+    {{-- ========================================================= --}}
 
-        <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
+    <div
+        class="overflow-hidden rounded-[2rem]
+               border border-slate-100
+               bg-white/95 shadow-xl
+               backdrop-blur"
+    >
+        <div
+            class="h-2 bg-gradient-to-r
+                   from-blue-700 via-yellow-400
+                   to-blue-700"
+        ></div>
 
-        {{-- Toolbar --}}
-        <div class="p-6 md:p-8 border-b border-slate-100">
 
+        {{-- ===================================================== --}}
+        {{-- TOOLBAR --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="border-b border-slate-100
+                   p-6 md:p-8"
+        >
             <div class="flex flex-col gap-6">
 
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Daftar Dosen & Staff
+                    <h2
+                        class="text-2xl font-black
+                               text-slate-800"
+                    >
+                        Daftar Dosen dan Staf
                     </h2>
 
                     <p class="mt-2 text-slate-500">
-                        Data ini akan ditampilkan pada halaman publik Dosen & Staff.
+                        Semua data yang tersimpan akan ditampilkan
+                        pada halaman publik Dosen dan Staf.
                     </p>
                 </div>
 
-                {{-- Search & Filter --}}
-                <form action="{{ route('admin.lecturer-staff.index') }}" method="GET">
 
-                    <div class="grid lg:grid-cols-12 gap-4 items-end">
-
+                <form
+                    action="{{ route(
+                        'admin.lecturer-staff.index'
+                    ) }}"
+                    method="GET"
+                >
+                    <div
+                        class="grid items-end gap-4
+                               lg:grid-cols-12"
+                    >
+                        {{-- Pencarian --}}
                         <div class="lg:col-span-6">
-
-                            <label class="block text-sm font-bold text-slate-700 mb-2">
-                                Cari Nama / NIP
+                            <label
+                                for="personSearch"
+                                class="mb-2 block text-sm
+                                       font-bold text-slate-700"
+                            >
+                                Cari Nama atau NIP
                             </label>
 
-                            <input type="text"
+                            <input
+                                type="search"
+                                id="personSearch"
                                 name="search"
-                                value="{{ request('search') }}"
-                                placeholder="Masukkan nama dosen, staff, atau NIP..."
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                                value="{{ $currentSearch }}"
+                                maxlength="100"
+                                autocomplete="off"
+                                placeholder="Masukkan nama dosen, staf, atau NIP..."
+                                class="w-full rounded-2xl
+                                       border border-slate-200
+                                       bg-slate-50 px-5 py-4
+                                       transition focus:bg-white
+                                       focus:outline-none
+                                       focus:ring-2
+                                       focus:ring-blue-500"
+                            >
                         </div>
 
-                        <div class="lg:col-span-3">
 
-                            <label class="block text-sm font-bold text-slate-700 mb-2">
+                        {{-- Filter --}}
+                        <div class="lg:col-span-3">
+                            <label
+                                for="personType"
+                                class="mb-2 block text-sm
+                                       font-bold text-slate-700"
+                            >
                                 Filter Kategori
                             </label>
 
-                            <select name="type"
-                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                <option value="all" {{ request('type', 'all') === 'all' ? 'selected' : '' }}>
+                            <select
+                                id="personType"
+                                name="type"
+                                class="w-full rounded-2xl
+                                       border border-slate-200
+                                       bg-slate-50 px-5 py-4
+                                       transition focus:bg-white
+                                       focus:outline-none
+                                       focus:ring-2
+                                       focus:ring-blue-500"
+                            >
+                                <option
+                                    value="all"
+                                    @selected($currentType === 'all')
+                                >
                                     Semua Data
                                 </option>
 
-                                <option value="dosen" {{ request('type') === 'dosen' ? 'selected' : '' }}>
+                                <option
+                                    value="{{ \App\Models\LecturerStaff::TYPE_DOSEN }}"
+                                    @selected(
+                                        $currentType
+                                        === \App\Models\LecturerStaff::TYPE_DOSEN
+                                    )
+                                >
                                     Dosen
                                 </option>
 
-                                <option value="staff" {{ request('type') === 'staff' ? 'selected' : '' }}>
-                                    Staff
+                                <option
+                                    value="{{ \App\Models\LecturerStaff::TYPE_STAFF }}"
+                                    @selected(
+                                        $currentType
+                                        === \App\Models\LecturerStaff::TYPE_STAFF
+                                    )
+                                >
+                                    Staf
                                 </option>
-
                             </select>
-
                         </div>
 
-                        <div class="lg:col-span-3 flex gap-3">
 
-                            <button type="submit"
-                                class="flex-1 inline-flex items-center justify-center px-5 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
+                        {{-- Tombol --}}
+                        <div
+                            class="flex gap-3 lg:col-span-3"
+                        >
+                            <button
+                                type="submit"
+                                class="inline-flex flex-1
+                                       items-center justify-center
+                                       rounded-2xl bg-blue-700
+                                       px-5 py-4 font-bold
+                                       text-white transition
+                                       hover:bg-blue-800"
+                            >
                                 Cari
                             </button>
 
-                            <a href="{{ route('admin.lecturer-staff.index') }}"
-                                class="inline-flex items-center justify-center px-5 py-4 rounded-2xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                            <a
+                                href="{{ route(
+                                    'admin.lecturer-staff.index'
+                                ) }}"
+                                class="inline-flex items-center
+                                       justify-center rounded-2xl
+                                       bg-slate-100 px-5 py-4
+                                       font-bold text-slate-700
+                                       transition hover:bg-slate-200"
+                            >
                                 Reset
                             </a>
-
                         </div>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
 
 
-        {{-- Desktop Table --}}
-        <div class="hidden lg:block overflow-x-auto">
+        {{-- ===================================================== --}}
+        {{-- DESKTOP TABLE --}}
+        {{-- ===================================================== --}}
+
+        <div class="hidden overflow-x-auto lg:block">
 
             <table class="w-full">
 
-                <thead class="bg-slate-50 border-b border-slate-100">
+                <thead
+                    class="border-b border-slate-100
+                           bg-slate-50"
+                >
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th
+                            class="px-6 py-4 text-left
+                                   text-xs font-bold uppercase
+                                   tracking-wider text-slate-500"
+                        >
                             Nama
                         </th>
 
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th
+                            class="px-6 py-4 text-left
+                                   text-xs font-bold uppercase
+                                   tracking-wider text-slate-500"
+                        >
                             NIP
                         </th>
 
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th
+                            class="px-6 py-4 text-left
+                                   text-xs font-bold uppercase
+                                   tracking-wider text-slate-500"
+                        >
                             Tipe
                         </th>
 
-                        <th class="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th
+                            class="px-6 py-4 text-right
+                                   text-xs font-bold uppercase
+                                   tracking-wider text-slate-500"
+                        >
                             Aksi
                         </th>
                     </tr>
                 </thead>
 
+
                 <tbody class="divide-y divide-slate-100">
 
                     @forelse ($lecturerStaff as $item)
 
-                        <tr
-                            class="hover:bg-slate-50/70 transition"
-                            data-person-card
-                            data-name="{{ strtolower($item->name) }}"
-                            data-nip="{{ strtolower($item->nip ?? '') }}"
-                            data-type="{{ strtolower($item->type) }}">
+                        @php
+                            $meta = $getPersonMeta($item);
+                        @endphp
 
+                        <tr
+                            class="transition
+                                   hover:bg-slate-50/70"
+                        >
+                            {{-- Nama --}}
                             <td class="px-6 py-5">
 
-                                <div class="flex items-center gap-4">
-
-                                    @if ($item->photo)
+                                <div
+                                    class="flex items-center gap-4"
+                                >
+                                    @if ($meta['photo_url'])
 
                                         <img
-                                            src="{{ asset('storage/' . $item->photo) }}"
-                                            class="w-16 h-16 rounded-2xl object-cover shadow-md border border-slate-100"
-                                            alt="{{ $item->name }}">
+                                            src="{{ $meta['photo_url'] }}"
+                                            alt="Foto {{ $meta['name'] }}"
+                                            class="h-16 w-16 shrink-0
+                                                   rounded-2xl border
+                                                   border-slate-100
+                                                   object-cover object-top
+                                                   shadow-md"
+                                            loading="lazy"
+                                        >
 
                                     @else
 
-                                        <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center shadow-md">
-                                            <span class="text-xl font-black text-blue-700">
-                                                {{ strtoupper(substr($item->name, 0, 1)) }}
+                                        <div
+                                            @class([
+                                                'flex h-16 w-16 shrink-0',
+                                                'items-center justify-center',
+                                                'rounded-2xl shadow-md',
+                                                'bg-blue-100' =>
+                                                    $meta['is_dosen'],
+                                                'bg-yellow-100' =>
+                                                    !$meta['is_dosen'],
+                                            ])
+                                        >
+                                            <span
+                                                @class([
+                                                    'text-xl font-black',
+                                                    'text-blue-700' =>
+                                                        $meta['is_dosen'],
+                                                    'text-yellow-700' =>
+                                                        !$meta['is_dosen'],
+                                                ])
+                                            >
+                                                {{ $meta['initial'] }}
                                             </span>
                                         </div>
 
                                     @endif
 
-                                    <div>
-                                        <h3 class="font-bold text-slate-800">
-                                            {{ $item->name }}
+
+                                    <div class="min-w-0">
+                                        <h3
+                                            class="break-words font-bold
+                                                   text-slate-800"
+                                        >
+                                            {{ $meta['name'] }}
                                         </h3>
 
-                                        <p class="mt-1 text-sm text-slate-500">
-                                            Program Studi D-III Teknik Mesin
+                                        <p
+                                            class="mt-1 text-sm
+                                                   leading-6 text-slate-500"
+                                        >
+                                            Program Studi D-IV Teknik Mesin
+                                            Produksi dan Perawatan
                                         </p>
+
+                                        @if (
+                                            $meta['photo_path'] !== ''
+                                            && !$meta['photo_exists']
+                                        )
+                                            <p
+                                                class="mt-2 text-xs
+                                                       font-semibold
+                                                       text-red-600"
+                                            >
+                                                Foto tidak ditemukan
+                                                di penyimpanan.
+                                            </p>
+                                        @endif
                                     </div>
-
                                 </div>
-
                             </td>
 
-                            <td class="px-6 py-5 text-slate-600">
-                                {{ $item->nip ?? '-' }}
+
+                            {{-- NIP --}}
+                            <td
+                                class="px-6 py-5
+                                       text-slate-600"
+                            >
+                                {{ $meta['nip'] !== ''
+                                    ? $meta['nip']
+                                    : '-' }}
                             </td>
 
+
+                            {{-- Tipe --}}
                             <td class="px-6 py-5">
-
-                                @if ($item->type === 'dosen')
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
-                                        Dosen
-                                    </span>
-                                @else
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-xs font-bold">
-                                        Staff
-                                    </span>
-                                @endif
-
+                                <span
+                                    @class([
+                                        'inline-flex rounded-full',
+                                        'px-3 py-1 text-xs font-bold',
+                                        'bg-blue-50 text-blue-700' =>
+                                            $meta['is_dosen'],
+                                        'bg-yellow-50 text-yellow-700' =>
+                                            !$meta['is_dosen'],
+                                    ])
+                                >
+                                    {{ $meta['type_label'] }}
+                                </span>
                             </td>
 
+
+                            {{-- Aksi --}}
                             <td class="px-6 py-5">
-
-                                <div class="flex justify-end gap-3">
-
-                                    <a href="{{ route('admin.lecturer-staff.edit', $item->id) }}"
-                                        class="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-700 hover:text-white transition">
+                                <div
+                                    class="flex justify-end gap-3"
+                                >
+                                    <a
+                                        href="{{ route(
+                                            'admin.lecturer-staff.edit',
+                                            $item
+                                        ) }}"
+                                        class="rounded-xl bg-blue-50
+                                               px-4 py-2 text-sm
+                                               font-bold text-blue-700
+                                               transition
+                                               hover:bg-blue-700
+                                               hover:text-white"
+                                    >
                                         Edit
                                     </a>
 
-                                    <form action="{{ route('admin.lecturer-staff.destroy', $item->id) }}"
+                                    <form
+                                        action="{{ route(
+                                            'admin.lecturer-staff.destroy',
+                                            $item
+                                        ) }}"
                                         method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-
+                                        onsubmit="return confirm(
+                                            'Yakin ingin menghapus data {{ addslashes($meta['name']) }}? Foto yang tersimpan juga akan dihapus.'
+                                        )"
+                                    >
                                         @csrf
                                         @method('DELETE')
 
                                         <button
                                             type="submit"
-                                            class="px-4 py-2 rounded-xl bg-red-50 text-red-700 text-sm font-bold hover:bg-red-600 hover:text-white transition">
+                                            class="rounded-xl bg-red-50
+                                                   px-4 py-2 text-sm
+                                                   font-bold text-red-700
+                                                   transition
+                                                   hover:bg-red-600
+                                                   hover:text-white"
+                                        >
                                             Hapus
                                         </button>
-
                                     </form>
-
                                 </div>
-
                             </td>
-
                         </tr>
 
                     @empty
 
                         <tr>
-                            <td colspan="4" class="px-6 py-14 text-center">
-
-                                <h3 class="text-xl font-bold text-slate-800">
-                                    Belum ada data
+                            <td
+                                colspan="4"
+                                class="px-6 py-14 text-center"
+                            >
+                                <h3
+                                    class="text-xl font-bold
+                                           text-slate-800"
+                                >
+                                    @if ($hasFilter)
+                                        Data Tidak Ditemukan
+                                    @else
+                                        Belum Ada Data
+                                    @endif
                                 </h3>
 
                                 <p class="mt-2 text-slate-500">
-                                    Tambahkan data dosen atau staff terlebih dahulu.
+                                    @if ($hasFilter)
+                                        Tidak ada data yang cocok
+                                        dengan pencarian atau filter.
+                                    @else
+                                        Tambahkan data dosen atau staf
+                                        terlebih dahulu.
+                                    @endif
                                 </p>
-
                             </td>
                         </tr>
 
                     @endforelse
 
                 </tbody>
-
             </table>
-
         </div>
 
 
-        {{-- Mobile / Tablet Cards --}}
-        <div class="lg:hidden p-5 md:p-6 space-y-4">
+        {{-- ===================================================== --}}
+        {{-- MOBILE DAN TABLET --}}
+        {{-- ===================================================== --}}
+
+        <div class="space-y-4 p-5 md:p-6 lg:hidden">
 
             @forelse ($lecturerStaff as $item)
 
-                <div
-                    class="rounded-3xl bg-slate-50 border border-slate-100 p-5"
-                    data-person-card
-                    data-name="{{ strtolower($item->name) }}"
-                    data-nip="{{ strtolower($item->nip ?? '') }}"
-                    data-type="{{ strtolower($item->type) }}">
+                @php
+                    $meta = $getPersonMeta($item);
+                @endphp
 
+                <article
+                    class="rounded-3xl border
+                           border-slate-100 bg-slate-50
+                           p-5"
+                >
                     <div class="flex items-start gap-4">
 
-                        @if ($item->photo)
+                        @if ($meta['photo_url'])
 
                             <img
-                                src="{{ asset('storage/' . $item->photo) }}"
-                                class="w-16 h-16 rounded-2xl object-cover shadow-md border border-slate-100 shrink-0"
-                                alt="{{ $item->name }}">
+                                src="{{ $meta['photo_url'] }}"
+                                alt="Foto {{ $meta['name'] }}"
+                                class="h-16 w-16 shrink-0
+                                       rounded-2xl border
+                                       border-slate-100
+                                       object-cover object-top
+                                       shadow-md"
+                                loading="lazy"
+                            >
 
                         @else
 
-                            <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center shadow-md shrink-0">
-                                <span class="text-xl font-black text-blue-700">
-                                    {{ strtoupper(substr($item->name, 0, 1)) }}
+                            <div
+                                @class([
+                                    'flex h-16 w-16 shrink-0',
+                                    'items-center justify-center',
+                                    'rounded-2xl shadow-md',
+                                    'bg-blue-100' =>
+                                        $meta['is_dosen'],
+                                    'bg-yellow-100' =>
+                                        !$meta['is_dosen'],
+                                ])
+                            >
+                                <span
+                                    @class([
+                                        'text-xl font-black',
+                                        'text-blue-700' =>
+                                            $meta['is_dosen'],
+                                        'text-yellow-700' =>
+                                            !$meta['is_dosen'],
+                                    ])
+                                >
+                                    {{ $meta['initial'] }}
                                 </span>
                             </div>
 
                         @endif
 
+
                         <div class="min-w-0 flex-1">
 
-                            <div class="flex items-start justify-between gap-3">
-
+                            <div
+                                class="flex items-start
+                                       justify-between gap-3"
+                            >
                                 <div class="min-w-0">
-                                    <h3 class="font-bold text-slate-800">
-                                        {{ $item->name }}
+                                    <h3
+                                        class="break-words font-bold
+                                               text-slate-800"
+                                    >
+                                        {{ $meta['name'] }}
                                     </h3>
 
-                                    <p class="mt-1 text-sm text-slate-500 break-all">
-                                        NIP. {{ $item->nip ?? '-' }}
+                                    <p
+                                        class="mt-1 break-all
+                                               text-sm text-slate-500"
+                                    >
+                                        NIP:
+                                        {{ $meta['nip'] !== ''
+                                            ? $meta['nip']
+                                            : '-' }}
                                     </p>
                                 </div>
 
-                                @if ($item->type === 'dosen')
-                                    <span class="shrink-0 inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
-                                        Dosen
-                                    </span>
-                                @else
-                                    <span class="shrink-0 inline-flex px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-xs font-bold">
-                                        Staff
-                                    </span>
-                                @endif
-
+                                <span
+                                    @class([
+                                        'inline-flex shrink-0',
+                                        'rounded-full px-3 py-1',
+                                        'text-xs font-bold',
+                                        'bg-blue-50 text-blue-700' =>
+                                            $meta['is_dosen'],
+                                        'bg-yellow-50 text-yellow-700' =>
+                                            !$meta['is_dosen'],
+                                    ])
+                                >
+                                    {{ $meta['type_label'] }}
+                                </span>
                             </div>
 
-                        </div>
 
+                            @if (
+                                $meta['photo_path'] !== ''
+                                && !$meta['photo_exists']
+                            )
+                                <p
+                                    class="mt-3 text-xs
+                                           font-semibold text-red-600"
+                                >
+                                    Foto tidak ditemukan di penyimpanan.
+                                </p>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 mt-5">
 
-                        <a href="{{ route('admin.lecturer-staff.edit', $item->id) }}"
-                            class="px-4 py-3 rounded-xl bg-blue-700 text-white text-center text-sm font-bold hover:bg-blue-800 transition">
+                    <div class="mt-5 grid grid-cols-2 gap-3">
+
+                        <a
+                            href="{{ route(
+                                'admin.lecturer-staff.edit',
+                                $item
+                            ) }}"
+                            class="rounded-xl bg-blue-700
+                                   px-4 py-3 text-center
+                                   text-sm font-bold text-white
+                                   transition hover:bg-blue-800"
+                        >
                             Edit
                         </a>
 
-                        <form action="{{ route('admin.lecturer-staff.destroy', $item->id) }}"
+                        <form
+                            action="{{ route(
+                                'admin.lecturer-staff.destroy',
+                                $item
+                            ) }}"
                             method="POST"
-                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-
+                            onsubmit="return confirm(
+                                'Yakin ingin menghapus data {{ addslashes($meta['name']) }}? Foto yang tersimpan juga akan dihapus.'
+                            )"
+                        >
                             @csrf
                             @method('DELETE')
 
                             <button
                                 type="submit"
-                                class="w-full px-4 py-3 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition">
+                                class="w-full rounded-xl
+                                       bg-red-600 px-4 py-3
+                                       text-sm font-bold text-white
+                                       transition hover:bg-red-700"
+                            >
                                 Hapus
                             </button>
-
                         </form>
-
                     </div>
-
-                </div>
+                </article>
 
             @empty
 
-                <div class="rounded-3xl bg-slate-50 border border-slate-100 p-10 text-center">
-
-                    <h3 class="text-xl font-bold text-slate-800">
-                        Belum ada data
+                <div
+                    class="rounded-3xl border
+                           border-slate-100 bg-slate-50
+                           p-10 text-center"
+                >
+                    <h3
+                        class="text-xl font-bold
+                               text-slate-800"
+                    >
+                        @if ($hasFilter)
+                            Data Tidak Ditemukan
+                        @else
+                            Belum Ada Data
+                        @endif
                     </h3>
 
                     <p class="mt-2 text-slate-500">
-                        Tambahkan data dosen atau staff terlebih dahulu.
+                        @if ($hasFilter)
+                            Tidak ada data yang cocok dengan pencarian
+                            atau filter yang dipilih.
+                        @else
+                            Tambahkan data dosen atau staf terlebih dahulu.
+                        @endif
                     </p>
 
+                    @if ($hasFilter)
+                        <a
+                            href="{{ route(
+                                'admin.lecturer-staff.index'
+                            ) }}"
+                            class="mt-6 inline-flex items-center
+                                   justify-center rounded-xl
+                                   bg-blue-700 px-5 py-3
+                                   text-sm font-bold text-white
+                                   transition hover:bg-blue-800"
+                        >
+                            Tampilkan Semua
+                        </a>
+                    @else
+                        <a
+                            href="{{ route(
+                                'admin.lecturer-staff.create'
+                            ) }}"
+                            class="mt-6 inline-flex items-center
+                                   justify-center rounded-xl
+                                   bg-blue-700 px-5 py-3
+                                   text-sm font-bold text-white
+                                   transition hover:bg-blue-800"
+                        >
+                            Tambah Data
+                        </a>
+                    @endif
                 </div>
 
             @endforelse
-
         </div>
 
+
+        {{-- ===================================================== --}}
+        {{-- PAGINATION --}}
+        {{-- ===================================================== --}}
+
         @if ($lecturerStaff->hasPages())
-            <div class="px-6 md:px-8 py-6 border-t border-slate-100">
+            <div
+                class="border-t border-slate-100
+                       px-6 py-6 md:px-8"
+            >
                 {{ $lecturerStaff->links() }}
             </div>
         @endif
 
-
     </div>
 
 </div>
-
-
 
 @endsection

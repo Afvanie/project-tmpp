@@ -69,7 +69,7 @@
                 </h1>
 
                 <p class="mt-3 text-blue-100 leading-7 max-w-4xl">
-                    Kelola konten halaman profil Program Studi D-III Teknik Mesin Polinema.
+                    Kelola konten halaman profil Program Studi D-IV Teknik Mesin Produksi dan Perawatan Polinema.
 
                     @if ($isOverviewSection)
                         Section ini mengatur bagian Profil Singkat yang tampil di awal halaman profil.
@@ -202,7 +202,7 @@
 
                     @if ($isOverviewSection)
                         <p class="mt-2 text-xs text-slate-500">
-                            Contoh: Mengenal Program Studi D-III Teknik Mesin
+                            Contoh: Mengenal Program Studi D-IV Teknik Mesin Produksi dan Perawatan
                         </p>
                     @endif
 
@@ -654,7 +654,7 @@
                 </h2>
 
                 <p class="mt-2 text-slate-500 leading-7">
-                    Kartu kecil yang tampil di bawah gambar, seperti D-III, Unggul, A.Md.T., dan Masa Studi.
+                    Kartu informasi yang tampil di bawah gambar, seperti Jenjang Pendidikan, Akreditasi, Gelar Lulusan, dan Masa Studi.
                 </p>
 
             </div>
@@ -769,7 +769,7 @@
                                     <input type="text"
                                            data-card-description
                                            value="{{ $cardDescription }}"
-                                           placeholder="Contoh: Program Diploma Tiga"
+                                           placeholder="Contoh: Diploma Empat"
                                            class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                                 </div>
@@ -888,7 +888,7 @@
 
                         <input type="text"
                                data-card-description
-                               placeholder="Contoh: Program Diploma Tiga"
+                               placeholder="Contoh: Diploma Empat"
                                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                     </div>
@@ -1770,7 +1770,7 @@
         | - Deskripsi Kecil
         |
         | Tetapi database tetap menyimpan format:
-        | D-III|Program Diploma Tiga
+        | D-III|Diploma Empat
         |--------------------------------------------------------------------------
         */
 

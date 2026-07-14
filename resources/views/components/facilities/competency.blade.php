@@ -27,7 +27,7 @@
                 <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6 mb-8"></div>
 
                 <p class="text-slate-600 leading-8 text-justify">
-                    Fasilitas Program Studi D-III Teknik Mesin mendukung proses
+                    Fasilitas Program Studi D-IV Teknik Mesin Produksi dan Perawatan mendukung proses
                     pembelajaran berbasis kompetensi melalui kegiatan praktik,
                     pengujian, perawatan, perancangan, dan penyelesaian permasalahan
                     teknik secara terukur.

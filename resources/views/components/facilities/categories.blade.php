@@ -1,164 +1,356 @@
-<section class="relative py-24 bg-white overflow-hidden">
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | DATA KATEGORI FASILITAS
+    |--------------------------------------------------------------------------
+    */
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 pointer-events-none">
+    $facilityItems = $facilities ?? collect();
 
-        <div class="absolute -left-40 top-20 w-[500px] h-[500px] rounded-full bg-blue-200/20 blur-[140px]"></div>
+    /*
+    |--------------------------------------------------------------------------
+    | TAMPILAN VISUAL PER KATEGORI
+    |--------------------------------------------------------------------------
+    |
+    | Pengaturan berikut hanya menentukan ikon dan warna kartu.
+    | Informasi judul dan deskripsi tetap berasal dari database.
+    |
+    */
 
-        <div class="absolute -right-40 bottom-20 w-[500px] h-[500px] rounded-full bg-yellow-200/20 blur-[140px]"></div>
+    $categoryStyles = [
+        \App\Models\Facility::CATEGORY_LABORATORY => [
+            'icon' => 'fa-flask',
+            'label' => 'Laboratorium',
+            'theme' => 'yellow',
+        ],
 
-        <div class="absolute inset-0 opacity-[0.03]"
-            style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-            linear-gradient(to right,#0f172a 1px,transparent 1px);
-            background-size:70px 70px;">
-        </div>
+        \App\Models\Facility::CATEGORY_WORKSHOP => [
+            'icon' => 'fa-screwdriver-wrench',
+            'label' => 'Workshop',
+            'theme' => 'blue',
+        ],
 
+        \App\Models\Facility::CATEGORY_CLASSROOM => [
+            'icon' => 'fa-book-open',
+            'label' => 'Ruang Kelas',
+            'theme' => 'blue',
+        ],
+
+        \App\Models\Facility::CATEGORY_GALLERY => [
+            'icon' => 'fa-images',
+            'label' => 'Galeri',
+            'theme' => 'yellow',
+        ],
+    ];
+@endphp
+
+
+<section
+    id="kategori-fasilitas"
+    class="relative overflow-hidden bg-white
+           py-20 md:py-24"
+>
+    {{-- ========================================================= --}}
+    {{-- BACKGROUND DECORATION --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+    >
+        <div
+            class="absolute -left-40 top-20
+                   h-[500px] w-[500px]
+                   rounded-full bg-blue-200/20
+                   blur-[140px]"
+        ></div>
+
+        <div
+            class="absolute -right-40 bottom-20
+                   h-[500px] w-[500px]
+                   rounded-full bg-yellow-200/20
+                   blur-[140px]"
+        ></div>
+
+        <div
+            class="absolute inset-0 opacity-[0.03]"
+            style="
+                background-image:
+                    linear-gradient(
+                        #0f172a 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        to right,
+                        #0f172a 1px,
+                        transparent 1px
+                    );
+                background-size: 70px 70px;
+            "
+        ></div>
+
+        <img
+            src="{{ asset('assets/images/logo.png') }}"
+            alt=""
+            class="absolute -bottom-24 -left-20
+                   hidden w-[420px] select-none
+                   grayscale opacity-[0.025]
+                   lg:block"
+        >
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
 
-        {{-- Heading --}}
-        <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+    <div
+        class="relative z-10 mx-auto
+               max-w-7xl px-6"
+    >
+        {{-- ===================================================== --}}
+        {{-- HEADING --}}
+        {{-- ===================================================== --}}
 
-            <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-                Fasilitas Pembelajaran
+        <div
+            class="mx-auto mb-14 max-w-3xl text-center
+                   md:mb-16"
+            data-aos="fade-up"
+        >
+            <span
+                class="text-sm font-semibold uppercase
+                       tracking-[5px] text-blue-700"
+            >
+                Fasilitas Program Studi
             </span>
 
-            <h2 class="mt-4 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                Penunjang Pendidikan Vokasi
+            <h2
+                class="mt-4 text-3xl font-bold
+                       leading-tight text-slate-800
+                       sm:text-4xl md:text-5xl"
+            >
+                Kategori Fasilitas
             </h2>
 
-            <div class="w-24 h-1 bg-yellow-400 rounded-full mx-auto mt-6"></div>
+            <div
+                class="mx-auto mt-6 h-1 w-24
+                       rounded-full bg-yellow-400"
+            ></div>
 
-            <p class="mt-7 text-slate-600 leading-8">
-                Program Studi D-III Teknik Mesin memiliki fasilitas pembelajaran dan
-                pendukung yang menunjang kegiatan teori, praktik, pengujian, perawatan,
-                produksi, pelayanan akademik, kesehatan, ibadah, serta pengembangan
-                keterampilan teknis mahasiswa.
+            <p
+                class="mt-7 leading-8 text-slate-600"
+            >
+                Daftar kategori dan dokumentasi fasilitas Program
+                Studi D-IV Teknik Mesin Produksi dan Perawatan
+                Politeknik Negeri Malang.
             </p>
-
         </div>
 
 
-        @php
-            $facilities = [
-                [
-                    'title' => 'Ruang Laboratorium',
-                    'label' => 'Praktikum & Pengujian',
-                    'description' => 'Ruang laboratorium mendukung kegiatan praktikum, pengujian, pengukuran, desain, simulasi, serta penerapan teknologi teknik mesin yang relevan dengan kebutuhan industri.',
-                    'icon' => 'fa-flask',
-                    'theme' => 'yellow',
-                    'delay' => 0,
-                ],
-                [
-                    'title' => 'Ruang Workshop',
-                    'label' => 'Praktik Utama',
-                    'description' => 'Ruang workshop digunakan sebagai area praktik utama mahasiswa dalam mengembangkan keterampilan teknis di bidang produksi, manufaktur, perawatan, perakitan, dan penggunaan peralatan kerja teknik mesin.',
-                    'icon' => 'fa-screwdriver-wrench',
-                    'theme' => 'blue',
-                    'delay' => 100,
-                ],
-                [
-                    'title' => 'Ruang Kelas',
-                    'label' => 'Pembelajaran Teori',
-                    'description' => 'Ruang kelas digunakan untuk mendukung pembelajaran teori, diskusi, presentasi, dan penguatan konsep dasar maupun terapan di bidang teknik mesin.',
-                    'icon' => 'fa-book-open',
-                    'theme' => 'blue',
-                    'delay' => 200,
-                ],
-                [
-                    'title' => 'Ruang Dosen',
-                    'label' => 'Konsultasi Akademik',
-                    'description' => 'Ruang dosen digunakan sebagai ruang kerja, koordinasi pembelajaran, konsultasi akademik, serta pendampingan mahasiswa oleh dosen Program Studi D-III Teknik Mesin.',
-                    'icon' => 'fa-chalkboard-user',
-                    'theme' => 'yellow',
-                    'delay' => 300,
-                ],
-                [
-                    'title' => 'Ruang Tata Usaha',
-                    'label' => 'Layanan Administrasi',
-                    'description' => 'Ruang tata usaha mendukung pelayanan administrasi akademik, pengelolaan dokumen, layanan informasi mahasiswa, serta kebutuhan operasional program studi.',
-                    'icon' => 'fa-clipboard-list',
-                    'theme' => 'blue',
-                    'delay' => 0,
-                ],
-                [
-                    'title' => 'Fasilitas Kesehatan',
-                    'label' => 'Kesehatan & Keselamatan',
-                    'description' => 'Fasilitas kesehatan tersedia untuk mendukung kenyamanan, keselamatan, dan layanan kesehatan dasar bagi mahasiswa, dosen, serta tenaga kependidikan di lingkungan kampus.',
-                    'icon' => 'fa-kit-medical',
-                    'theme' => 'yellow',
-                    'delay' => 100,
-                ],
-                [
-                    'title' => 'Masjid',
-                    'label' => 'Fasilitas Ibadah',
-                    'description' => 'Masjid menjadi fasilitas ibadah bagi mahasiswa, dosen, tenaga kependidikan, dan masyarakat kampus dalam menunjang kegiatan spiritual di lingkungan Polinema.',
-                    'icon' => 'fa-mosque',
-                    'theme' => 'blue',
-                    'delay' => 200,
-                ],
-                [
-                    'title' => 'Galeri Aktivitas Mahasiswa',
-                    'label' => 'Dokumentasi Kegiatan',
-                    'description' => 'Galeri menampilkan dokumentasi aktivitas mahasiswa di lingkungan kampus, kegiatan praktikum, proyek mahasiswa, kunjungan industri, organisasi, serta kegiatan akademik dan non-akademik.',
-                    'icon' => 'fa-users',
-                    'theme' => 'yellow',
-                    'delay' => 300,
-                ],
-            ];
-        @endphp
+        {{-- ===================================================== --}}
+        {{-- DAFTAR KATEGORI --}}
+        {{-- ===================================================== --}}
+
+        @if ($facilityItems->isNotEmpty())
+
+            <div
+                class="grid gap-7
+                       md:grid-cols-2
+                       xl:grid-cols-4"
+            >
+                @foreach ($facilityItems as $facility)
+
+                    @php
+                        $style = $categoryStyles[
+                            $facility->category
+                        ] ?? [
+                            'icon' => 'fa-building',
+                            'label' => $facility->category_label,
+                            'theme' => 'blue',
+                        ];
+
+                        $isBlue = $style['theme'] === 'blue';
+
+                        $title = trim(
+                            (string) $facility->title
+                        );
+
+                        $description = trim(
+                            (string) $facility->description
+                        );
+
+                        $photoCount = $facility->relationLoaded('photos')
+                            ? $facility->photos->count()
+                            : 0;
+                    @endphp
+
+                    <article
+                        class="group relative overflow-hidden
+                               rounded-3xl border
+                               border-slate-100 bg-white
+                               p-7 shadow-lg
+                               transition-all duration-500
+                               hover:-translate-y-2
+                               hover:shadow-2xl"
+                        data-aos="fade-up"
+                        data-aos-delay="{{ min(
+                            ($loop->index % 4) * 100,
+                            300
+                        ) }}"
+                    >
+                        {{-- Dekorasi --}}
+                        <div
+                            @class([
+                                'absolute -right-12 -top-12',
+                                'h-36 w-36 rounded-full',
+                                'transition duration-500',
+                                'bg-blue-100 group-hover:bg-yellow-100' =>
+                                    $isBlue,
+                                'bg-yellow-100 group-hover:bg-blue-100' =>
+                                    !$isBlue,
+                            ])
+                        ></div>
 
 
-        {{-- Facility Cards --}}
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-7">
+                        <div class="relative">
 
-            @foreach ($facilities as $facility)
+                            {{-- Ikon --}}
+                            <div
+                                @class([
+                                    'mb-6 flex h-16 w-16',
+                                    'items-center justify-center',
+                                    'rounded-2xl shadow-lg',
+                                    'transition duration-500',
+                                    'bg-blue-700 text-white',
+                                    'group-hover:bg-yellow-400',
+                                    'group-hover:text-slate-900' =>
+                                        $isBlue,
+                                    'bg-yellow-400 text-slate-900',
+                                    'group-hover:bg-blue-700',
+                                    'group-hover:text-white' =>
+                                        !$isBlue,
+                                ])
+                            >
+                                <i
+                                    class="fa-solid {{ $style['icon'] }}
+                                           text-3xl"
+                                    aria-hidden="true"
+                                ></i>
+                            </div>
 
-                <div class="group relative rounded-3xl bg-white border border-slate-100 shadow-lg p-7 overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-500"
-                    data-aos="fade-up"
-                    data-aos-delay="{{ $facility['delay'] }}">
 
-                    <div class="absolute -right-12 -top-12 w-36 h-36 rounded-full transition
-                        {{ $facility['theme'] === 'blue'
-                            ? 'bg-blue-100 group-hover:bg-yellow-100'
-                            : 'bg-yellow-100 group-hover:bg-blue-100' }}">
-                    </div>
+                            {{-- Label --}}
+                            <span
+                                @class([
+                                    'inline-flex rounded-full',
+                                    'px-3 py-1 text-xs',
+                                    'font-semibold',
+                                    'bg-blue-50 text-blue-700' =>
+                                        $isBlue,
+                                    'bg-yellow-50 text-yellow-700' =>
+                                        !$isBlue,
+                                ])
+                            >
+                                {{ $style['label'] }}
+                            </span>
 
-                    <div class="relative">
 
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition
-                            {{ $facility['theme'] === 'blue'
-                                ? 'bg-blue-700 text-white group-hover:bg-yellow-400 group-hover:text-slate-900'
-                                : 'bg-yellow-400 text-slate-900 group-hover:bg-blue-700 group-hover:text-white' }}">
+                            {{-- Judul --}}
+                            <h3
+                                class="mt-4 text-2xl font-bold
+                                       leading-snug text-slate-800"
+                            >
+                                {{ $title !== ''
+                                    ? $title
+                                    : $facility->category_label }}
+                            </h3>
 
-                            <i class="fa-solid {{ $facility['icon'] }} text-3xl"></i>
+
+                            {{-- Deskripsi dari Admin --}}
+                            @if ($description !== '')
+                                <p
+                                    class="mt-4 leading-8
+                                           text-slate-600"
+                                >
+                                    {{ $description }}
+                                </p>
+                            @endif
+
+
+                            {{-- Jumlah Dokumentasi --}}
+                            <div
+                                class="mt-6 flex items-center
+                                       justify-between gap-4
+                                       border-t border-slate-100
+                                       pt-5"
+                            >
+                                <span
+                                    class="text-sm font-semibold
+                                           text-slate-500"
+                                >
+                                    Dokumentasi
+                                </span>
+
+                                <span
+                                    @class([
+                                        'inline-flex min-w-9',
+                                        'items-center justify-center',
+                                        'rounded-full px-3 py-1',
+                                        'text-sm font-bold',
+                                        'bg-blue-50 text-blue-700' =>
+                                            $isBlue,
+                                        'bg-yellow-50 text-yellow-700' =>
+                                            !$isBlue,
+                                    ])
+                                >
+                                    {{ $photoCount }}
+                                </span>
+                            </div>
 
                         </div>
+                    </article>
 
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4
-                            {{ $facility['theme'] === 'blue'
-                                ? 'bg-blue-50 text-blue-700'
-                                : 'bg-yellow-50 text-yellow-700' }}">
-                            {{ $facility['label'] }}
-                        </span>
+                @endforeach
+            </div>
 
-                        <h3 class="text-2xl font-bold text-slate-800">
-                            {{ $facility['title'] }}
-                        </h3>
+        @else
 
-                        <p class="mt-4 text-slate-600 leading-8 text-justify">
-                            {{ $facility['description'] }}
-                        </p>
+            {{-- ================================================= --}}
+            {{-- EMPTY STATE --}}
+            {{-- ================================================= --}}
 
-                    </div>
-
+            <div
+                class="mx-auto max-w-3xl
+                       rounded-3xl border
+                       border-slate-100 bg-slate-50
+                       p-8 text-center sm:p-10"
+                data-aos="fade-up"
+            >
+                <div
+                    class="mx-auto flex h-16 w-16
+                           items-center justify-center
+                           rounded-2xl bg-blue-100
+                           text-blue-700"
+                >
+                    <i
+                        class="fa-solid fa-building
+                               text-2xl"
+                        aria-hidden="true"
+                    ></i>
                 </div>
 
-            @endforeach
+                <h3
+                    class="mt-5 text-2xl font-bold
+                           text-slate-800"
+                >
+                    Informasi Fasilitas Belum Tersedia
+                </h3>
 
-        </div>
+                <p
+                    class="mx-auto mt-3 max-w-xl
+                           leading-7 text-slate-500"
+                >
+                    Kategori dan dokumentasi fasilitas belum
+                    dipublikasikan oleh pengelola program studi.
+                </p>
+            </div>
 
+        @endif
     </div>
-
 </section>

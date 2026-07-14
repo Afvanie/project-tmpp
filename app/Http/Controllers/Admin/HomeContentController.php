@@ -17,7 +17,7 @@ class HomeContentController extends Controller
             [
                 'badge' => 'Program Studi',
                 'title' => 'Deskripsi Program Studi',
-                'description' => 'Program Studi D-III Teknik Mesin merupakan program pendidikan vokasi yang berfokus pada penguasaan kompetensi teknis, keterampilan praktik, dan pemahaman teoritis di bidang teknik mesin.',
+                'description' => 'Program Studi D-IV Teknik Mesin Produksi dan Perawatan merupakan program pendidikan vokasi di Jurusan Teknik Mesin Politeknik Negeri Malang yang mempersiapkan lulusan Sarjana Terapan dengan kompetensi dalam bidang produksi, manufaktur, dan perawatan mesin.',
                 'button_text' => 'Selengkapnya',
                 'button_url' => '/profile',
                 'is_active' => true,
