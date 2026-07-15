@@ -1,13 +1,11 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | DOKUMENTASI FASILITAS
+    | GALERI FASILITAS
     |--------------------------------------------------------------------------
     |
-    | Hanya kategori yang mempunyai foto aktif dan file yang benar-benar
-    | tersedia di storage yang ditampilkan pada galeri.
-    |
-    | Tidak ada foto placeholder atau dokumentasi buatan.
+    | Hanya fasilitas yang mempunyai foto aktif dan file yang tersedia
+    | pada storage publik yang akan ditampilkan.
     |
     */
 
@@ -15,26 +13,20 @@
         $facilities ?? []
     );
 
-    $categoryLabels = [
-        \App\Models\Facility::CATEGORY_LABORATORY =>
-            'Laboratorium',
-
-        \App\Models\Facility::CATEGORY_WORKSHOP =>
-            'Workshop',
-
-        \App\Models\Facility::CATEGORY_CLASSROOM =>
-            'Ruang Kelas',
-
-        \App\Models\Facility::CATEGORY_GALLERY =>
-            'Aktivitas Mahasiswa',
-    ];
-
     $galleryFacilities = $facilityCollection
         ->map(function ($facility) {
-            $validPhotos = collect($facility->photos ?? [])
+            $validPhotos = collect(
+                $facility->photos ?? []
+            )
                 ->filter(function ($photo): bool {
-                    $photoPath = trim(
-                        (string) $photo->photo
+                    $photoPath = ltrim(
+                        trim(
+                            (string) (
+                                $photo->photo
+                                ?? ''
+                            )
+                        ),
+                        '/'
                     );
 
                     return $photoPath !== ''
@@ -55,16 +47,22 @@
             return $facility->photos->isNotEmpty();
         })
         ->values();
+
+    $totalGalleryPhotos = $galleryFacilities
+        ->sum(function ($facility): int {
+            return $facility->photos->count();
+        });
 @endphp
 
 
 <section
     id="dokumentasi-fasilitas"
     class="relative overflow-hidden
-           bg-slate-50 py-20 md:py-24"
+           bg-white py-16
+           md:py-20 lg:py-24"
 >
     {{-- ========================================================= --}}
-    {{-- BACKGROUND DECORATION --}}
+    {{-- DEKORASI BACKGROUND --}}
     {{-- ========================================================= --}}
 
     <div
@@ -72,88 +70,179 @@
         aria-hidden="true"
     >
         <div
-            class="absolute -left-40 top-20
-                   h-[520px] w-[520px]
-                   rounded-full bg-blue-200/30
+            class="absolute -right-56 top-0
+                   h-[460px] w-[460px]
+                   rounded-full bg-blue-100/35
                    blur-[150px]"
         ></div>
 
         <div
-            class="absolute -right-40 bottom-20
-                   h-[520px] w-[520px]
-                   rounded-full bg-yellow-200/30
+            class="absolute -left-56 bottom-0
+                   h-[460px] w-[460px]
+                   rounded-full bg-yellow-100/35
                    blur-[150px]"
         ></div>
-
-        <div
-            class="absolute inset-0 opacity-[0.035]"
-            style="
-                background-image:
-                    linear-gradient(
-                        #0f172a 1px,
-                        transparent 1px
-                    ),
-                    linear-gradient(
-                        to right,
-                        #0f172a 1px,
-                        transparent 1px
-                    );
-                background-size: 70px 70px;
-            "
-        ></div>
-
-        <img
-            src="{{ asset('assets/images/logo.png') }}"
-            alt=""
-            class="absolute -bottom-24 -right-20
-                   hidden w-[440px] select-none
-                   grayscale opacity-[0.025]
-                   lg:block"
-        >
     </div>
 
 
     <div
-        class="relative z-10 mx-auto
-               max-w-7xl px-6"
+        class="relative"
+        style="
+            display: grid;
+            width: 100%;
+            justify-items: center;
+            padding-left: 24px;
+            padding-right: 24px;
+        "
     >
+        {{-- CENTER FIX FINAL --}}
+        <div
+            style="
+                width: 100%;
+                max-width: 1024px;
+            "
+        >
         {{-- ===================================================== --}}
         {{-- HEADING --}}
         {{-- ===================================================== --}}
 
-        <div
-            class="mx-auto mb-14 max-w-3xl
-                   text-center md:mb-16"
+        <header
+            class="grid items-end gap-8
+                   lg:grid-cols-12"
             data-aos="fade-up"
         >
-            <span
-                class="text-sm font-semibold uppercase
-                       tracking-[5px] text-blue-700"
-            >
-                Dokumentasi Fasilitas
-            </span>
+            <div class="lg:col-span-8">
+                <div
+                    class="flex items-center gap-3"
+                >
+                    <span
+                        class="h-px w-9
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
 
-            <h2
-                class="mt-4 text-3xl font-bold
-                       leading-tight text-slate-800
-                       sm:text-4xl md:text-5xl"
-            >
-                Fasilitas dan Aktivitas Mahasiswa
-            </h2>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.22em]
+                               text-[#075F9B]"
+                    >
+                        Dokumentasi Fasilitas
+                    </p>
+                </div>
 
-            <div
-                class="mx-auto mt-6 h-1 w-24
-                       rounded-full bg-yellow-400"
-            ></div>
 
-            <p
-                class="mt-7 leading-8 text-slate-600"
-            >
-                Dokumentasi fasilitas dan aktivitas mahasiswa
-                Program Studi D-IV Teknik Mesin Produksi dan
-                Perawatan yang telah dipublikasikan oleh pengelola.
-            </p>
-        </div>
+                <h2
+                    class="mt-4 max-w-4xl
+                           text-3xl font-semibold
+                           leading-tight
+                           tracking-[-0.025em]
+                           text-slate-900
+                           sm:text-4xl lg:text-5xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
+                >
+                    Jelajahi Fasilitas dan Aktivitas Mahasiswa
+                </h2>
+
+
+                <p
+                    class="mt-5 max-w-2xl
+                           text-sm leading-7
+                           text-slate-600
+                           sm:text-base sm:leading-8"
+                >
+                    Dokumentasi ruang pembelajaran, kegiatan praktik,
+                    fasilitas pendukung, dan aktivitas mahasiswa
+                    Program Studi D-IV Teknik Mesin Produksi dan
+                    Perawatan.
+                </p>
+
+
+                <div
+                    class="mt-6 flex items-center gap-3"
+                    aria-hidden="true"
+                >
+                    <span
+                        class="h-1 w-14 rounded-full
+                               bg-[#075F9B]"
+                    ></span>
+
+                    <span
+                        class="h-1 w-7 rounded-full
+                               bg-[#D7B33E]"
+                    ></span>
+                </div>
+            </div>
+
+
+            @if ($galleryFacilities->isNotEmpty())
+                <div
+                    class="flex items-center gap-6
+                           lg:col-span-4
+                           lg:justify-end"
+                >
+                    <div
+                        class="border-l-2
+                               border-[#075F9B]
+                               pl-4"
+                    >
+                        <p
+                            class="text-3xl font-bold
+                                   text-[#075F9B]"
+                        >
+                            {{ str_pad(
+                                (string) $galleryFacilities->count(),
+                                2,
+                                '0',
+                                STR_PAD_LEFT
+                            ) }}
+                        </p>
+
+                        <p
+                            class="mt-1 text-[9px]
+                                   font-bold uppercase
+                                   tracking-[0.15em]
+                                   text-slate-400"
+                        >
+                            Kategori
+                        </p>
+                    </div>
+
+
+                    <div
+                        class="border-l-2
+                               border-[#D7B33E]
+                               pl-4"
+                    >
+                        <p
+                            class="text-3xl font-bold
+                                   text-yellow-700"
+                        >
+                            {{ str_pad(
+                                (string) $totalGalleryPhotos,
+                                2,
+                                '0',
+                                STR_PAD_LEFT
+                            ) }}
+                        </p>
+
+                        <p
+                            class="mt-1 text-[9px]
+                                   font-bold uppercase
+                                   tracking-[0.15em]
+                                   text-slate-400"
+                        >
+                            Dokumentasi
+                        </p>
+                    </div>
+                </div>
+            @endif
+        </header>
 
 
         {{-- ===================================================== --}}
@@ -161,190 +250,148 @@
         {{-- ===================================================== --}}
 
         @if ($galleryFacilities->isNotEmpty())
-
-            <div class="space-y-12 md:space-y-14">
-
+            <div
+                class="mt-12 space-y-10
+                       lg:mt-16 lg:space-y-14"
+            >
                 @foreach ($galleryFacilities as $facility)
-
                     @php
                         $facilityTitle = trim(
-                            (string) $facility->title
+                            (string) (
+                                $facility->title
+                                ?? ''
+                            )
+                        );
+
+                        $facilityLabel = trim(
+                            (string) (
+                                $facility->category_label
+                                ?? 'Fasilitas'
+                            )
                         );
 
                         $facilityDescription = trim(
-                            (string) $facility->description
+                            (string) (
+                                $facility->description
+                                ?? ''
+                            )
                         );
-
-                        $facilityLabel = $categoryLabels[
-                            $facility->category
-                        ] ?? $facility->category_label;
-
-                        $sliderId = 'facility-slider-'
-                            . $facility->id;
 
                         $photos = $facility->photos;
 
                         $photoTotal = $photos->count();
 
-                        $hasMultiplePhotos = $photoTotal > 1;
+                        $hasMultiplePhotos =
+                            $photoTotal > 1;
+
+                        $sliderId =
+                            'facility-slider-'
+                            . $facility->id;
+
+                        $displayTitle =
+                            $facilityTitle !== ''
+                                ? $facilityTitle
+                                : $facilityLabel;
+
+                        $firstPhoto = $photos->first();
+
+                        $firstPhotoPath = ltrim(
+                            trim(
+                                (string) $firstPhoto->photo
+                            ),
+                            '/'
+                        );
+
+                        $firstPhotoUrl = asset(
+                            'storage/'
+                            . $firstPhotoPath
+                        );
+
+                        $firstPhotoTitle = trim(
+                            (string) (
+                                $firstPhoto->title
+                                ?? ''
+                            )
+                        );
+
+                        $firstPhotoCaption =
+                            $firstPhotoTitle !== ''
+                                ? $firstPhotoTitle
+                                : $displayTitle;
+
+                        $imageOnRight =
+                            $loop->iteration % 2 === 0;
                     @endphp
 
 
                     <article
                         id="{{ $sliderId }}"
-                        class="relative overflow-hidden
-                               rounded-[2rem] border
-                               border-slate-100 bg-white/95
-                               shadow-2xl backdrop-blur
-                               md:rounded-[2.5rem]"
-                        data-aos="fade-up"
+                        class="w-full scroll-mt-28
+                               overflow-hidden rounded-[2rem]
+                               border border-slate-200
+                               bg-white
+                               shadow-[0_20px_55px_rgba(15,23,42,0.10)]"
                         data-facility-slider
+                        data-aos="fade-up"
                         tabindex="0"
                         role="region"
                         aria-roledescription="carousel"
-                        aria-label="Dokumentasi {{ $facilityTitle }}"
+                        aria-label="Dokumentasi {{ $displayTitle }}"
                     >
-                        {{-- Accent --}}
                         <div
-                            class="h-2 bg-gradient-to-r
-                                   from-blue-700
-                                   via-yellow-400
-                                   to-blue-700"
-                        ></div>
-
-
-                        <div class="grid lg:grid-cols-12">
-
+                            class="grid lg:h-[510px]
+                                    lg:grid-cols-12"
+                        >
                             {{-- ================================= --}}
-                            {{-- INFORMASI KATEGORI --}}
+                            {{-- FOTO UTAMA --}}
                             {{-- ================================= --}}
 
                             <div
-                                class="flex flex-col justify-between
-                                       bg-white p-7 sm:p-8
-                                       lg:col-span-4 lg:p-10"
-                            >
-                                <div>
-                                    <div
-                                        class="mb-6 flex flex-wrap
-                                               items-center gap-4"
-                                    >
-                                        <span
-                                            class="inline-flex h-14 w-14
-                                                   items-center justify-center
-                                                   rounded-2xl bg-blue-700
-                                                   text-xl font-black
-                                                   text-white shadow-lg"
-                                        >
-                                            {{ str_pad(
-                                                (string) $loop->iteration,
-                                                2,
-                                                '0',
-                                                STR_PAD_LEFT
-                                            ) }}
-                                        </span>
-
-                                        <span
-                                            class="inline-flex rounded-full
-                                                   border border-yellow-400/40
-                                                   bg-yellow-400/20
-                                                   px-4 py-2 text-xs
-                                                   font-bold uppercase
-                                                   tracking-wider
-                                                   text-yellow-700"
-                                        >
-                                            {{ $facilityLabel }}
-                                        </span>
-                                    </div>
-
-
-                                    <h3
-                                        class="text-3xl font-bold
-                                               leading-tight text-slate-800
-                                               md:text-4xl"
-                                    >
-                                        {{ $facilityTitle !== ''
-                                            ? $facilityTitle
-                                            : $facility->category_label }}
-                                    </h3>
-
-
-                                    @if ($facilityDescription !== '')
-                                        <p
-                                            class="mt-5 leading-8
-                                                   text-slate-600"
-                                        >
-                                            {{ $facilityDescription }}
-                                        </p>
-                                    @endif
-                                </div>
-
-
-                                <div class="mt-8">
-                                    <div
-                                        class="inline-flex items-center
-                                               gap-3 rounded-2xl
-                                               border border-slate-100
-                                               bg-slate-50 px-5 py-3"
-                                    >
-                                        <span
-                                            class="text-3xl font-black
-                                                   text-blue-700"
-                                        >
-                                            {{ $photoTotal }}
-                                        </span>
-
-                                        <span
-                                            class="text-sm font-semibold
-                                                   text-slate-500"
-                                        >
-                                            {{ $photoTotal === 1
-                                                ? 'Foto Tersedia'
-                                                : 'Foto Tersedia' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {{-- ================================= --}}
-                            {{-- SLIDER --}}
-                            {{-- ================================= --}}
-
-                            <div
-                                class="relative bg-slate-100
-                                       lg:col-span-8"
+                                @class([
+                                    'relative min-w-0 bg-slate-900',
+                                    'lg:col-span-8',
+                                    'lg:order-2' => $imageOnRight,
+                                    'lg:order-1' => !$imageOnRight,
+                                ])
                             >
                                 <div
-                                    class="relative h-[340px]
+                                    class="relative h-[320px]
                                            overflow-hidden
-                                           sm:h-[420px]
-                                           md:h-[500px]"
+                                           sm:h-[430px]
+                                           lg:h-[510px]"
                                 >
                                     <div
                                         class="facility-track
                                                flex h-full
                                                transition-transform
-                                               duration-500 ease-out"
+                                               duration-500
+                                               ease-out"
                                     >
                                         @foreach ($photos as $photo)
-
                                             @php
-                                                $photoTitle = trim(
-                                                    (string) $photo->title
+                                                $photoPath = ltrim(
+                                                    trim(
+                                                        (string) $photo->photo
+                                                    ),
+                                                    '/'
                                                 );
-
-                                                if ($photoTitle === '') {
-                                                    $photoTitle =
-                                                        $facilityTitle !== ''
-                                                            ? $facilityTitle
-                                                            : $facility->category_label;
-                                                }
 
                                                 $photoUrl = asset(
                                                     'storage/'
-                                                    . $photo->photo
+                                                    . $photoPath
                                                 );
+
+                                                $photoTitle = trim(
+                                                    (string) (
+                                                        $photo->title
+                                                        ?? ''
+                                                    )
+                                                );
+
+                                                $photoCaption =
+                                                    $photoTitle !== ''
+                                                        ? $photoTitle
+                                                        : $displayTitle;
                                             @endphp
 
 
@@ -353,11 +400,13 @@
                                                        relative h-full
                                                        min-w-full"
                                                 data-slide-index="{{ $loop->index }}"
+                                                data-photo-url="{{ $photoUrl }}"
+                                                data-photo-title="{{ $photoCaption }}"
                                                 aria-hidden="{{ $loop->first
                                                     ? 'false'
                                                     : 'true' }}"
                                             >
-                                                {{-- Background Blur --}}
+                                                {{-- Background blur --}}
                                                 <img
                                                     src="{{ $photoUrl }}"
                                                     alt=""
@@ -365,267 +414,411 @@
                                                            h-full w-full
                                                            scale-110
                                                            object-cover
-                                                           opacity-45
-                                                           blur-xl"
+                                                           opacity-40
+                                                           blur-2xl"
+                                                    loading="lazy"
+                                                >
+
+
+                                                {{-- Gambar utama --}}
+                                                <img
+                                                    src="{{ $photoUrl }}"
+                                                    alt="Dokumentasi {{ $photoCaption }}"
+                                                    class="relative h-full
+                                                           w-full object-cover"
                                                     loading="lazy"
                                                 >
 
 
                                                 {{-- Overlay --}}
                                                 <div
-                                                    class="absolute inset-0
-                                                           bg-gradient-to-br
-                                                           from-[#003B73]/55
-                                                           via-white/10
-                                                           to-[#003B73]/75"
-                                                ></div>
-
-
-                                                {{-- Gambar Utama --}}
-                                                <div
-                                                    class="absolute inset-0
-                                                           flex items-center
-                                                           justify-center
-                                                           p-5 sm:p-7
-                                                           md:p-10"
-                                                >
-                                                    <img
-                                                        src="{{ $photoUrl }}"
-                                                        alt="Dokumentasi {{ $photoTitle }}"
-                                                        class="max-h-full max-w-full
-                                                               rounded-2xl
-                                                               bg-white/20
-                                                               object-contain
-                                                               shadow-2xl
-                                                               ring-4
-                                                               ring-white/80
-                                                               backdrop-blur"
-                                                        loading="lazy"
-                                                    >
-                                                </div>
-
-
-                                                {{-- Gradient Bawah --}}
-                                                <div
                                                     class="pointer-events-none
                                                            absolute inset-0
                                                            bg-gradient-to-t
-                                                           from-slate-950/60
-                                                           via-slate-950/5
-                                                           to-transparent"
+                                                           from-slate-950/90
+                                                           via-slate-950/10
+                                                           to-slate-950/10"
+                                                    aria-hidden="true"
                                                 ></div>
 
 
                                                 {{-- Caption --}}
                                                 <figcaption
-                                                    class="absolute bottom-5
-                                                           left-5 right-5
-                                                           sm:bottom-6
-                                                           sm:left-6
-                                                           sm:right-6"
+                                                    class="absolute bottom-6
+                                                           left-6 right-24
+                                                           sm:bottom-8
+                                                           sm:left-8
+                                                           sm:right-28"
                                                 >
-                                                    <span
-                                                        class="inline-flex
-                                                               max-w-full
-                                                               items-center
-                                                               gap-2 rounded-full
-                                                               bg-white/90
-                                                               px-4 py-2
-                                                               text-sm font-bold
-                                                               text-slate-800
-                                                               shadow
-                                                               backdrop-blur"
+                                                    <p
+                                                        class="text-[9px]
+                                                               font-bold uppercase
+                                                               tracking-[0.18em]
+                                                               text-[#F2D56F]"
                                                     >
-                                                        <span
-                                                            class="h-2 w-2
-                                                                   shrink-0
-                                                                   rounded-full
-                                                                   bg-yellow-400"
-                                                        ></span>
+                                                        Dokumentasi
+                                                    </p>
 
-                                                        <span
-                                                            class="truncate"
-                                                        >
-                                                            {{ $photoTitle }}
-                                                        </span>
-                                                    </span>
+                                                    <p
+                                                        class="mt-2 line-clamp-2
+                                                               text-lg font-bold
+                                                               leading-7 text-white
+                                                               drop-shadow
+                                                               sm:text-xl"
+                                                    >
+                                                        {{ $photoCaption }}
+                                                    </p>
                                                 </figcaption>
                                             </figure>
-
                                         @endforeach
+                                    </div>
+
+
+                                    {{-- Counter --}}
+                                    <div
+                                        class="absolute right-5 top-5
+                                               flex items-center gap-1
+                                               rounded-full
+                                               border border-white/20
+                                               bg-slate-950/45
+                                               px-4 py-2
+                                               text-xs font-bold
+                                               text-white
+                                               backdrop-blur-md
+                                               sm:right-6 sm:top-6"
+                                    >
+                                        <span data-current-index>
+                                            01
+                                        </span>
+
+                                        <span class="text-white/40">
+                                            /
+                                        </span>
+
+                                        <span>
+                                            {{ str_pad(
+                                                (string) $photoTotal,
+                                                2,
+                                                '0',
+                                                STR_PAD_LEFT
+                                            ) }}
+                                        </span>
                                     </div>
 
 
                                     {{-- Navigasi --}}
                                     @if ($hasMultiplePhotos)
-
-                                        <button
-                                            type="button"
-                                            class="facility-prev
-                                                   absolute left-3
-                                                   top-1/2 flex h-11 w-11
-                                                   -translate-y-1/2
-                                                   items-center justify-center
-                                                   rounded-full bg-white/90
-                                                   text-slate-800 shadow-lg
-                                                   backdrop-blur transition
-                                                   hover:bg-yellow-400
-                                                   sm:left-5"
-                                            aria-label="Tampilkan foto sebelumnya"
+                                        <div
+                                            class="absolute bottom-6
+                                                   right-5 flex gap-2
+                                                   sm:bottom-8
+                                                   sm:right-7"
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="h-6 w-6"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                aria-hidden="true"
+                                            <button
+                                                type="button"
+                                                class="facility-prev
+                                                       flex h-11 w-11
+                                                       items-center
+                                                       justify-center
+                                                       rounded-full
+                                                       border border-white/20
+                                                       bg-white/10
+                                                       text-white
+                                                       backdrop-blur-md
+                                                       transition
+                                                       hover:border-white
+                                                       hover:bg-white
+                                                       hover:text-slate-900"
+                                                aria-label="Foto sebelumnya"
                                             >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M15 19l-7-7 7-7"
-                                                />
-                                            </svg>
-                                        </button>
+                                                <i
+                                                    class="fa-solid
+                                                           fa-chevron-left
+                                                           text-xs"
+                                                    aria-hidden="true"
+                                                ></i>
+                                            </button>
 
-
-                                        <button
-                                            type="button"
-                                            class="facility-next
-                                                   absolute right-3
-                                                   top-1/2 flex h-11 w-11
-                                                   -translate-y-1/2
-                                                   items-center justify-center
-                                                   rounded-full bg-white/90
-                                                   text-slate-800 shadow-lg
-                                                   backdrop-blur transition
-                                                   hover:bg-yellow-400
-                                                   sm:right-5"
-                                            aria-label="Tampilkan foto berikutnya"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="h-6 w-6"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M9 5l7 7-7 7"
-                                                />
-                                            </svg>
-                                        </button>
-
-                                    @endif
-                                </div>
-
-
-                                {{-- Dots --}}
-                                @if ($hasMultiplePhotos)
-
-                                    <div
-                                        class="facility-dots
-                                               flex items-center
-                                               justify-center gap-2
-                                               bg-white px-5 py-5"
-                                        aria-label="Navigasi dokumentasi"
-                                    >
-                                        @foreach ($photos as $photo)
 
                                             <button
                                                 type="button"
-                                                @class([
-                                                    'facility-dot h-3',
-                                                    'rounded-full transition-all',
-                                                    'w-8 bg-blue-700' =>
-                                                        $loop->first,
-                                                    'w-3 bg-slate-300' =>
-                                                        !$loop->first,
-                                                ])
-                                                aria-label="Tampilkan foto {{ $loop->iteration }}"
-                                                aria-current="{{ $loop->first
-                                                    ? 'true'
-                                                    : 'false' }}"
-                                            ></button>
+                                                class="facility-next
+                                                       flex h-11 w-11
+                                                       items-center
+                                                       justify-center
+                                                       rounded-full
+                                                       border border-white/20
+                                                       bg-white/10
+                                                       text-white
+                                                       backdrop-blur-md
+                                                       transition
+                                                       hover:border-white
+                                                       hover:bg-white
+                                                       hover:text-slate-900"
+                                                aria-label="Foto berikutnya"
+                                            >
+                                                <i
+                                                    class="fa-solid
+                                                           fa-chevron-right
+                                                           text-xs"
+                                                    aria-hidden="true"
+                                                ></i>
+                                            </button>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
 
-                                        @endforeach
+
+                            {{-- ================================= --}}
+                            {{-- INFORMASI FASILITAS --}}
+                            {{-- ================================= --}}
+
+                            <div
+                                @class([
+                                    'relative flex flex-col',
+                                    'justify-between bg-[#F8FAFC]',
+                                    'p-6 sm:p-8 lg:p-10',
+                                    'lg:col-span-4',
+                                    'lg:order-1' => $imageOnRight,
+                                    'lg:order-2' => !$imageOnRight,
+                                ])
+                            >
+                                {{-- Aksen --}}
+                                <div
+                                    @class([
+                                        'absolute top-0 h-1',
+                                        'w-24 bg-[#D7B33E]',
+                                        'left-0' => $imageOnRight,
+                                        'right-0' => !$imageOnRight,
+                                    ])
+                                    aria-hidden="true"
+                                ></div>
+
+
+                                <div>
+                                    <div
+                                        class="flex items-center
+                                               justify-between gap-4"
+                                    >
+                                        <span
+                                            class="inline-flex items-center
+                                                   gap-2 rounded-full
+                                                   border border-blue-100
+                                                   bg-white px-3 py-1.5
+                                                   text-[9px] font-bold
+                                                   uppercase
+                                                   tracking-[0.15em]
+                                                   text-[#075F9B]
+                                                   shadow-sm"
+                                        >
+                                            <span
+                                                class="h-1.5 w-1.5
+                                                       rounded-full
+                                                       bg-[#D7B33E]"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            {{ $facilityLabel }}
+                                        </span>
+
+
+                                        <span
+                                            class="text-xs font-bold
+                                                   text-slate-300"
+                                        >
+                                            {{ str_pad(
+                                                (string) $loop->iteration,
+                                                2,
+                                                '0',
+                                                STR_PAD_LEFT
+                                            ) }}
+                                        </span>
                                     </div>
 
-                                @endif
+
+                                    <h3
+                                        class="mt-6 text-2xl
+                                               font-bold leading-tight
+                                               tracking-[-0.025em]
+                                               text-slate-900
+                                               sm:text-3xl"
+                                    >
+                                        {{ $displayTitle }}
+                                    </h3>
+
+
+                                    @if ($facilityDescription !== '')
+                                        <p
+                                            class="mt-4 text-sm
+                                                   leading-7
+                                                   text-slate-600"
+                                        >
+                                            {{ $facilityDescription }}
+                                        </p>
+                                    @else
+                                        <p
+                                            class="mt-4 text-sm
+                                                   leading-7
+                                                   text-slate-500"
+                                        >
+                                            Dokumentasi fasilitas
+                                            {{ strtolower($facilityLabel) }}
+                                            yang telah dipublikasikan
+                                            oleh pengelola program studi.
+                                        </p>
+                                    @endif
+
+
+                                    <div
+                                        class="mt-6 flex items-center
+                                               gap-3 text-xs
+                                               font-medium
+                                               text-slate-500"
+                                    >
+                                        <span
+                                            class="flex h-9 w-9
+                                                   items-center
+                                                   justify-center
+                                                   rounded-xl
+                                                   bg-blue-50
+                                                   text-[#075F9B]"
+                                        >
+                                            <i
+                                                class="fa-regular fa-images"
+                                                aria-hidden="true"
+                                            ></i>
+                                        </span>
+
+                                        <span>
+                                            {{ $photoTotal }}
+                                            dokumentasi foto
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                                {{-- Thumbnail --}}
+                                <div class="mt-8">
+                                
+
+
+                                    <div
+                                        class="mt-6 border-t
+                                               border-slate-200 pt-6"
+                                    >
+                                        <p
+                                            class="text-[9px] font-bold
+                                                   uppercase
+                                                   tracking-[0.16em]
+                                                   text-slate-400"
+                                        >
+                                            Foto Aktif
+                                        </p>
+
+                                        <p
+                                            class="mt-2 line-clamp-2
+                                                   text-sm font-semibold
+                                                   leading-6
+                                                   text-slate-700"
+                                            data-current-title
+                                        >
+                                            {{ $firstPhotoCaption }}
+                                        </p>
+
+
+                                        <a
+                                            href="{{ $firstPhotoUrl }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            data-open-photo
+                                            class="mt-5 inline-flex
+                                                   items-center gap-3
+                                                   text-xs font-bold
+                                                   uppercase
+                                                   tracking-[0.12em]
+                                                   text-[#075F9B]
+                                                   transition
+                                                   hover:text-[#073763]"
+                                        >
+                                            Buka Foto Penuh
+
+                                            <span
+                                                class="flex h-9 w-9
+                                                       items-center
+                                                       justify-center
+                                                       rounded-full
+                                                       bg-[#075F9B]
+                                                       text-white
+                                                       transition
+                                                       hover:bg-[#073763]"
+                                            >
+                                                <i
+                                                    class="fa-solid
+                                                           fa-up-right-from-square
+                                                           text-[10px]"
+                                                    aria-hidden="true"
+                                                ></i>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </article>
-
                 @endforeach
             </div>
-
         @else
-
             {{-- ================================================= --}}
             {{-- EMPTY STATE --}}
             {{-- ================================================= --}}
 
             <div
-                class="mx-auto max-w-3xl
-                       rounded-[2rem] border
-                       border-slate-100 bg-white
-                       p-8 text-center shadow-lg
-                       sm:p-10"
+                class="mt-12 rounded-[2rem]
+                       border border-dashed
+                       border-slate-300
+                       bg-[#F8FAFC]
+                       px-6 py-14
+                       text-center"
                 data-aos="fade-up"
             >
-                <div
-                    class="mx-auto flex h-20 w-20
+                <span
+                    class="mx-auto flex h-16 w-16
                            items-center justify-center
-                           rounded-3xl bg-blue-100
-                           text-blue-700"
+                           rounded-2xl bg-blue-50
+                           text-2xl text-[#075F9B]"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-10 w-10"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    <i
+                        class="fa-regular fa-images"
                         aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                    </svg>
-                </div>
+                    ></i>
+                </span>
 
                 <h3
-                    class="mt-5 text-2xl font-bold
-                           text-slate-800"
+                    class="mt-5 text-xl font-bold
+                           text-slate-900"
                 >
                     Dokumentasi Belum Tersedia
                 </h3>
 
                 <p
                     class="mx-auto mt-3 max-w-xl
-                           leading-7 text-slate-500"
+                           text-sm leading-7
+                           text-slate-500"
                 >
                     Foto fasilitas dan aktivitas mahasiswa belum
                     dipublikasikan oleh pengelola program studi.
                 </p>
             </div>
-
         @endif
+        </div>
     </div>
 </section>
 
 
 @once
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        function initializeFacilitySliders() {
             const sliders = document.querySelectorAll(
                 '[data-facility-slider]'
             );
@@ -649,13 +842,28 @@
                     '.facility-next'
                 );
 
-                const dots = Array.from(
+                const thumbnails = Array.from(
                     slider.querySelectorAll(
-                        '.facility-dot'
+                        '.facility-thumb'
                     )
                 );
 
-                if (!track || slides.length <= 1) {
+                const currentIndexElement =
+                    slider.querySelector(
+                        '[data-current-index]'
+                    );
+
+                const currentTitleElement =
+                    slider.querySelector(
+                        '[data-current-title]'
+                    );
+
+                const openPhotoLink =
+                    slider.querySelector(
+                        '[data-open-photo]'
+                    );
+
+                if (!track || slides.length === 0) {
                     return;
                 }
 
@@ -677,63 +885,119 @@
 
 
                 function updateSlider(nextIndex) {
-                    currentIndex = normalizeIndex(nextIndex);
+                    currentIndex = normalizeIndex(
+                        nextIndex
+                    );
 
                     track.style.transform =
                         'translateX(-'
                         + (currentIndex * 100)
                         + '%)';
 
-                    slides.forEach(function (slide, index) {
-                        slide.setAttribute(
-                            'aria-hidden',
-                            index === currentIndex
-                                ? 'false'
-                                : 'true'
-                        );
-                    });
+                    slides.forEach(
+                        function (slide, index) {
+                            slide.setAttribute(
+                                'aria-hidden',
+                                index === currentIndex
+                                    ? 'false'
+                                    : 'true'
+                            );
+                        }
+                    );
 
-                    dots.forEach(function (dot, index) {
-                        const isActive =
-                            index === currentIndex;
 
-                        dot.classList.toggle(
-                            'w-8',
-                            isActive
-                        );
+                    thumbnails.forEach(
+                        function (thumbnail, index) {
+                            const isActive =
+                                index === currentIndex;
 
-                        dot.classList.toggle(
-                            'bg-blue-700',
-                            isActive
-                        );
+                            thumbnail.classList.toggle(
+                                'border-[#D7B33E]',
+                                isActive
+                            );
 
-                        dot.classList.toggle(
-                            'w-3',
-                            !isActive
-                        );
+                            thumbnail.classList.toggle(
+                                'opacity-100',
+                                isActive
+                            );
 
-                        dot.classList.toggle(
-                            'bg-slate-300',
-                            !isActive
-                        );
+                            thumbnail.classList.toggle(
+                                'ring-2',
+                                isActive
+                            );
 
-                        dot.setAttribute(
-                            'aria-current',
-                            isActive
-                                ? 'true'
-                                : 'false'
+                            thumbnail.classList.toggle(
+                                'ring-yellow-200',
+                                isActive
+                            );
+
+                            thumbnail.classList.toggle(
+                                'border-transparent',
+                                !isActive
+                            );
+
+                            thumbnail.classList.toggle(
+                                'opacity-60',
+                                !isActive
+                            );
+
+                            thumbnail.setAttribute(
+                                'aria-current',
+                                isActive
+                                    ? 'true'
+                                    : 'false'
+                            );
+
+                        }
+                    );
+
+
+                    const activeSlide =
+                        slides[currentIndex];
+
+                    const photoUrl =
+                        activeSlide.dataset.photoUrl;
+
+                    const photoTitle =
+                        activeSlide.dataset.photoTitle;
+
+
+                    if (currentIndexElement) {
+                        currentIndexElement.textContent =
+                            String(currentIndex + 1)
+                                .padStart(2, '0');
+                    }
+
+
+                    if (currentTitleElement) {
+                        currentTitleElement.textContent =
+                            photoTitle;
+                    }
+
+
+                    if (openPhotoLink && photoUrl) {
+                        openPhotoLink.href = photoUrl;
+
+                        openPhotoLink.setAttribute(
+                            'aria-label',
+                            'Buka foto '
+                            + photoTitle
                         );
-                    });
+                    }
                 }
 
 
                 function showNextSlide() {
-                    updateSlider(currentIndex + 1);
+                    updateSlider(
+                        currentIndex + 1
+                    );
                 }
 
 
                 function showPreviousSlide() {
-                    updateSlider(currentIndex - 1);
+                    updateSlider(
+                        currentIndex - 1
+                    );
                 }
 
 
@@ -753,25 +1017,33 @@
                 }
 
 
-                dots.forEach(function (dot, index) {
-                    dot.addEventListener(
-                        'click',
-                        function () {
-                            updateSlider(index);
-                        }
-                    );
-                });
+                thumbnails.forEach(
+                    function (thumbnail, index) {
+                        thumbnail.addEventListener(
+                            'click',
+                            function () {
+                                updateSlider(index);
+                            }
+                        );
+                    }
+                );
 
 
                 slider.addEventListener(
                     'keydown',
                     function (event) {
-                        if (event.key === 'ArrowRight') {
+                        if (
+                            event.key ===
+                            'ArrowRight'
+                        ) {
                             event.preventDefault();
                             showNextSlide();
                         }
 
-                        if (event.key === 'ArrowLeft') {
+                        if (
+                            event.key ===
+                            'ArrowLeft'
+                        ) {
                             event.preventDefault();
                             showPreviousSlide();
                         }
@@ -799,14 +1071,17 @@
                         }
 
                         const touchEndX =
-                            event.changedTouches[0].clientX;
+                            event.changedTouches[0]
+                                .clientX;
 
                         const distance =
                             touchEndX - touchStartX;
 
                         touchStartX = null;
 
-                        if (Math.abs(distance) < 50) {
+                        if (
+                            Math.abs(distance) < 50
+                        ) {
                             return;
                         }
 
@@ -824,6 +1099,18 @@
 
                 updateSlider(0);
             });
-        });
+        }
+
+
+        if (
+            document.readyState === 'loading'
+        ) {
+            document.addEventListener(
+                'DOMContentLoaded',
+                initializeFacilitySliders
+            );
+        } else {
+            initializeFacilitySliders();
+        }
     </script>
 @endonce

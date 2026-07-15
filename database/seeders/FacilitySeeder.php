@@ -10,11 +10,10 @@ use Illuminate\Database\Seeder;
 class FacilitySeeder extends Seeder
 {
     /**
-     * Membuat struktur awal kategori fasilitas TMPP.
+     * Membuat struktur awal fasilitas TMPP.
      *
-     * Deskripsi sengaja dikosongkan karena materi resmi yang tersedia
-     * belum memberikan uraian khusus untuk setiap fasilitas.
-     * Pengelola dapat melengkapinya melalui halaman admin.
+     * Seeder tidak mengubah deskripsi fasilitas yang sudah
+     * dilengkapi melalui admin dan tidak menghapus foto.
      */
     public function run(): void
     {
@@ -25,9 +24,6 @@ class FacilitySeeder extends Seeder
 
                 'title' =>
                     'Ruang Laboratorium',
-
-                'description' =>
-                    null,
 
                 'sort_order' =>
                     1,
@@ -43,9 +39,6 @@ class FacilitySeeder extends Seeder
                 'title' =>
                     'Ruang Workshop',
 
-                'description' =>
-                    null,
-
                 'sort_order' =>
                     2,
 
@@ -60,11 +53,64 @@ class FacilitySeeder extends Seeder
                 'title' =>
                     'Ruang Kelas',
 
-                'description' =>
-                    null,
-
                 'sort_order' =>
                     3,
+
+                'is_active' =>
+                    true,
+            ],
+
+            [
+                'category' =>
+                    Facility::CATEGORY_LECTURER_ROOM,
+
+                'title' =>
+                    'Ruang Dosen',
+
+                'sort_order' =>
+                    4,
+
+                'is_active' =>
+                    true,
+            ],
+
+            [
+                'category' =>
+                    Facility::CATEGORY_ADMINISTRATION,
+
+                'title' =>
+                    'Ruang Tata Usaha',
+
+                'sort_order' =>
+                    5,
+
+                'is_active' =>
+                    true,
+            ],
+
+            [
+                'category' =>
+                    Facility::CATEGORY_HEALTH,
+
+                'title' =>
+                    'Fasilitas Kesehatan',
+
+                'sort_order' =>
+                    6,
+
+                'is_active' =>
+                    true,
+            ],
+
+            [
+                'category' =>
+                    Facility::CATEGORY_MOSQUE,
+
+                'title' =>
+                    'Masjid',
+
+                'sort_order' =>
+                    7,
 
                 'is_active' =>
                     true,
@@ -77,11 +123,8 @@ class FacilitySeeder extends Seeder
                 'title' =>
                     'Galeri Aktivitas Mahasiswa',
 
-                'description' =>
-                    null,
-
                 'sort_order' =>
-                    4,
+                    8,
 
                 'is_active' =>
                     true,
@@ -91,13 +134,18 @@ class FacilitySeeder extends Seeder
         foreach ($facilities as $facility) {
             Facility::query()->updateOrCreate(
                 [
-                    'category' => $facility['category'],
+                    'category' =>
+                        $facility['category'],
                 ],
                 [
-                    'title' => $facility['title'],
-                    'description' => $facility['description'],
-                    'sort_order' => $facility['sort_order'],
-                    'is_active' => $facility['is_active'],
+                    'title' =>
+                        $facility['title'],
+
+                    'sort_order' =>
+                        $facility['sort_order'],
+
+                    'is_active' =>
+                        $facility['is_active'],
                 ]
             );
         }

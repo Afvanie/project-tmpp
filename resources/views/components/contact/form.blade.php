@@ -1,237 +1,602 @@
-<section class="relative py-24 bg-white overflow-hidden">
+<section
+    id="form-kontak"
+    class="relative overflow-hidden
+           border-y border-slate-200
+           bg-white py-16
+           md:py-20 lg:py-24"
+>
+    {{-- ========================================================= --}}
+    {{-- DEKORASI RINGAN --}}
+    {{-- ========================================================= --}}
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 pointer-events-none">
+    <div
+        class="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+    >
+        <div
+            class="absolute -left-48 top-0
+                   h-96 w-96 rounded-full
+                   bg-blue-100/35
+                   blur-[140px]"
+        ></div>
 
-        <div class="absolute -left-40 top-20 w-[500px] h-[500px] rounded-full bg-blue-200/20 blur-[140px]"></div>
-
-        <div class="absolute -right-40 bottom-20 w-[500px] h-[500px] rounded-full bg-yellow-200/20 blur-[140px]"></div>
-
-        <div class="absolute inset-0 opacity-[0.03]"
-            style="background-image: linear-gradient(#0f172a 1px, transparent 1px),
-            linear-gradient(to right,#0f172a 1px,transparent 1px);
-            background-size:70px 70px;">
-        </div>
-
+        <div
+            class="absolute -right-48 bottom-0
+                   h-96 w-96 rounded-full
+                   bg-yellow-100/30
+                   blur-[140px]"
+        ></div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
 
-        <div class="grid lg:grid-cols-12 gap-12 items-start">
+    <div
+        class="relative mx-auto
+               max-w-7xl px-6"
+    >
+        <div
+            class="grid items-start gap-12
+                   lg:grid-cols-12
+                   lg:gap-16"
+        >
+            {{-- ================================================= --}}
+            {{-- INFORMASI --}}
+            {{-- ================================================= --}}
 
-            {{-- Left Content --}}
-            <div class="lg:col-span-5" data-aos="fade-right">
+            <div
+                class="lg:col-span-5"
+                data-aos="fade-right"
+            >
+                <div
+                    class="flex items-center gap-3"
+                >
+                    <span
+                        class="h-px w-8
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
 
-                <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-                    Kirim Pesan
-                </span>
-
-                <h2 class="mt-4 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                    Ada pertanyaan terkait Program Studi?
-                </h2>
-
-                <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6 mb-8"></div>
-
-                <p class="text-slate-600 leading-8 text-justify">
-                    Silakan hubungi Program Studi D-IV Teknik Mesin Produksi dan Perawatan untuk informasi
-                    mengenai akademik, administrasi, kerja sama, kegiatan mahasiswa,
-                    maupun kebutuhan komunikasi lainnya.
-                </p>
-
-                <div class="mt-8 space-y-4">
-
-                    <div class="flex items-start gap-4 rounded-2xl bg-slate-50 border border-slate-100 p-5">
-
-                        <div class="w-11 h-11 rounded-xl bg-blue-700 text-white flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-6 h-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M12 22a10 10 0 100-20 10 10 0 000 20z" />
-                            </svg>
-                        </div>
-
-                        <div>
-                            <h3 class="font-bold text-slate-800">
-                                Catatan
-                            </h3>
-
-                            <p class="mt-1 text-slate-600 leading-7">
-                                Form ini untuk sementara masih tampilan statis.
-                                Nanti bisa dihubungkan ke email, database, atau dashboard admin.
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div class="flex items-start gap-4 rounded-2xl bg-yellow-50 border border-yellow-100 p-5">
-
-                        <div class="w-11 h-11 rounded-xl bg-yellow-400 text-slate-900 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="w-6 h-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 8v4l3 3M12 22a10 10 0 100-20 10 10 0 000 20z" />
-                            </svg>
-                        </div>
-
-                        <div>
-                            <h3 class="font-bold text-slate-800">
-                                Waktu Respon
-                            </h3>
-
-                            <p class="mt-1 text-slate-600 leading-7">
-                                Pesan akan ditindaklanjuti pada jam layanan akademik.
-                            </p>
-                        </div>
-
-                    </div>
-
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.22em]
+                               text-[#075F9B]"
+                    >
+                        Kirim Pesan
+                    </p>
                 </div>
 
+
+                <h2
+                    class="mt-4 max-w-xl
+                           text-3xl font-semibold
+                           leading-tight
+                           tracking-[-0.025em]
+                           text-slate-900
+                           sm:text-4xl lg:text-5xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
+                >
+                    Sampaikan Pertanyaan kepada Program Studi
+                </h2>
+
+
+                <p
+                    class="mt-5 max-w-xl
+                           text-sm leading-7
+                           text-slate-600
+                           sm:text-base
+                           sm:leading-8"
+                >
+                    Formulir ini dapat digunakan untuk menyampaikan
+                    kebutuhan informasi mengenai akademik,
+                    administrasi, kerja sama, kegiatan mahasiswa,
+                    maupun komunikasi lainnya.
+                </p>
+
+
+                <div
+                    class="mt-8 space-y-4"
+                >
+                    {{-- Status form --}}
+                    <div
+                        class="flex items-start gap-4
+                               rounded-2xl
+                               border border-blue-100
+                               bg-blue-50/60 p-5"
+                    >
+                        <span
+                            class="flex h-10 w-10
+                                   shrink-0 items-center
+                                   justify-center
+                                   rounded-xl bg-white
+                                   text-[#075F9B]
+                                   shadow-sm"
+                        >
+                            <i
+                                class="fa-solid fa-code"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+
+                        <div>
+                            <h3
+                                class="text-sm font-bold
+                                       text-slate-900"
+                            >
+                                Status Formulir
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm
+                                       leading-7
+                                       text-slate-600"
+                            >
+                                Form masih berupa tampilan frontend
+                                dan belum terhubung dengan email,
+                                database, atau dashboard admin.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    {{-- Waktu layanan --}}
+                    <div
+                        class="flex items-start gap-4
+                               rounded-2xl
+                               border border-yellow-100
+                               bg-yellow-50/60 p-5"
+                    >
+                        <span
+                            class="flex h-10 w-10
+                                   shrink-0 items-center
+                                   justify-center
+                                   rounded-xl bg-white
+                                   text-yellow-700
+                                   shadow-sm"
+                        >
+                            <i
+                                class="fa-regular fa-clock"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+
+                        <div>
+                            <h3
+                                class="text-sm font-bold
+                                       text-slate-900"
+                            >
+                                Tindak Lanjut
+                            </h3>
+
+                            <p
+                                class="mt-1 text-sm
+                                       leading-7
+                                       text-slate-600"
+                            >
+                                Pesan yang telah terhubung ke backend
+                                nantinya dapat ditindaklanjuti pada
+                                jam layanan program studi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {{-- Right Form --}}
-            <div class="lg:col-span-7" data-aos="fade-left">
 
-                <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
+            {{-- ================================================= --}}
+            {{-- FORM --}}
+            {{-- ================================================= --}}
 
-                    <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
+            <div
+                class="lg:col-span-7"
+                data-aos="fade-left"
+            >
+                <div
+                    class="overflow-hidden
+                           rounded-[2rem]
+                           border border-slate-200
+                           bg-[#F8FAFC]
+                           shadow-[0_20px_55px_rgba(15,23,42,0.09)]"
+                >
+                    {{-- Header form --}}
+                    <div
+                        class="flex items-center
+                               justify-between gap-5
+                               border-b border-slate-200
+                               bg-white px-6 py-5
+                               sm:px-8"
+                    >
+                        <div>
+                            <p
+                                class="text-[9px] font-bold
+                                       uppercase
+                                       tracking-[0.17em]
+                                       text-[#075F9B]"
+                            >
+                                Formulir Kontak
+                            </p>
 
-                    <div class="p-7 md:p-10">
+                            <h3
+                                class="mt-1 text-xl font-bold
+                                       text-slate-900"
+                            >
+                                Tulis Pesan Anda
+                            </h3>
+                        </div>
 
-                        <h3 class="text-3xl font-bold text-slate-800">
-                            Form Kontak
-                        </h3>
 
-                        <p class="mt-3 text-slate-500 leading-7">
-                            Isi data berikut untuk mengirim pesan kepada Program Studi D-IV Teknik Mesin Produksi dan Perawatan.
-                        </p>
+                        <span
+                            class="flex h-11 w-11
+                                   shrink-0 items-center
+                                   justify-center
+                                   rounded-xl
+                                   bg-blue-50
+                                   text-[#075F9B]"
+                        >
+                            <i
+                                class="fa-regular
+                                       fa-envelope"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+                    </div>
 
-                        <form id="contactForm" class="mt-8 space-y-6">
 
-                            <div class="grid md:grid-cols-2 gap-6">
-
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                                        Nama Lengkap
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Masukkan nama lengkap"
-                                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                                        Email
-                                    </label>
-
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Masukkan email"
-                                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-
-                            </div>
-
+                    <form
+                        id="contactForm"
+                        class="space-y-5
+                               p-6 sm:p-8"
+                        novalidate
+                    >
+                        <div
+                            class="grid gap-5
+                                   sm:grid-cols-2"
+                        >
+                            {{-- Nama --}}
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">
-                                    Subjek
+                                <label
+                                    for="contactName"
+                                    class="mb-2 block
+                                           text-sm font-semibold
+                                           text-slate-700"
+                                >
+                                    Nama Lengkap
+                                    <span class="text-red-500">*</span>
                                 </label>
 
                                 <input
+                                    id="contactName"
                                     type="text"
-                                    name="subject"
-                                    placeholder="Masukkan subjek pesan"
-                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    name="name"
+                                    autocomplete="name"
+                                    required
+                                    placeholder="Masukkan nama lengkap"
+                                    class="w-full rounded-xl
+                                           border border-slate-200
+                                           bg-white px-4 py-3.5
+                                           text-sm text-slate-900
+                                           outline-none
+                                           transition
+                                           placeholder:text-slate-400
+                                           focus:border-[#075F9B]
+                                           focus:ring-4
+                                           focus:ring-blue-100"
+                                >
                             </div>
 
+
+                            {{-- Email --}}
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">
-                                    Pesan
+                                <label
+                                    for="contactEmail"
+                                    class="mb-2 block
+                                           text-sm font-semibold
+                                           text-slate-700"
+                                >
+                                    Email
+                                    <span class="text-red-500">*</span>
                                 </label>
 
-                                <textarea
-                                    name="message"
-                                    rows="6"
-                                    placeholder="Tulis pesan Anda"
-                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                <input
+                                    id="contactEmail"
+                                    type="email"
+                                    name="email"
+                                    autocomplete="email"
+                                    required
+                                    placeholder="nama@email.com"
+                                    class="w-full rounded-xl
+                                           border border-slate-200
+                                           bg-white px-4 py-3.5
+                                           text-sm text-slate-900
+                                           outline-none
+                                           transition
+                                           placeholder:text-slate-400
+                                           focus:border-[#075F9B]
+                                           focus:ring-4
+                                           focus:ring-blue-100"
+                                >
                             </div>
+                        </div>
+
+
+                        {{-- Subjek --}}
+                        <div>
+                            <label
+                                for="contactSubject"
+                                class="mb-2 block
+                                       text-sm font-semibold
+                                       text-slate-700"
+                            >
+                                Subjek
+                                <span class="text-red-500">*</span>
+                            </label>
+
+                            <input
+                                id="contactSubject"
+                                type="text"
+                                name="subject"
+                                required
+                                placeholder="Tuliskan subjek pesan"
+                                class="w-full rounded-xl
+                                       border border-slate-200
+                                       bg-white px-4 py-3.5
+                                       text-sm text-slate-900
+                                       outline-none
+                                       transition
+                                       placeholder:text-slate-400
+                                       focus:border-[#075F9B]
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            >
+                        </div>
+
+
+                        {{-- Pesan --}}
+                        <div>
+                            <div
+                                class="mb-2 flex items-center
+                                       justify-between gap-4"
+                            >
+                                <label
+                                    for="contactMessage"
+                                    class="text-sm font-semibold
+                                           text-slate-700"
+                                >
+                                    Pesan
+                                    <span class="text-red-500">*</span>
+                                </label>
+
+                                <span
+                                    id="contactCharacterCount"
+                                    class="text-xs
+                                           text-slate-400"
+                                >
+                                    0 / 1000
+                                </span>
+                            </div>
+
+                            <textarea
+                                id="contactMessage"
+                                name="message"
+                                rows="6"
+                                maxlength="1000"
+                                required
+                                placeholder="Tuliskan pesan Anda secara jelas"
+                                class="w-full resize-y
+                                       rounded-xl
+                                       border border-slate-200
+                                       bg-white px-4 py-3.5
+                                       text-sm leading-7
+                                       text-slate-900
+                                       outline-none
+                                       transition
+                                       placeholder:text-slate-400
+                                       focus:border-[#075F9B]
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            ></textarea>
+                        </div>
+
+
+                        {{-- Alert validasi --}}
+                        <div
+                            id="contactValidationAlert"
+                            class="hidden rounded-xl
+                                   border border-red-200
+                                   bg-red-50 px-4 py-3
+                                   text-sm leading-6
+                                   text-red-700"
+                            role="alert"
+                        >
+                            Lengkapi seluruh kolom wajib dengan data
+                            yang benar.
+                        </div>
+
+
+                        {{-- Alert status --}}
+                        <div
+                            id="contactAlert"
+                            class="hidden rounded-xl
+                                   border border-blue-200
+                                   bg-blue-50 px-4 py-4
+                                   text-sm leading-7
+                                   text-blue-800"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            <div class="flex items-start gap-3">
+                                <i
+                                    class="fa-solid fa-circle-info
+                                           mt-1 text-[#075F9B]"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <p>
+                                    Data formulir belum dikirim karena
+                                    fitur ini masih berupa tampilan
+                                    frontend dan belum terhubung ke
+                                    sistem pengiriman pesan.
+                                </p>
+                            </div>
+                        </div>
+
+
+                        {{-- Footer form --}}
+                        <div
+                            class="flex flex-col gap-4
+                                   border-t border-slate-200
+                                   pt-6
+                                   sm:flex-row
+                                   sm:items-center
+                                   sm:justify-between"
+                        >
+                            <p
+                                class="text-xs leading-6
+                                       text-slate-400"
+                            >
+                                Kolom bertanda
+                                <span class="text-red-500">*</span>
+                                wajib diisi.
+                            </p>
+
 
                             <button
                                 type="submit"
-                                class="inline-flex items-center justify-center gap-3 rounded-2xl bg-blue-700 px-7 py-4 text-white font-bold shadow-lg hover:bg-blue-800 hover:-translate-y-1 transition-all duration-300">
+                                class="inline-flex
+                                       items-center
+                                       justify-center gap-3
+                                       rounded-xl
+                                       bg-[#075F9B]
+                                       px-6 py-3.5
+                                       text-sm font-bold
+                                       text-white
+                                       shadow-lg
+                                       shadow-blue-900/10
+                                       transition
+                                       hover:bg-[#073763]
+                                       focus:outline-none
+                                       focus:ring-4
+                                       focus:ring-blue-200"
+                            >
+                                Tinjau Pesan
 
-                                Kirim Pesan
-
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="w-5 h-5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor">
-
-                                    <path stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-
+                                <i
+                                    class="fa-solid
+                                           fa-arrow-right
+                                           text-xs"
+                                    aria-hidden="true"
+                                ></i>
                             </button>
-
-                        </form>
-
-                        <div
-                            id="contactAlert"
-                            class="hidden mt-6 rounded-2xl bg-blue-50 border border-blue-100 p-5 text-blue-700 leading-7">
-
-                            Form kontak saat ini masih berupa tampilan statis. Fitur pengiriman pesan dapat dihubungkan ke backend pada tahap berikutnya.
-
                         </div>
-
-                    </div>
-
+                    </form>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('contactForm');
-        const alertBox = document.getElementById('contactAlert');
 
-        if (!form || !alertBox) {
-            return;
+@once
+    <script>
+        function initializeContactForm() {
+            const form = document.getElementById(
+                'contactForm'
+            );
+
+            const messageField = document.getElementById(
+                'contactMessage'
+            );
+
+            const characterCount = document.getElementById(
+                'contactCharacterCount'
+            );
+
+            const validationAlert = document.getElementById(
+                'contactValidationAlert'
+            );
+
+            const contactAlert = document.getElementById(
+                'contactAlert'
+            );
+
+            if (!form) {
+                return;
+            }
+
+
+            function updateCharacterCount() {
+                if (!messageField || !characterCount) {
+                    return;
+                }
+
+                characterCount.textContent =
+                    messageField.value.length
+                    + ' / 1000';
+            }
+
+
+            if (messageField) {
+                messageField.addEventListener(
+                    'input',
+                    updateCharacterCount
+                );
+
+                updateCharacterCount();
+            }
+
+
+            form.addEventListener(
+                'submit',
+                function (event) {
+                    event.preventDefault();
+
+                    if (validationAlert) {
+                        validationAlert.classList.add(
+                            'hidden'
+                        );
+                    }
+
+                    if (contactAlert) {
+                        contactAlert.classList.add(
+                            'hidden'
+                        );
+                    }
+
+
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+
+                        if (validationAlert) {
+                            validationAlert.classList.remove(
+                                'hidden'
+                            );
+                        }
+
+                        return;
+                    }
+
+
+                    if (contactAlert) {
+                        contactAlert.classList.remove(
+                            'hidden'
+                        );
+                    }
+                }
+            );
         }
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
 
-            alertBox.classList.remove('hidden');
-
-            alertBox.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-        });
-    });
-</script>
+        if (document.readyState === 'loading') {
+            document.addEventListener(
+                'DOMContentLoaded',
+                initializeContactForm
+            );
+        } else {
+            initializeContactForm();
+        }
+    </script>
+@endonce

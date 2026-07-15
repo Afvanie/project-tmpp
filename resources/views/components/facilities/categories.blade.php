@@ -1,356 +1,434 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | DATA KATEGORI FASILITAS
+    | DATA FASILITAS
     |--------------------------------------------------------------------------
     */
 
-    $facilityItems = $facilities ?? collect();
+    $facilityItems = collect(
+        $facilities ?? []
+    );
+
 
     /*
     |--------------------------------------------------------------------------
-    | TAMPILAN VISUAL PER KATEGORI
+    | IDENTITAS VISUAL KATEGORI
     |--------------------------------------------------------------------------
     |
-    | Pengaturan berikut hanya menentukan ikon dan warna kartu.
-    | Informasi judul dan deskripsi tetap berasal dari database.
+    | Judul dan deskripsi tetap berasal dari database.
+    | Konfigurasi berikut hanya mengatur ikon dan label publik.
     |
     */
 
     $categoryStyles = [
         \App\Models\Facility::CATEGORY_LABORATORY => [
-            'icon' => 'fa-flask',
-            'label' => 'Laboratorium',
-            'theme' => 'yellow',
+            'icon' => 'fa-flask-vial',
+            'label' => 'Ruang Laboratorium',
+            'icon_class' => 'bg-blue-50 text-[#075F9B]',
+            'dot_class' => 'bg-[#075F9B]',
         ],
 
         \App\Models\Facility::CATEGORY_WORKSHOP => [
             'icon' => 'fa-screwdriver-wrench',
-            'label' => 'Workshop',
-            'theme' => 'blue',
+            'label' => 'Ruang Workshop',
+            'icon_class' => 'bg-yellow-50 text-yellow-700',
+            'dot_class' => 'bg-[#D7B33E]',
         ],
 
         \App\Models\Facility::CATEGORY_CLASSROOM => [
-            'icon' => 'fa-book-open',
+            'icon' => 'fa-chalkboard-user',
             'label' => 'Ruang Kelas',
-            'theme' => 'blue',
+            'icon_class' => 'bg-blue-50 text-[#075F9B]',
+            'dot_class' => 'bg-[#075F9B]',
         ],
 
         \App\Models\Facility::CATEGORY_GALLERY => [
             'icon' => 'fa-images',
-            'label' => 'Galeri',
-            'theme' => 'yellow',
+            'label' => 'Galeri Aktivitas',
+            'icon_class' => 'bg-yellow-50 text-yellow-700',
+            'dot_class' => 'bg-[#D7B33E]',
         ],
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RINGKASAN DATA
+    |--------------------------------------------------------------------------
+    */
+
+    $totalPublishedPhotos = $facilityItems
+        ->sum(function ($facility) {
+            return collect(
+                $facility->photos ?? []
+            )
+                ->filter(function ($photo) {
+                    $photoPath = trim(
+                        (string) (
+                            $photo->photo
+                            ?? ''
+                        )
+                    );
+
+                    return $photoPath !== ''
+                        && \Illuminate\Support\Facades\Storage::disk(
+                            'public'
+                        )->exists($photoPath);
+                })
+                ->count();
+        });
 @endphp
 
 
 <section
     id="kategori-fasilitas"
-    class="relative overflow-hidden bg-white
-           py-20 md:py-24"
+    class="border-b border-slate-200
+           bg-white py-12
+           md:py-14"
 >
-    {{-- ========================================================= --}}
-    {{-- BACKGROUND DECORATION --}}
-    {{-- ========================================================= --}}
-
     <div
-        class="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-    >
-        <div
-            class="absolute -left-40 top-20
-                   h-[500px] w-[500px]
-                   rounded-full bg-blue-200/20
-                   blur-[140px]"
-        ></div>
-
-        <div
-            class="absolute -right-40 bottom-20
-                   h-[500px] w-[500px]
-                   rounded-full bg-yellow-200/20
-                   blur-[140px]"
-        ></div>
-
-        <div
-            class="absolute inset-0 opacity-[0.03]"
-            style="
-                background-image:
-                    linear-gradient(
-                        #0f172a 1px,
-                        transparent 1px
-                    ),
-                    linear-gradient(
-                        to right,
-                        #0f172a 1px,
-                        transparent 1px
-                    );
-                background-size: 70px 70px;
-            "
-        ></div>
-
-        <img
-            src="{{ asset('assets/images/logo.png') }}"
-            alt=""
-            class="absolute -bottom-24 -left-20
-                   hidden w-[420px] select-none
-                   grayscale opacity-[0.025]
-                   lg:block"
-        >
-    </div>
-
-
-    <div
-        class="relative z-10 mx-auto
-               max-w-7xl px-6"
+        class="mx-auto max-w-7xl px-6"
     >
         {{-- ===================================================== --}}
-        {{-- HEADING --}}
+        {{-- HEADING RINGKAS --}}
         {{-- ===================================================== --}}
 
         <div
-            class="mx-auto mb-14 max-w-3xl text-center
-                   md:mb-16"
+            class="flex flex-col gap-6
+                   lg:flex-row
+                   lg:items-end
+                   lg:justify-between"
             data-aos="fade-up"
         >
-            <span
-                class="text-sm font-semibold uppercase
-                       tracking-[5px] text-blue-700"
-            >
-                Fasilitas Program Studi
-            </span>
+            <div class="max-w-2xl">
+                <div
+                    class="flex items-center gap-3"
+                >
+                    <span
+                        class="h-px w-8
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
 
-            <h2
-                class="mt-4 text-3xl font-bold
-                       leading-tight text-slate-800
-                       sm:text-4xl md:text-5xl"
-            >
-                Kategori Fasilitas
-            </h2>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.2em]
+                               text-[#075F9B]"
+                    >
+                        Kategori Fasilitas
+                    </p>
+                </div>
 
-            <div
-                class="mx-auto mt-6 h-1 w-24
-                       rounded-full bg-yellow-400"
-            ></div>
+                <h2
+                    class="mt-3 text-2xl
+                           font-semibold
+                           tracking-[-0.02em]
+                           text-slate-900
+                           sm:text-3xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
+                >
+                    Sarana Pendukung Pembelajaran
+                </h2>
 
-            <p
-                class="mt-7 leading-8 text-slate-600"
-            >
-                Daftar kategori dan dokumentasi fasilitas Program
-                Studi D-IV Teknik Mesin Produksi dan Perawatan
-                Politeknik Negeri Malang.
-            </p>
+                <p
+                    class="mt-3 text-sm
+                           leading-7 text-slate-500"
+                >
+                    Ringkasan kategori fasilitas yang tersedia
+                    pada Program Studi D-IV Teknik Mesin Produksi
+                    dan Perawatan.
+                </p>
+            </div>
+
+
+            @if ($facilityItems->isNotEmpty())
+                <div
+                    class="flex items-center gap-5
+                           text-sm text-slate-500"
+                >
+                    <div>
+                        <span
+                            class="font-bold
+                                   text-[#075F9B]"
+                        >
+                            {{ $facilityItems->count() }}
+                        </span>
+
+                        kategori
+                    </div>
+
+                    <span
+                        class="h-4 w-px
+                               bg-slate-300"
+                        aria-hidden="true"
+                    ></span>
+
+                    <div>
+                        <span
+                            class="font-bold
+                                   text-yellow-700"
+                        >
+                            {{ $totalPublishedPhotos }}
+                        </span>
+
+                        dokumentasi
+                    </div>
+                </div>
+            @endif
         </div>
 
 
         {{-- ===================================================== --}}
-        {{-- DAFTAR KATEGORI --}}
+        {{-- KATEGORI MINIMALIS --}}
         {{-- ===================================================== --}}
 
         @if ($facilityItems->isNotEmpty())
-
             <div
-                class="grid gap-7
-                       md:grid-cols-2
+                class="mt-8 grid gap-4
+                       sm:grid-cols-2
                        xl:grid-cols-4"
             >
                 @foreach ($facilityItems as $facility)
-
                     @php
                         $style = $categoryStyles[
                             $facility->category
                         ] ?? [
                             'icon' => 'fa-building',
-                            'label' => $facility->category_label,
-                            'theme' => 'blue',
+                            'label' => trim(
+                                (string) (
+                                    $facility->category_label
+                                    ?? 'Fasilitas'
+                                )
+                            ),
+                            'icon_class' => 'bg-blue-50 text-[#075F9B]',
+                            'dot_class' => 'bg-[#075F9B]',
                         ];
 
-                        $isBlue = $style['theme'] === 'blue';
-
-                        $title = trim(
-                            (string) $facility->title
+                        $facilityTitle = trim(
+                            (string) (
+                                $facility->title
+                                ?? ''
+                            )
                         );
 
-                        $description = trim(
-                            (string) $facility->description
+                        $facilityDescription = trim(
+                            (string) (
+                                $facility->description
+                                ?? ''
+                            )
                         );
 
-                        $photoCount = $facility->relationLoaded('photos')
-                            ? $facility->photos->count()
-                            : 0;
+                        $validPhotos = collect(
+                            $facility->photos ?? []
+                        )
+                            ->filter(function ($photo) {
+                                $photoPath = trim(
+                                    (string) (
+                                        $photo->photo
+                                        ?? ''
+                                    )
+                                );
+
+                                return $photoPath !== ''
+                                    && \Illuminate\Support\Facades\Storage::disk(
+                                        'public'
+                                    )->exists($photoPath);
+                            })
+                            ->values();
+
+                        $photoCount = $validPhotos->count();
+
+                        $targetId = 'facility-slider-'
+                            . $facility->id;
                     @endphp
 
+
                     <article
-                        class="group relative overflow-hidden
-                               rounded-3xl border
-                               border-slate-100 bg-white
-                               p-7 shadow-lg
-                               transition-all duration-500
-                               hover:-translate-y-2
-                               hover:shadow-2xl"
+                        class="group relative
+                               rounded-2xl border
+                               border-slate-200
+                               bg-white p-5
+                               transition duration-300
+                               hover:-translate-y-0.5
+                               hover:border-blue-200
+                               hover:shadow-md"
                         data-aos="fade-up"
                         data-aos-delay="{{ min(
-                            ($loop->index % 4) * 100,
-                            300
+                            ($loop->index % 4) * 70,
+                            210
                         ) }}"
                     >
-                        {{-- Dekorasi --}}
                         <div
-                            @class([
-                                'absolute -right-12 -top-12',
-                                'h-36 w-36 rounded-full',
-                                'transition duration-500',
-                                'bg-blue-100 group-hover:bg-yellow-100' =>
-                                    $isBlue,
-                                'bg-yellow-100 group-hover:bg-blue-100' =>
-                                    !$isBlue,
-                            ])
-                        ></div>
-
-
-                        <div class="relative">
-
+                            class="flex items-start gap-4"
+                        >
                             {{-- Ikon --}}
-                            <div
-                                @class([
-                                    'mb-6 flex h-16 w-16',
-                                    'items-center justify-center',
-                                    'rounded-2xl shadow-lg',
-                                    'transition duration-500',
-                                    'bg-blue-700 text-white',
-                                    'group-hover:bg-yellow-400',
-                                    'group-hover:text-slate-900' =>
-                                        $isBlue,
-                                    'bg-yellow-400 text-slate-900',
-                                    'group-hover:bg-blue-700',
-                                    'group-hover:text-white' =>
-                                        !$isBlue,
-                                ])
+                            <span
+                                class="flex h-11 w-11
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       {{ $style['icon_class'] }}"
                             >
                                 <i
-                                    class="fa-solid {{ $style['icon'] }}
-                                           text-3xl"
+                                    class="fa-solid
+                                           {{ $style['icon'] }}"
                                     aria-hidden="true"
                                 ></i>
-                            </div>
-
-
-                            {{-- Label --}}
-                            <span
-                                @class([
-                                    'inline-flex rounded-full',
-                                    'px-3 py-1 text-xs',
-                                    'font-semibold',
-                                    'bg-blue-50 text-blue-700' =>
-                                        $isBlue,
-                                    'bg-yellow-50 text-yellow-700' =>
-                                        !$isBlue,
-                                ])
-                            >
-                                {{ $style['label'] }}
                             </span>
 
 
-                            {{-- Judul --}}
-                            <h3
-                                class="mt-4 text-2xl font-bold
-                                       leading-snug text-slate-800"
-                            >
-                                {{ $title !== ''
-                                    ? $title
-                                    : $facility->category_label }}
-                            </h3>
-
-
-                            {{-- Deskripsi dari Admin --}}
-                            @if ($description !== '')
-                                <p
-                                    class="mt-4 leading-8
-                                           text-slate-600"
+                            {{-- Informasi --}}
+                            <div class="min-w-0 flex-1">
+                                <div
+                                    class="flex items-center gap-2"
                                 >
-                                    {{ $description }}
-                                </p>
-                            @endif
+                                    <span
+                                        class="h-1.5 w-1.5
+                                               shrink-0 rounded-full
+                                               {{ $style['dot_class'] }}"
+                                        aria-hidden="true"
+                                    ></span>
+
+                                    <p
+                                        class="text-[9px]
+                                               font-bold uppercase
+                                               tracking-[0.15em]
+                                               text-slate-400"
+                                    >
+                                        {{ $style['label'] }}
+                                    </p>
+                                </div>
 
 
-                            {{-- Jumlah Dokumentasi --}}
+                                <h3
+                                    class="mt-2 text-base
+                                           font-bold leading-6
+                                           text-slate-900"
+                                >
+                                    {{ $facilityTitle !== ''
+                                        ? $facilityTitle
+                                        : $style['label'] }}
+                                </h3>
+
+
+                                @if ($facilityDescription !== '')
+                                    <p
+                                        class="mt-2 text-xs
+                                               leading-6
+                                               text-slate-500"
+                                    >
+                                        {{ \Illuminate\Support\Str::limit(
+                                            $facilityDescription,
+                                            85
+                                        ) }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+
+
+                        <div
+                            class="mt-5 flex items-center
+                                   justify-between
+                                   border-t
+                                   border-slate-100 pt-4"
+                        >
                             <div
-                                class="mt-6 flex items-center
-                                       justify-between gap-4
-                                       border-t border-slate-100
-                                       pt-5"
+                                class="flex items-center gap-2
+                                       text-xs text-slate-500"
                             >
-                                <span
-                                    class="text-sm font-semibold
-                                           text-slate-500"
-                                >
-                                    Dokumentasi
-                                </span>
+                                <i
+                                    class="fa-regular
+                                           fa-images"
+                                    aria-hidden="true"
+                                ></i>
 
-                                <span
-                                    @class([
-                                        'inline-flex min-w-9',
-                                        'items-center justify-center',
-                                        'rounded-full px-3 py-1',
-                                        'text-sm font-bold',
-                                        'bg-blue-50 text-blue-700' =>
-                                            $isBlue,
-                                        'bg-yellow-50 text-yellow-700' =>
-                                            !$isBlue,
-                                    ])
-                                >
+                                <span>
                                     {{ $photoCount }}
+                                    foto
                                 </span>
                             </div>
 
+
+                            @if ($photoCount > 0)
+                                <a
+                                    href="#{{ $targetId }}"
+                                    class="inline-flex
+                                           items-center gap-2
+                                           text-xs font-bold
+                                           text-[#075F9B]
+                                           transition
+                                           hover:text-[#073763]"
+                                >
+                                    Lihat
+
+                                    <i
+                                        class="fa-solid
+                                               fa-arrow-down
+                                               text-[10px]"
+                                        aria-hidden="true"
+                                    ></i>
+                                </a>
+                            @else
+                                <span
+                                    class="text-[10px]
+                                           font-semibold
+                                           text-slate-400"
+                                >
+                                    Belum tersedia
+                                </span>
+                            @endif
                         </div>
                     </article>
-
                 @endforeach
             </div>
-
         @else
-
             {{-- ================================================= --}}
             {{-- EMPTY STATE --}}
             {{-- ================================================= --}}
 
             <div
-                class="mx-auto max-w-3xl
-                       rounded-3xl border
-                       border-slate-100 bg-slate-50
-                       p-8 text-center sm:p-10"
+                class="mt-8 rounded-2xl
+                       border border-dashed
+                       border-slate-300
+                       bg-slate-50
+                       px-6 py-9
+                       text-center"
                 data-aos="fade-up"
             >
-                <div
-                    class="mx-auto flex h-16 w-16
+                <span
+                    class="mx-auto flex h-12 w-12
                            items-center justify-center
-                           rounded-2xl bg-blue-100
-                           text-blue-700"
+                           rounded-xl bg-blue-50
+                           text-[#075F9B]"
                 >
                     <i
-                        class="fa-solid fa-building
-                               text-2xl"
+                        class="fa-solid fa-building"
                         aria-hidden="true"
                     ></i>
-                </div>
+                </span>
 
                 <h3
-                    class="mt-5 text-2xl font-bold
-                           text-slate-800"
+                    class="mt-4 font-bold
+                           text-slate-900"
                 >
                     Informasi Fasilitas Belum Tersedia
                 </h3>
 
                 <p
-                    class="mx-auto mt-3 max-w-xl
+                    class="mt-2 text-sm
                            leading-7 text-slate-500"
                 >
-                    Kategori dan dokumentasi fasilitas belum
-                    dipublikasikan oleh pengelola program studi.
+                    Kategori fasilitas belum dipublikasikan
+                    oleh pengelola program studi.
                 </p>
             </div>
-
         @endif
     </div>
 </section>

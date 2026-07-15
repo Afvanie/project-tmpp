@@ -22,7 +22,16 @@ class Facility extends Model
 
     public const CATEGORY_CLASSROOM = 'ruang_kelas';
 
+    public const CATEGORY_LECTURER_ROOM = 'ruang_dosen';
+
+    public const CATEGORY_ADMINISTRATION = 'ruang_tata_usaha';
+
+    public const CATEGORY_HEALTH = 'fasilitas_kesehatan';
+
+    public const CATEGORY_MOSQUE = 'masjid';
+
     public const CATEGORY_GALLERY = 'galeri';
+
 
     /*
     |--------------------------------------------------------------------------
@@ -38,6 +47,7 @@ class Facility extends Model
         'is_active',
     ];
 
+
     /*
     |--------------------------------------------------------------------------
     | CASTS
@@ -51,6 +61,7 @@ class Facility extends Model
             'is_active' => 'boolean',
         ];
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -66,6 +77,7 @@ class Facility extends Model
             ->orderBy('id');
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | QUERY SCOPES
@@ -74,7 +86,10 @@ class Facility extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('is_active', true);
+        return $query->where(
+            'is_active',
+            true
+        );
     }
 
     public function scopeOrdered(Builder $query): Builder
@@ -83,6 +98,7 @@ class Facility extends Model
             ->orderBy('sort_order')
             ->orderBy('id');
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -102,10 +118,23 @@ class Facility extends Model
             self::CATEGORY_CLASSROOM =>
                 'Ruang Kelas',
 
+            self::CATEGORY_LECTURER_ROOM =>
+                'Ruang Dosen',
+
+            self::CATEGORY_ADMINISTRATION =>
+                'Ruang Tata Usaha',
+
+            self::CATEGORY_HEALTH =>
+                'Fasilitas Kesehatan',
+
+            self::CATEGORY_MOSQUE =>
+                'Masjid',
+
             self::CATEGORY_GALLERY =>
                 'Galeri Aktivitas Mahasiswa',
         ];
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -119,14 +148,16 @@ class Facility extends Model
             ?? $this->category;
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | CATEGORY VALIDATION
     |--------------------------------------------------------------------------
     */
 
-    public static function isValidCategory(string $category): bool
-    {
+    public static function isValidCategory(
+        string $category
+    ): bool {
         return array_key_exists(
             $category,
             self::categories()

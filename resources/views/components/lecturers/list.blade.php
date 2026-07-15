@@ -1,36 +1,47 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | DATA HALAMAN
+    | STATUS FILTER
     |--------------------------------------------------------------------------
     */
 
-    $currentSearch = trim(
-        (string) ($search ?? request('search', ''))
+    $selectedType = request(
+        'type',
+        'all'
     );
 
-    $currentType = (string) (
-        $type ?? request('type', 'all')
+    $searchKeyword = trim(
+        (string) request(
+            'search',
+            ''
+        )
     );
 
-    $totalAll = (int) ($totalAll ?? 0);
-    $totalDosen = (int) ($totalDosen ?? 0);
-    $totalStaff = (int) ($totalStaff ?? 0);
+    $hasActiveFilter = $searchKeyword !== ''
+        || $selectedType !== 'all';
 
-    $hasFilter = $currentSearch !== ''
-        || $currentType !== 'all';
+    /*
+    |--------------------------------------------------------------------------
+    | JUDUL HASIL
+    |--------------------------------------------------------------------------
+    */
+
+    $listTitle = match ($selectedType) {
+        'dosen' => 'Dosen Program Studi',
+        'staff' => 'Staf Program Studi',
+        default => 'Dosen & Staf Program Studi',
+    };
 @endphp
 
 
 <section
     id="lecturer-staff-list"
     class="relative overflow-hidden
-           bg-gradient-to-br
-           from-slate-50 via-white to-blue-50
-           py-20 md:py-24"
+           bg-[#F6F8FB] py-16
+           md:py-20 lg:py-24"
 >
     {{-- ========================================================= --}}
-    {{-- BACKGROUND DECORATION --}}
+    {{-- DEKORASI LATAR --}}
     {{-- ========================================================= --}}
 
     <div
@@ -38,248 +49,303 @@
         aria-hidden="true"
     >
         <div
-            class="absolute -left-40 -top-40
-                   h-[500px] w-[500px]
-                   rounded-full bg-blue-200/30
-                   blur-[140px]"
+            class="absolute -left-48 top-0
+                   h-[430px] w-[430px]
+                   rounded-full
+                   bg-blue-100/45
+                   blur-[145px]"
         ></div>
 
         <div
-            class="absolute -right-40 bottom-0
-                   h-[500px] w-[500px]
-                   rounded-full bg-yellow-200/30
-                   blur-[140px]"
+            class="absolute -right-48 bottom-0
+                   h-[430px] w-[430px]
+                   rounded-full
+                   bg-yellow-100/40
+                   blur-[145px]"
         ></div>
-
-        <div
-            class="absolute inset-0 opacity-[0.03]"
-            style="
-                background-image:
-                    linear-gradient(
-                        #0f172a 1px,
-                        transparent 1px
-                    ),
-                    linear-gradient(
-                        to right,
-                        #0f172a 1px,
-                        transparent 1px
-                    );
-                background-size: 70px 70px;
-            "
-        ></div>
-
-        <img
-            src="{{ asset('assets/images/logo.png') }}"
-            alt=""
-            class="absolute -right-20 top-24
-                   w-[360px] select-none
-                   grayscale opacity-[0.035]
-                   md:w-[520px]"
-        >
-
-        <div
-            class="absolute bottom-10 left-6
-                   select-none text-[70px]
-                   font-black leading-none
-                   text-blue-900/[0.025]
-                   md:left-10 md:text-[130px]"
-        >
-            TMPP
-        </div>
     </div>
 
 
     <div
-        class="relative z-10 mx-auto
+        class="relative mx-auto
                max-w-7xl px-6"
     >
         {{-- ===================================================== --}}
         {{-- HEADING --}}
         {{-- ===================================================== --}}
 
-        <div
-            class="mx-auto mb-14 max-w-3xl text-center"
+        <header
+            class="grid items-end gap-8
+                   lg:grid-cols-12"
             data-aos="fade-up"
         >
-            <span
-                class="text-sm font-semibold uppercase
-                       tracking-[5px] text-blue-700"
-            >
-                Tim Pengajar dan Kependidikan
-            </span>
+            <div class="lg:col-span-8">
+                <div
+                    class="flex items-center gap-3"
+                >
+                    <span
+                        class="h-px w-9
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
 
-            <h2
-                class="mt-4 text-3xl font-bold
-                       leading-tight text-slate-800
-                       sm:text-4xl md:text-5xl"
-            >
-                Dosen dan Staf Program Studi
-            </h2>
+                    <p
+                        class="text-[11px] font-bold
+                               uppercase
+                               tracking-[0.22em]
+                               text-[#075F9B]"
+                    >
+                        Tim Akademik Program Studi
+                    </p>
+                </div>
+
+
+                <h2
+                    class="mt-5 max-w-4xl
+                           text-3xl font-semibold
+                           leading-tight
+                           tracking-[-0.025em]
+                           text-slate-900
+                           sm:text-4xl
+                           lg:text-5xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
+                >
+                    Dosen &amp; Staf
+                </h2>
+
+
+                <p
+                    class="mt-5 max-w-3xl
+                           text-base leading-8
+                           text-slate-600
+                           sm:text-lg"
+                >
+                    Tenaga pendidik dan tenaga kependidikan
+                    yang mendukung pembelajaran, pelayanan
+                    akademik, serta pengembangan Program Studi
+                    D-IV Teknik Mesin Produksi dan Perawatan.
+                </p>
+
+
+                <div
+                    class="mt-6 flex items-center gap-3"
+                    aria-hidden="true"
+                >
+                    <span
+                        class="h-1 w-14
+                               rounded-full
+                               bg-[#075F9B]"
+                    ></span>
+
+                    <span
+                        class="h-1 w-7
+                               rounded-full
+                               bg-[#D7B33E]"
+                    ></span>
+                </div>
+            </div>
+
 
             <div
-                class="mx-auto mt-6 h-1 w-24
-                       rounded-full bg-yellow-400"
-            ></div>
-
-            <p
-                class="mt-6 leading-8 text-slate-600"
+                class="lg:col-span-4
+                       lg:flex
+                       lg:justify-end"
             >
-                Tenaga pendidik dan tenaga kependidikan yang
-                mendukung proses pembelajaran, pelayanan akademik,
-                serta pengembangan Program Studi D-IV Teknik Mesin
-                Produksi dan Perawatan.
-            </p>
-        </div>
+                <div
+                    class="flex items-center gap-4
+                           border-l-2
+                           border-[#D7B33E]
+                           pl-5"
+                >
+                    <span
+                        class="text-5xl font-bold
+                               tracking-[-0.04em]
+                               text-[#075F9B]"
+                    >
+                        {{ str_pad(
+                            (string) ($totalAll ?? 0),
+                            2,
+                            '0',
+                            STR_PAD_LEFT
+                        ) }}
+                    </span>
+
+                    <div>
+                        <p
+                            class="text-xs font-bold
+                                   uppercase
+                                   tracking-[0.16em]
+                                   text-slate-400"
+                        >
+                            Total Personel
+                        </p>
+
+                        <p
+                            class="mt-1 text-sm
+                                   leading-6
+                                   text-slate-600"
+                        >
+                            Dosen dan staf aktif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </header>
 
 
         {{-- ===================================================== --}}
-        {{-- STATISTIK --}}
+        {{-- RINGKASAN DATA --}}
         {{-- ===================================================== --}}
 
         <div
-            class="mb-10 grid gap-6 md:grid-cols-3"
+            class="mt-12 grid gap-4
+                   sm:grid-cols-3"
+            data-aos="fade-up"
         >
-            {{-- Total --}}
-            <div
-                class="rounded-3xl border
-                       border-slate-100 bg-white/90
-                       p-6 shadow-lg backdrop-blur
-                       sm:p-7"
-                data-aos="fade-up"
+            {{-- Semua --}}
+            <a
+                href="{{ route('lecturers') }}"
+                class="group flex items-center
+                       justify-between gap-4
+                       rounded-2xl border
+                       bg-white px-5 py-5
+                       shadow-sm transition
+                       hover:-translate-y-0.5
+                       hover:shadow-md
+                       {{ $selectedType === 'all'
+                            ? 'border-[#075F9B] ring-1 ring-[#075F9B]/10'
+                            : 'border-slate-200 hover:border-blue-200' }}"
             >
-                <p
-                    class="text-sm font-semibold uppercase
-                           tracking-[4px] text-slate-500"
-                >
-                    Total Data
-                </p>
-
-                <div
-                    class="mt-4 flex items-end
-                           justify-between gap-4"
-                >
-                    <div>
-                        <h3
-                            class="text-3xl font-bold
-                                   text-slate-800"
-                        >
-                            Semua
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Dosen dan staf yang terdata.
-                        </p>
-                    </div>
-
-                    <span
-                        class="text-5xl font-black
-                               text-slate-100"
+                <div>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.17em]
+                               text-slate-400"
                     >
-                        {{ $totalAll }}
-                    </span>
+                        Semua Personel
+                    </p>
+
+                    <p
+                        class="mt-1 text-sm
+                               font-bold text-slate-800"
+                    >
+                        Dosen &amp; Staf
+                    </p>
                 </div>
-            </div>
+
+                <span
+                    class="text-3xl font-bold
+                           tracking-tight
+                           text-[#075F9B]"
+                >
+                    {{ $totalAll ?? 0 }}
+                </span>
+            </a>
 
 
             {{-- Dosen --}}
-            <div
-                class="rounded-3xl border
-                       border-slate-100 bg-white/90
-                       p-6 shadow-lg backdrop-blur
-                       sm:p-7"
-                data-aos="fade-up"
-                data-aos-delay="100"
+            <a
+                href="{{ route('lecturers', ['type' => 'dosen']) }}"
+                class="group flex items-center
+                       justify-between gap-4
+                       rounded-2xl border
+                       bg-white px-5 py-5
+                       shadow-sm transition
+                       hover:-translate-y-0.5
+                       hover:shadow-md
+                       {{ $selectedType === 'dosen'
+                            ? 'border-[#075F9B] ring-1 ring-[#075F9B]/10'
+                            : 'border-slate-200 hover:border-blue-200' }}"
             >
-                <p
-                    class="text-sm font-semibold uppercase
-                           tracking-[4px] text-blue-700"
-                >
-                    Tenaga Pendidik
-                </p>
-
-                <div
-                    class="mt-4 flex items-end
-                           justify-between gap-4"
-                >
-                    <div>
-                        <h3
-                            class="text-3xl font-bold
-                                   text-slate-800"
-                        >
-                            Dosen
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Pengajar dan pembimbing akademik.
-                        </p>
-                    </div>
-
-                    <span
-                        class="text-5xl font-black
-                               text-blue-100"
+                <div>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.17em]
+                               text-[#075F9B]"
                     >
-                        {{ $totalDosen }}
-                    </span>
+                        Tenaga Pendidik
+                    </p>
+
+                    <p
+                        class="mt-1 text-sm
+                               font-bold text-slate-800"
+                    >
+                        Dosen
+                    </p>
                 </div>
-            </div>
+
+                <span
+                    class="text-3xl font-bold
+                           tracking-tight
+                           text-[#075F9B]"
+                >
+                    {{ $totalDosen ?? 0 }}
+                </span>
+            </a>
 
 
             {{-- Staf --}}
-            <div
-                class="rounded-3xl border
-                       border-slate-100 bg-white/90
-                       p-6 shadow-lg backdrop-blur
-                       sm:p-7"
-                data-aos="fade-up"
-                data-aos-delay="200"
+            <a
+                href="{{ route('lecturers', ['type' => 'staff']) }}"
+                class="group flex items-center
+                       justify-between gap-4
+                       rounded-2xl border
+                       bg-white px-5 py-5
+                       shadow-sm transition
+                       hover:-translate-y-0.5
+                       hover:shadow-md
+                       {{ $selectedType === 'staff'
+                            ? 'border-[#D7B33E] ring-1 ring-[#D7B33E]/15'
+                            : 'border-slate-200 hover:border-yellow-200' }}"
             >
-                <p
-                    class="text-sm font-semibold uppercase
-                           tracking-[4px] text-yellow-600"
-                >
-                    Tenaga Kependidikan
-                </p>
-
-                <div
-                    class="mt-4 flex items-end
-                           justify-between gap-4"
-                >
-                    <div>
-                        <h3
-                            class="text-3xl font-bold
-                                   text-slate-800"
-                        >
-                            Staf
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Pendukung pelayanan akademik.
-                        </p>
-                    </div>
-
-                    <span
-                        class="text-5xl font-black
-                               text-yellow-100"
+                <div>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.17em]
+                               text-yellow-700"
                     >
-                        {{ $totalStaff }}
-                    </span>
+                        Tenaga Kependidikan
+                    </p>
+
+                    <p
+                        class="mt-1 text-sm
+                               font-bold text-slate-800"
+                    >
+                        Staf
+                    </p>
                 </div>
-            </div>
+
+                <span
+                    class="text-3xl font-bold
+                           tracking-tight
+                           text-yellow-700"
+                >
+                    {{ $totalStaff ?? 0 }}
+                </span>
+            </a>
         </div>
 
 
         {{-- ===================================================== --}}
-        {{-- SEARCH DAN FILTER --}}
+        {{-- PENCARIAN DAN FILTER --}}
         {{-- ===================================================== --}}
 
         <div
-            class="mb-14 rounded-3xl
-                   border border-slate-100
-                   bg-white/90 p-5
-                   shadow-lg backdrop-blur
-                   md:p-6"
+            class="mt-7 rounded-2xl
+                   border border-slate-200
+                   bg-white p-4
+                   shadow-sm
+                   sm:p-5"
             data-aos="fade-up"
-            data-aos-delay="150"
+            data-aos-delay="100"
         >
             <form
                 action="{{ route('lecturers') }}"
@@ -289,32 +355,54 @@
                     class="grid items-end gap-4
                            lg:grid-cols-12"
                 >
-                    {{-- Cari --}}
+                    {{-- Pencarian --}}
                     <div class="lg:col-span-6">
                         <label
                             for="lecturerSearch"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
+                            class="mb-2 block
+                                   text-xs font-bold
+                                   uppercase
+                                   tracking-[0.12em]
+                                   text-slate-500"
                         >
-                            Cari Nama atau NIP
+                            Cari Personel
                         </label>
 
-                        <input
-                            type="search"
-                            id="lecturerSearch"
-                            name="search"
-                            value="{{ $currentSearch }}"
-                            maxlength="100"
-                            autocomplete="off"
-                            placeholder="Masukkan nama dosen atau staf..."
-                            class="w-full rounded-2xl
-                                   border border-slate-200
-                                   bg-slate-50 px-5 py-4
-                                   transition focus:bg-white
-                                   focus:outline-none
-                                   focus:ring-2
-                                   focus:ring-blue-500"
-                        >
+                        <div class="relative">
+                            <span
+                                class="pointer-events-none
+                                       absolute inset-y-0
+                                       left-0 flex
+                                       items-center pl-4
+                                       text-slate-400"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-magnifying-glass"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <input
+                                id="lecturerSearch"
+                                type="search"
+                                name="search"
+                                value="{{ $searchKeyword }}"
+                                placeholder="Masukkan nama dosen atau staf"
+                                class="w-full rounded-xl
+                                       border border-slate-200
+                                       bg-slate-50
+                                       py-3.5 pl-11 pr-4
+                                       text-sm text-slate-800
+                                       outline-none
+                                       transition
+                                       placeholder:text-slate-400
+                                       focus:border-[#075F9B]
+                                       focus:bg-white
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            >
+                        </div>
                     </div>
 
 
@@ -322,73 +410,132 @@
                     <div class="lg:col-span-3">
                         <label
                             for="lecturerType"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
+                            class="mb-2 block
+                                   text-xs font-bold
+                                   uppercase
+                                   tracking-[0.12em]
+                                   text-slate-500"
                         >
-                            Filter Kategori
+                            Kategori
                         </label>
 
-                        <select
-                            id="lecturerType"
-                            name="type"
-                            class="w-full rounded-2xl
-                                   border border-slate-200
-                                   bg-slate-50 px-5 py-4
-                                   transition focus:bg-white
-                                   focus:outline-none
-                                   focus:ring-2
-                                   focus:ring-blue-500"
-                        >
-                            <option
-                                value="all"
-                                @selected($currentType === 'all')
+                        <div class="relative">
+                            <select
+                                id="lecturerType"
+                                name="type"
+                                class="w-full appearance-none
+                                       rounded-xl border
+                                       border-slate-200
+                                       bg-slate-50
+                                       px-4 py-3.5
+                                       pr-10 text-sm
+                                       font-semibold
+                                       text-slate-700
+                                       outline-none
+                                       transition
+                                       focus:border-[#075F9B]
+                                       focus:bg-white
+                                       focus:ring-4
+                                       focus:ring-blue-100"
                             >
-                                Semua
-                            </option>
+                                <option
+                                    value="all"
+                                    {{ $selectedType === 'all'
+                                        ? 'selected'
+                                        : '' }}
+                                >
+                                    Semua Personel
+                                </option>
 
-                            <option
-                                value="dosen"
-                                @selected($currentType === 'dosen')
-                            >
-                                Dosen
-                            </option>
+                                <option
+                                    value="dosen"
+                                    {{ $selectedType === 'dosen'
+                                        ? 'selected'
+                                        : '' }}
+                                >
+                                    Dosen
+                                </option>
 
-                            <option
-                                value="staff"
-                                @selected($currentType === 'staff')
+                                <option
+                                    value="staff"
+                                    {{ $selectedType === 'staff'
+                                        ? 'selected'
+                                        : '' }}
+                                >
+                                    Staf
+                                </option>
+                            </select>
+
+                            <span
+                                class="pointer-events-none
+                                       absolute inset-y-0
+                                       right-0 flex
+                                       items-center pr-4
+                                       text-xs text-slate-400"
                             >
-                                Staf
-                            </option>
-                        </select>
+                                <i
+                                    class="fa-solid
+                                           fa-chevron-down"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+                        </div>
                     </div>
 
 
                     {{-- Tombol --}}
                     <div
-                        class="flex gap-3 lg:col-span-3"
+                        class="flex gap-3
+                               lg:col-span-3"
                     >
                         <button
                             type="submit"
-                            class="inline-flex flex-1
-                                   items-center justify-center
-                                   rounded-2xl bg-blue-700
-                                   px-5 py-4 font-bold
-                                   text-white transition
-                                   hover:bg-blue-800"
+                            class="inline-flex min-h-12
+                                   flex-1 items-center
+                                   justify-center gap-2
+                                   rounded-xl
+                                   bg-[#073763]
+                                   px-5 py-3
+                                   text-sm font-bold
+                                   text-white
+                                   transition
+                                   hover:bg-[#075F9B]
+                                   hover:shadow-md"
                         >
+                            <i
+                                class="fa-solid
+                                       fa-magnifying-glass"
+                                aria-hidden="true"
+                            ></i>
+
                             Cari
                         </button>
 
-                        <a
-                            href="{{ route('lecturers') }}"
-                            class="inline-flex items-center
-                                   justify-center rounded-2xl
-                                   bg-slate-100 px-5 py-4
-                                   font-bold text-slate-700
-                                   transition hover:bg-slate-200"
-                        >
-                            Reset
-                        </a>
+                        @if ($hasActiveFilter)
+                            <a
+                                href="{{ route('lecturers') }}"
+                                class="inline-flex min-h-12
+                                       items-center
+                                       justify-center
+                                       rounded-xl
+                                       border border-slate-200
+                                       bg-slate-50
+                                       px-4 py-3
+                                       text-sm font-bold
+                                       text-slate-600
+                                       transition
+                                       hover:border-slate-300
+                                       hover:bg-slate-100"
+                                aria-label="Reset pencarian"
+                                title="Reset"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-rotate-left"
+                                    aria-hidden="true"
+                                ></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </form>
@@ -400,42 +547,45 @@
         {{-- ===================================================== --}}
 
         <div
-            class="mb-8"
+            class="mt-14 flex flex-col
+                   gap-4 border-b
+                   border-slate-200 pb-6
+                   sm:flex-row
+                   sm:items-end
+                   sm:justify-between"
             data-aos="fade-up"
         >
-            <span
-                class="text-sm font-semibold uppercase
-                       tracking-[4px] text-blue-700"
-            >
-                Daftar Personel
-            </span>
-
-            <h3
-                class="mt-3 text-3xl font-bold
-                       text-slate-800 md:text-4xl"
-            >
-                @if ($currentType === 'dosen')
-                    Dosen Program Studi
-                @elseif ($currentType === 'staff')
-                    Staf Program Studi
-                @else
-                    Dosen dan Staf Program Studi
-                @endif
-            </h3>
-
-            <div
-                class="mt-5 h-1 w-20
-                       rounded-full bg-yellow-400"
-            ></div>
-
-            @if ($currentSearch !== '')
-                <p class="mt-4 text-slate-500">
-                    Hasil pencarian untuk
-                    <span class="font-bold text-slate-700">
-                        “{{ $currentSearch }}”
-                    </span>
+            <div>
+                <p
+                    class="text-[11px] font-bold
+                           uppercase
+                           tracking-[0.2em]
+                           text-[#075F9B]"
+                >
+                    Daftar Personel
                 </p>
-            @endif
+
+                <h3
+                    class="mt-2 text-2xl
+                           font-semibold
+                           tracking-tight
+                           text-slate-900
+                           sm:text-3xl"
+                >
+                    {{ $listTitle }}
+                </h3>
+            </div>
+
+            <p
+                class="text-sm font-medium
+                       text-slate-500"
+            >
+                Menampilkan
+                <span class="font-bold text-slate-800">
+                    {{ $lecturerStaff->count() }}
+                </span>
+                data pada halaman ini
+            </p>
         </div>
 
 
@@ -444,30 +594,20 @@
         {{-- ===================================================== --}}
 
         @if ($lecturerStaff->count() > 0)
-
             <div
-                class="grid gap-7
+                class="mt-8 grid gap-6
                        sm:grid-cols-2
                        lg:grid-cols-3
                        xl:grid-cols-4"
             >
                 @foreach ($lecturerStaff as $person)
-
                     @php
-                        /*
-                        |--------------------------------------------------------------------------
-                        | INISIAL
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $personName = trim(
-                            (string) $person->name
-                        );
-
                         $nameParts = collect(
                             preg_split(
                                 '/\s+/',
-                                $personName
+                                trim(
+                                    (string) $person->name
+                                )
                             )
                         )
                             ->filter()
@@ -476,7 +616,7 @@
                         $initials = $nameParts
                             ->map(function ($word) {
                                 return mb_substr(
-                                    (string) $word,
+                                    $word,
                                     0,
                                     1
                                 );
@@ -487,49 +627,44 @@
                             $initials = 'TM';
                         }
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | JENIS
-                        |--------------------------------------------------------------------------
-                        */
+                        $isDosen =
+                            $person->type === 'dosen';
 
-                        $isDosen = $person->type
-                            === \App\Models\LecturerStaff::TYPE_DOSEN;
+                        $personType = $isDosen
+                            ? 'Dosen'
+                            : 'Staf';
 
-                        $typeLabel = $person->type_label;
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | FOTO
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $photoPath = trim(
-                            (string) $person->photo
-                        );
-
-                        $photoExists = $photoPath !== ''
-                            && \Illuminate\Support\Facades\Storage::disk(
-                                'public'
-                            )->exists($photoPath);
-
-                        $photoUrl = $photoExists
-                            ? asset('storage/' . $photoPath)
-                            : null;
+                        $personRole = $isDosen
+                            ? 'Tenaga Pendidik'
+                            : 'Tenaga Kependidikan';
 
                         $nip = trim(
-                            (string) $person->nip
+                            (string) (
+                                $person->nip
+                                ?? ''
+                            )
                         );
+
+                        $hasPhoto = trim(
+                            (string) (
+                                $person->photo
+                                ?? ''
+                            )
+                        ) !== '';
                     @endphp
 
+
                     <article
-                        class="group overflow-hidden
-                               rounded-3xl border
-                               border-slate-100 bg-white
-                               shadow-lg transition-all
-                               duration-500
-                               hover:-translate-y-2
-                               hover:shadow-2xl"
+                        class="group relative
+                               overflow-hidden
+                               rounded-[1.5rem]
+                               border border-slate-200
+                               bg-white
+                               shadow-[0_12px_35px_rgba(15,23,42,0.06)]
+                               transition duration-300
+                               hover:-translate-y-1
+                               hover:border-blue-200
+                               hover:shadow-[0_22px_50px_rgba(15,23,42,0.12)]"
                         data-aos="fade-up"
                         data-aos-delay="{{ min(
                             ($loop->index % 4) * 70,
@@ -538,68 +673,62 @@
                     >
                         {{-- Foto --}}
                         <div
-                            class="relative h-80
-                                   overflow-hidden bg-slate-100"
+                            class="relative aspect-[4/5]
+                                   overflow-hidden
+                                   bg-slate-100"
                         >
-                            @if ($photoUrl)
-
+                            @if ($hasPhoto)
                                 <img
-                                    src="{{ $photoUrl }}"
-                                    alt="Foto {{ $personName }}"
+                                    src="{{ asset(
+                                        'storage/'
+                                        . ltrim(
+                                            $person->photo,
+                                            '/'
+                                        )
+                                    ) }}"
+                                    alt="{{ $person->name }}"
                                     class="h-full w-full
-                                           object-cover
-                                           object-top
+                                           object-cover object-top
                                            transition duration-700
                                            group-hover:scale-105"
                                     loading="lazy"
                                 >
-
                             @else
-
                                 <div
-                                    @class([
-                                        'flex h-full w-full flex-col',
-                                        'items-center justify-center',
-                                        'bg-gradient-to-br',
-                                        'from-blue-700 via-blue-800 to-slate-900' =>
-                                            $isDosen,
-                                        'from-yellow-400 via-yellow-500 to-blue-800' =>
-                                            !$isDosen,
-                                    ])
+                                    class="flex h-full w-full
+                                           flex-col items-center
+                                           justify-center
+                                           {{ $isDosen
+                                                ? 'bg-gradient-to-br from-[#075F9B] via-[#073763] to-[#02182C]'
+                                                : 'bg-gradient-to-br from-[#D7B33E] via-[#B68D19] to-[#073763]' }}"
                                 >
-                                    <div
-                                        class="flex h-28 w-28
-                                               items-center justify-center
-                                               rounded-full border
-                                               border-white/25
-                                               bg-white/15
-                                               shadow-2xl backdrop-blur"
-                                    >
-                                        <span
-                                            class="text-5xl font-black
-                                                   uppercase tracking-wider
-                                                   text-white"
-                                        >
-                                            {{ $initials }}
-                                        </span>
-                                    </div>
-
-                                    <div
-                                        class="mt-5 rounded-full
-                                               border border-white/15
+                                    <span
+                                        class="flex h-24 w-24
+                                               items-center
+                                               justify-center
+                                               rounded-full
+                                               border border-white/20
                                                bg-white/10
-                                               px-5 py-2
-                                               backdrop-blur"
+                                               text-4xl font-bold
+                                               tracking-wide
+                                               text-white
+                                               shadow-xl
+                                               backdrop-blur-sm"
                                     >
-                                        <p
-                                            class="text-sm font-semibold
-                                                   text-white/85"
-                                        >
-                                            D-IV TMPP
-                                        </p>
-                                    </div>
-                                </div>
+                                        {{ mb_strtoupper(
+                                            $initials
+                                        ) }}
+                                    </span>
 
+                                    <p
+                                        class="mt-5 text-xs
+                                               font-bold uppercase
+                                               tracking-[0.18em]
+                                               text-white/65"
+                                    >
+                                        D-IV TMPP
+                                    </p>
+                                </div>
                             @endif
 
 
@@ -607,76 +736,164 @@
                             <div
                                 class="absolute inset-0
                                        bg-gradient-to-t
-                                       from-slate-950/85
-                                       via-slate-950/10
+                                       from-[#02182C]/90
+                                       via-[#02182C]/10
                                        to-transparent"
+                                aria-hidden="true"
                             ></div>
 
 
-                            {{-- Jenis --}}
-                            <div
-                                class="absolute left-4 top-4"
+                            {{-- Label kategori --}}
+                            <span
+                                class="absolute left-4 top-4
+                                       inline-flex items-center
+                                       gap-2 rounded-full
+                                       px-3 py-2
+                                       text-[10px] font-bold
+                                       uppercase
+                                       tracking-[0.13em]
+                                       shadow-md
+                                       backdrop-blur-sm
+                                       {{ $isDosen
+                                            ? 'bg-[#075F9B]/90 text-white'
+                                            : 'bg-[#E2BD45]/95 text-[#031D36]' }}"
                             >
                                 <span
-                                    @class([
-                                        'inline-flex rounded-full',
-                                        'px-4 py-2 text-sm',
-                                        'font-semibold shadow-lg',
-                                        'bg-blue-700 text-white' =>
-                                            $isDosen,
-                                        'bg-yellow-400 text-slate-900' =>
-                                            !$isDosen,
-                                    ])
-                                >
-                                    {{ $typeLabel }}
-                                </span>
-                            </div>
+                                    class="h-1.5 w-1.5
+                                           rounded-full
+                                           {{ $isDosen
+                                                ? 'bg-[#F2D56F]'
+                                                : 'bg-[#073763]' }}"
+                                    aria-hidden="true"
+                                ></span>
+
+                                {{ $personType }}
+                            </span>
 
 
                             {{-- Nama --}}
                             <div
-                                class="absolute bottom-5
-                                       left-5 right-5"
+                                class="absolute inset-x-0
+                                       bottom-0 p-5"
                             >
-                                <h3
-                                    class="text-xl font-bold
-                                           leading-snug text-white"
+                                <h4
+                                    class="text-lg font-bold
+                                           leading-7 text-white"
                                 >
-                                    {{ $personName }}
-                                </h3>
+                                    {{ $person->name }}
+                                </h4>
+
+                                <p
+                                    class="mt-1 text-xs
+                                           font-medium
+                                           text-white/65"
+                                >
+                                    {{ $personRole }}
+                                </p>
                             </div>
                         </div>
 
 
                         {{-- Informasi --}}
-                        <div class="p-6">
-
-                            <p class="text-sm text-slate-500">
-                                {{ $isDosen
-                                    ? 'Tenaga Pendidik'
-                                    : 'Tenaga Kependidikan' }}
-                            </p>
-
+                        <div class="p-5">
                             @if ($nip !== '')
-                                <p
-                                    class="mt-3 break-words
-                                           text-sm font-semibold
-                                           text-blue-700"
+                                <div
+                                    class="flex items-start gap-3"
                                 >
-                                    NIP {{ $nip }}
-                                </p>
+                                    <span
+                                        class="mt-0.5 flex h-8 w-8
+                                               shrink-0 items-center
+                                               justify-center
+                                               rounded-lg
+                                               bg-blue-50
+                                               text-xs
+                                               text-[#075F9B]"
+                                    >
+                                        <i
+                                            class="fa-solid
+                                                   fa-id-card"
+                                            aria-hidden="true"
+                                        ></i>
+                                    </span>
+
+                                    <div class="min-w-0">
+                                        <p
+                                            class="text-[9px]
+                                                   font-bold uppercase
+                                                   tracking-[0.15em]
+                                                   text-slate-400"
+                                        >
+                                            NIP
+                                        </p>
+
+                                        <p
+                                            class="mt-1 break-words
+                                                   text-xs font-semibold
+                                                   leading-5
+                                                   text-slate-700"
+                                        >
+                                            {{ $nip }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @else
+                                <div
+                                    class="flex items-center gap-3"
+                                >
+                                    <span
+                                        class="flex h-8 w-8
+                                               items-center
+                                               justify-center
+                                               rounded-lg
+                                               bg-blue-50
+                                               text-xs
+                                               text-[#075F9B]"
+                                    >
+                                        <i
+                                            class="fa-solid
+                                                   fa-building-columns"
+                                            aria-hidden="true"
+                                        ></i>
+                                    </span>
+
+                                    <p
+                                        class="text-xs
+                                               font-semibold
+                                               leading-5
+                                               text-slate-600"
+                                    >
+                                        Program Studi D-IV TMPP
+                                    </p>
+                                </div>
                             @endif
 
-                            <p
-                                class="mt-3 font-semibold
-                                       leading-7 text-slate-800"
+
+                            <div
+                                class="mt-5 flex items-center
+                                       justify-between
+                                       border-t
+                                       border-slate-100 pt-4"
                             >
-                                Program Studi D-IV Teknik Mesin
-                                Produksi dan Perawatan
-                            </p>
+                                <p
+                                    class="text-[9px] font-bold
+                                           uppercase
+                                           tracking-[0.14em]
+                                           text-slate-400"
+                                >
+                                    Politeknik Negeri Malang
+                                </p>
+
+                                <span
+                                    class="h-2 w-2
+                                           rounded-full
+                                           {{ $isDosen
+                                                ? 'bg-[#075F9B]'
+                                                : 'bg-[#D7B33E]' }}"
+                                    aria-hidden="true"
+                                ></span>
+                            </div>
                         </div>
                     </article>
-
                 @endforeach
             </div>
 
@@ -686,85 +903,83 @@
             {{-- ================================================= --}}
 
             @if ($lecturerStaff->hasPages())
-                <div class="mt-12">
-                    {{ $lecturerStaff->links() }}
+                <div
+                    class="mt-12 border-t
+                           border-slate-200 pt-8"
+                >
+                    {{ $lecturerStaff->withQueryString()->links() }}
                 </div>
             @endif
-
         @else
-
             {{-- ================================================= --}}
-            {{-- EMPTY STATE --}}
+            {{-- DATA KOSONG --}}
             {{-- ================================================= --}}
 
             <div
-                class="rounded-3xl border
-                       border-slate-100 bg-white/90
-                       p-8 text-center shadow-lg
-                       backdrop-blur sm:p-10"
+                class="mt-8 rounded-[1.75rem]
+                       border border-dashed
+                       border-slate-300
+                       bg-white px-6 py-14
+                       text-center"
                 data-aos="fade-up"
             >
-                <div
+                <span
                     class="mx-auto flex h-16 w-16
-                           items-center justify-center
-                           rounded-2xl bg-blue-50
-                           text-blue-700"
+                           items-center
+                           justify-center
+                           rounded-2xl
+                           bg-blue-50
+                           text-xl
+                           text-[#075F9B]"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-8 w-8"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    <i
+                        class="fa-solid
+                               fa-user-group"
                         aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m4-4a4 4 0 100-8 4 4 0 000 8zm6 2a3 3 0 100-6"
-                        />
-                    </svg>
-                </div>
+                    ></i>
+                </span>
 
                 <h4
-                    class="mt-5 text-2xl font-bold
-                           text-slate-800"
+                    class="mt-5 text-xl
+                           font-bold text-slate-900"
                 >
-                    @if ($hasFilter)
-                        Data Tidak Ditemukan
-                    @else
-                        Data Dosen dan Staf Belum Tersedia
-                    @endif
+                    Data tidak ditemukan
                 </h4>
 
                 <p
-                    class="mx-auto mt-3 max-w-xl
-                           leading-7 text-slate-500"
+                    class="mx-auto mt-2
+                           max-w-md text-sm
+                           leading-7
+                           text-slate-500"
                 >
-                    @if ($hasFilter)
-                        Tidak ada data yang cocok dengan kata kunci
-                        atau kategori yang dipilih.
-                    @else
-                        Data dosen dan staf belum ditambahkan oleh
-                        pengelola melalui halaman admin.
-                    @endif
+                    Belum ada personel yang sesuai dengan
+                    kata kunci atau kategori yang dipilih.
                 </p>
 
-                @if ($hasFilter)
+                @if ($hasActiveFilter)
                     <a
                         href="{{ route('lecturers') }}"
-                        class="mt-6 inline-flex items-center
-                               justify-center rounded-xl
-                               bg-blue-700 px-6 py-3
-                               font-semibold text-white
-                               transition hover:bg-blue-800"
+                        class="mt-6 inline-flex
+                               items-center
+                               justify-center gap-2
+                               rounded-xl
+                               bg-[#073763]
+                               px-5 py-3
+                               text-sm font-bold
+                               text-white
+                               transition
+                               hover:bg-[#075F9B]"
                     >
+                        <i
+                            class="fa-solid
+                                   fa-rotate-left"
+                            aria-hidden="true"
+                        ></i>
+
                         Tampilkan Semua
                     </a>
                 @endif
             </div>
-
         @endif
     </div>
 </section>

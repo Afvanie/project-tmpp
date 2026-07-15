@@ -1,126 +1,115 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | BANNER FASILITAS
+    | HERO FASILITAS
     |--------------------------------------------------------------------------
     */
 
-    $bannerRelativePath = 'assets/images/fasilitas-banner.jpg';
+    $bannerCandidates = [
+        'assets/images/fasilitas-banner.jpg',
+        'assets/images/facilities-banner.jpg',
+        'assets/images/profile-banner.jpg',
+    ];
 
-    $bannerAvailable = file_exists(
-        public_path($bannerRelativePath)
+    $bannerPath = collect($bannerCandidates)
+        ->first(function ($path) {
+            return file_exists(
+                public_path($path)
+            );
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | RINGKASAN DATA
+    |--------------------------------------------------------------------------
+    |
+    | Hanya dipakai untuk membantu konteks halaman.
+    | Tidak menampilkan statistik besar pada hero.
+    |
+    */
+
+    $facilityCollection = collect(
+        $facilities ?? []
     );
+
+    $availableCategories = $facilityCollection
+        ->pluck('category')
+        ->filter()
+        ->unique()
+        ->count();
 @endphp
 
 
 <section
-    class="relative flex min-h-[520px] items-center
-           overflow-hidden bg-blue-950 py-24
-           md:min-h-[600px] md:py-28"
+    id="facilities-hero"
+    data-navbar-banner
+    class="relative flex min-h-[500px]
+           items-center overflow-hidden
+           bg-[#031D36]
+           sm:min-h-[540px]
+           lg:min-h-[580px]"
 >
     {{-- ========================================================= --}}
     {{-- BACKGROUND --}}
     {{-- ========================================================= --}}
 
     <div class="absolute inset-0">
-
-        @if ($bannerAvailable)
+        @if ($bannerPath)
             <img
-                src="{{ asset($bannerRelativePath) }}"
+                src="{{ asset($bannerPath) }}"
                 alt="Fasilitas Program Studi D-IV Teknik Mesin Produksi dan Perawatan"
-                class="h-full w-full object-cover"
+                class="h-full w-full
+                       object-cover object-center"
             >
         @else
             <div
                 class="h-full w-full
                        bg-gradient-to-br
-                       from-blue-900 via-blue-800
-                       to-slate-950"
+                       from-[#031D36]
+                       via-[#073763]
+                       to-[#075F9B]"
             ></div>
         @endif
 
 
-        {{-- Overlay Horizontal --}}
+        {{-- Overlay utama --}}
         <div
             class="absolute inset-0"
             style="
-                background: linear-gradient(
-                    90deg,
-                    rgba(0, 35, 75, 0.88) 0%,
-                    rgba(0, 75, 145, 0.72) 45%,
-                    rgba(0, 35, 75, 0.94) 100%
-                );
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(2, 22, 41, 0.93) 0%,
+                        rgba(3, 37, 67, 0.80) 48%,
+                        rgba(3, 37, 67, 0.36) 78%,
+                        rgba(3, 37, 67, 0.17) 100%
+                    );
             "
         ></div>
 
 
-        {{-- Overlay Vertikal --}}
-        <div
-            class="absolute inset-0"
-            style="
-                background: linear-gradient(
-                    180deg,
-                    rgba(0, 25, 55, 0.10) 0%,
-                    rgba(0, 25, 55, 0.48) 100%
-                );
-            "
-        ></div>
-    </div>
-
-
-    {{-- ========================================================= --}}
-    {{-- ORNAMEN BACKGROUND --}}
-    {{-- ========================================================= --}}
-
-    <div
-        class="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-    >
-        {{-- Grid --}}
+        {{-- Overlay bawah --}}
         <div
             class="absolute inset-0
-                   bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)]
-                   bg-[size:70px_70px]"
+                   bg-gradient-to-t
+                   from-[#02182C]/75
+                   via-transparent
+                   to-[#02182C]/15"
         ></div>
-
-        {{-- Blur Kuning --}}
-        <div
-            class="absolute -bottom-28 -left-32
-                   h-96 w-96 rounded-full
-                   bg-yellow-400/20 blur-[120px]"
-        ></div>
-
-        {{-- Blur Biru --}}
-        <div
-            class="absolute -right-40 top-0
-                   h-[430px] w-[430px]
-                   rounded-full bg-blue-400/20
-                   blur-[130px]"
-        ></div>
-
-        {{-- Watermark --}}
-        <div
-            class="absolute bottom-6 right-6
-                   select-none text-right
-                   text-[58px] font-black leading-none
-                   text-white/[0.035]
-                   sm:text-[72px]
-                   md:bottom-10 md:right-10
-                   md:text-[112px]"
-        >
-            FASILITAS
-        </div>
-
-        {{-- Logo Polinema --}}
-        <img
-            src="{{ asset('assets/images/logo.png') }}"
-            alt=""
-            class="absolute -bottom-20 -right-12
-                   hidden w-[350px] select-none
-                   grayscale opacity-[0.05]
-                   lg:block"
-        >
     </div>
+
+
+    {{-- Cahaya lembut --}}
+    <div
+        class="pointer-events-none absolute
+               -left-40 top-1/2
+               h-[420px] w-[420px]
+               -translate-y-1/2
+               rounded-full
+               bg-blue-500/15
+               blur-[140px]"
+        aria-hidden="true"
+    ></div>
 
 
     {{-- ========================================================= --}}
@@ -129,126 +118,211 @@
 
     <div
         class="relative z-10 mx-auto
-               w-full max-w-7xl px-6"
+               w-full max-w-7xl
+               px-6 pb-16 pt-32
+               sm:px-8 sm:pt-36
+               lg:px-10"
     >
-        {{-- Breadcrumb --}}
-        <nav
-            aria-label="Breadcrumb"
-            class="mb-6"
-        >
-            <ol
-                class="flex flex-wrap items-center
-                       gap-x-2 gap-y-2 text-sm
-                       text-white/80"
+        <div class="max-w-3xl">
+
+            {{-- Breadcrumb --}}
+            <nav
+                aria-label="Breadcrumb"
+                data-aos="fade-right"
             >
-                <li>
-                    <a
-                        href="{{ route('home') }}"
-                        class="transition
-                               hover:text-yellow-300"
-                    >
-                        Beranda
-                    </a>
-                </li>
-
-                <li aria-hidden="true">
-                    /
-                </li>
-
-                <li
-                    class="font-semibold text-yellow-300"
-                    aria-current="page"
+                <ol
+                    class="flex flex-wrap items-center
+                           gap-2 text-xs font-medium
+                           text-white/60
+                           sm:text-sm"
                 >
-                    Fasilitas
-                </li>
-            </ol>
-        </nav>
+                    <li>
+                        <a
+                            href="{{ route('home') }}"
+                            class="transition hover:text-white"
+                        >
+                            Beranda
+                        </a>
+                    </li>
+
+                    <li
+                        class="text-white/30"
+                        aria-hidden="true"
+                    >
+                        /
+                    </li>
+
+                    <li
+                        class="text-white/90"
+                        aria-current="page"
+                    >
+                        Fasilitas
+                    </li>
+                </ol>
+            </nav>
 
 
-        {{-- Label --}}
-        <span
-            class="inline-flex items-center
-                   rounded-full border
-                   border-yellow-300/40
-                   bg-yellow-400/15
-                   px-4 py-2 text-xs
-                   font-bold uppercase
-                   tracking-[0.16em]
-                   text-yellow-300
-                   backdrop-blur-sm
-                   sm:px-5 sm:text-sm"
-        >
-            Fasilitas Program Studi
-        </span>
-
-
-        {{-- Judul --}}
-        <h1
-            class="mt-6 max-w-4xl
-                   text-4xl font-extrabold
-                   leading-tight text-white
-                   drop-shadow-lg
-                   sm:text-5xl md:text-6xl"
-        >
-            Fasilitas D-IV TMPP
-        </h1>
-
-
-        {{-- Deskripsi --}}
-        <p
-            class="mt-6 max-w-3xl
-                   text-base leading-8
-                   text-white/90 drop-shadow
-                   md:text-lg"
-        >
-            Informasi kategori dan dokumentasi fasilitas Program
-            Studi D-IV Teknik Mesin Produksi dan Perawatan
-            Politeknik Negeri Malang.
-        </p>
-
-
-        {{-- Kategori Ringkas --}}
-        <div class="mt-8 flex flex-wrap gap-3">
-
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
+            {{-- Label --}}
+            <div
+                class="mt-8 flex items-center gap-3"
+                data-aos="fade-up"
+                data-aos-delay="80"
             >
-                Laboratorium
-            </span>
+                <span
+                    class="h-px w-8 bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
 
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
-            >
-                Workshop
-            </span>
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.24em]
+                           text-[#F2D56F]
+                           sm:text-xs"
+                >
+                    Sarana Pembelajaran Vokasi
+                </p>
+            </div>
 
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
-            >
-                Ruang Kelas
-            </span>
 
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
+            {{-- Judul --}}
+            <h1
+                class="mt-5 max-w-3xl
+                       text-4xl font-semibold
+                       leading-[1.12]
+                       tracking-[-0.03em]
+                       text-white
+                       drop-shadow-md
+                       sm:text-5xl
+                       lg:text-6xl"
+                style="
+                    font-family:
+                        'Space Grotesk',
+                        'Plus Jakarta Sans',
+                        sans-serif;
+                "
+                data-aos="fade-up"
+                data-aos-delay="140"
             >
-                Galeri Aktivitas
-            </span>
+                Fasilitas Program Studi
+
+                <span
+                    class="mt-2 block
+                           font-bold text-[#F1CE57]"
+                >
+                    D-IV Teknik Mesin Produksi dan Perawatan
+                </span>
+            </h1>
+
+
+            {{-- Deskripsi --}}
+            <p
+                class="mt-6 max-w-2xl
+                       text-sm leading-7
+                       text-white/75
+                       sm:text-base
+                       sm:leading-8"
+                data-aos="fade-up"
+                data-aos-delay="210"
+            >
+                Lingkungan pembelajaran yang mendukung kegiatan
+                praktik, pengujian, produksi, perawatan mesin,
+                pembelajaran teori, serta pengembangan kompetensi
+                mahasiswa.
+            </p>
+
+
+            {{-- Identitas fasilitas --}}
+            <div
+                class="mt-8 flex flex-wrap
+                       items-center gap-x-4 gap-y-2
+                       text-xs font-semibold
+                       text-white/70
+                       sm:text-sm"
+                data-aos="fade-up"
+                data-aos-delay="270"
+            >
+                <span>
+                    Laboratorium
+                </span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+                    Workshop
+                </span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+                    Ruang Kelas
+                </span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+                    Galeri Aktivitas
+                </span>
+            </div>
+
+
+            @if ($availableCategories > 0)
+                <a
+                    href="#kategori-fasilitas"
+                    class="mt-9 inline-flex
+                           items-center gap-3
+                           text-xs font-bold
+                           uppercase
+                           tracking-[0.15em]
+                           text-white/75
+                           transition
+                           hover:text-[#F2D56F]"
+                    data-aos="fade-up"
+                    data-aos-delay="320"
+                >
+                    <span
+                        class="flex h-9 w-9
+                               items-center justify-center
+                               rounded-full
+                               border border-white/20
+                               bg-white/10
+                               backdrop-blur-sm"
+                    >
+                        <i
+                            class="fa-solid fa-arrow-down"
+                            aria-hidden="true"
+                        ></i>
+                    </span>
+
+                    Lihat Fasilitas
+                </a>
+            @endif
         </div>
     </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- AKSEN BAWAH --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="absolute inset-x-0 bottom-0
+               z-10 h-1
+               bg-gradient-to-r
+               from-[#073763]
+               via-[#E2BD45]
+               to-[#0B67A5]"
+        aria-hidden="true"
+    ></div>
 </section>

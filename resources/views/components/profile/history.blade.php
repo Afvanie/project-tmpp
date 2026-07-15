@@ -10,12 +10,14 @@
             'items' => function ($query) {
                 $query
                     ->where('is_active', true)
-                    ->orderBy('sort_order');
+                    ->orderBy('sort_order')
+                    ->orderBy('id');
             },
         ])
         ->where('slug', 'history')
         ->where('is_active', true)
         ->first();
+
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +29,9 @@
         ? $historySection->items
             ->where('item_group', 'paragraph')
             ->filter(function ($item) {
-                return trim((string) $item->content) !== '';
+                return trim(
+                    (string) $item->content
+                ) !== '';
             })
             ->sortBy('sort_order')
             ->values()
@@ -37,149 +41,277 @@
         ? $historySection->items
             ->where('item_group', 'timeline')
             ->filter(function ($item) {
-                return trim((string) $item->title) !== ''
-                    || trim((string) $item->content) !== '';
+                return trim(
+                    (string) $item->title
+                ) !== ''
+                    || trim(
+                        (string) $item->content
+                    ) !== '';
             })
             ->sortBy('sort_order')
             ->values()
         : collect();
 
-    $historyDescription = trim(
-        (string) ($historySection?->description ?? '')
-    );
 
     /*
     |--------------------------------------------------------------------------
-    | STATUS KONTEN
+    | STATUS SECTION
     |--------------------------------------------------------------------------
-    |
-    | Section hanya tampil jika pengelola sudah mengisi minimal:
-    |
-    | - Deskripsi section
-    | - Paragraf sejarah
-    | - Timeline perjalanan program studi
-    |
     */
+
+    $historyDescription = trim(
+        (string) (
+            $historySection?->description
+            ?? ''
+        )
+    );
+
+    $hasParagraphs = $paragraphs->isNotEmpty();
+    $hasTimelines = $timelines->isNotEmpty();
 
     $hasHistoryContent = $historySection
         && (
             $historyDescription !== ''
-            || $paragraphs->isNotEmpty()
-            || $timelines->isNotEmpty()
+            || $hasParagraphs
+            || $hasTimelines
         );
-
-    $hasParagraphs = $paragraphs->isNotEmpty();
-    $hasTimelines = $timelines->isNotEmpty();
 @endphp
 
 
 @if ($hasHistoryContent)
-
     <section
         id="profile-history"
-        class="relative overflow-hidden bg-slate-50 py-20 md:py-24"
+        class="relative overflow-hidden
+               bg-white py-16
+               md:py-20 lg:py-24"
     >
-        {{-- ========================================================= --}}
-        {{-- BACKGROUND DECORATION --}}
-        {{-- ========================================================= --}}
+        {{-- ===================================================== --}}
+        {{-- DEKORASI LATAR --}}
+        {{-- ===================================================== --}}
 
         <div
             class="pointer-events-none absolute inset-0"
             aria-hidden="true"
         >
             <div
-                class="absolute -left-40 top-10
-                       h-[450px] w-[450px]
-                       rounded-full bg-blue-200/30
-                       blur-[140px]"
+                class="absolute -left-40 top-8
+                       h-96 w-96 rounded-full
+                       bg-blue-100/45
+                       blur-[130px]"
             ></div>
 
             <div
-                class="absolute -right-40 bottom-10
-                       h-[450px] w-[450px]
-                       rounded-full bg-yellow-200/30
-                       blur-[140px]"
+                class="absolute -right-40 bottom-0
+                       h-96 w-96 rounded-full
+                       bg-yellow-100/35
+                       blur-[130px]"
             ></div>
 
             <div
-                class="absolute inset-0 opacity-[0.025]
-                       bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)]
-                       bg-[size:70px_70px]"
-            ></div>
+                class="absolute right-8 top-12
+                       hidden select-none
+                       text-[110px] font-black
+                       leading-none
+                       text-slate-900/[0.025]
+                       lg:block"
+            >
+                SEJARAH
+            </div>
         </div>
 
 
-        <div class="relative mx-auto max-w-7xl px-6">
-
-            {{-- ===================================================== --}}
+        <div
+            class="relative mx-auto
+                   max-w-7xl px-6"
+        >
+            {{-- ================================================= --}}
             {{-- HEADING --}}
-            {{-- ===================================================== --}}
+            {{-- ================================================= --}}
 
-            <div
-                class="mx-auto mb-14 max-w-4xl text-center md:mb-16"
+            <header
+                class="max-w-4xl"
                 data-aos="fade-up"
             >
-                <span
-                    class="text-sm font-semibold uppercase
-                           tracking-[5px] text-blue-700"
+                <div
+                    class="flex items-center gap-3"
                 >
-                    {{ $historySection->subtitle
-                        ?: 'Perjalanan Program Studi' }}
-                </span>
+                    <span
+                        class="h-px w-9
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
+
+                    <p
+                        class="text-[11px] font-bold
+                               uppercase
+                               tracking-[0.22em]
+                               text-[#075F9B]"
+                    >
+                        {{ trim(
+                            (string) (
+                                $historySection->subtitle
+                                ?? ''
+                            )
+                        ) !== ''
+                            ? $historySection->subtitle
+                            : 'Perjalanan Program Studi' }}
+                    </p>
+                </div>
+
 
                 <h2
-                    class="mt-4 text-3xl font-bold
-                           leading-tight text-slate-800
-                           sm:text-4xl md:text-5xl"
+                    class="mt-5 text-3xl
+                           font-semibold leading-tight
+                           tracking-[-0.025em]
+                           text-slate-900
+                           sm:text-4xl lg:text-5xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
                 >
-                    {{ $historySection->title
-                        ?: 'Sejarah Program Studi' }}
+                    {{ trim(
+                        (string) (
+                            $historySection->title
+                            ?? ''
+                        )
+                    ) !== ''
+                        ? $historySection->title
+                        : 'Sejarah Program Studi' }}
                 </h2>
 
-                <div
-                    class="mx-auto mt-6 h-1 w-24
-                           rounded-full bg-yellow-400"
-                ></div>
 
                 @if ($historyDescription !== '')
                     <p
-                        class="mx-auto mt-6 max-w-3xl
-                               leading-8 text-slate-600"
+                        class="mt-5 max-w-3xl
+                               text-base leading-8
+                               text-slate-600
+                               sm:text-lg"
                     >
                         {{ $historyDescription }}
                     </p>
                 @endif
-            </div>
 
 
-            {{-- ===================================================== --}}
-            {{-- CONTENT --}}
-            {{-- ===================================================== --}}
+                <div
+                    class="mt-6 flex items-center gap-3"
+                    aria-hidden="true"
+                >
+                    <span
+                        class="h-1 w-14
+                               rounded-full
+                               bg-[#075F9B]"
+                    ></span>
+
+                    <span
+                        class="h-1 w-7
+                               rounded-full
+                               bg-[#D7B33E]"
+                    ></span>
+                </div>
+            </header>
+
+
+            {{-- ================================================= --}}
+            {{-- KONTEN --}}
+            {{-- ================================================= --}}
 
             <div
                 class="
-                    grid items-start gap-12 lg:gap-14
+                    mt-12 grid items-start gap-12
+                    lg:mt-14 lg:gap-16
 
                     {{ $hasParagraphs && $hasTimelines
-                        ? 'lg:grid-cols-2'
+                        ? 'lg:grid-cols-12'
                         : 'mx-auto max-w-4xl grid-cols-1' }}
                 "
             >
                 {{-- ================================================= --}}
-                {{-- PARAGRAF SEJARAH --}}
+                {{-- NARASI SEJARAH --}}
                 {{-- ================================================= --}}
 
                 @if ($hasParagraphs)
                     <div
-                        class="space-y-7 text-justify
-                               leading-9 text-slate-600"
+                        class="{{ $hasTimelines
+                            ? 'lg:col-span-6'
+                            : '' }}"
                         data-aos="fade-right"
                     >
-                        @foreach ($paragraphs as $paragraph)
-                            <p>
-                                {!! nl2br(e($paragraph->content)) !!}
+                        <div
+                            class="border-l-2
+                                   border-[#D7B33E]
+                                   pl-6 sm:pl-8"
+                        >
+                            <p
+                                class="text-[10px] font-bold
+                                       uppercase
+                                       tracking-[0.2em]
+                                       text-[#075F9B]"
+                            >
+                                Narasi Program Studi
                             </p>
-                        @endforeach
+
+                            <div
+                                class="mt-5 space-y-5
+                                       text-justify
+                                       text-[15px]
+                                       leading-8
+                                       text-slate-600
+                                       sm:text-base
+                                       sm:leading-9"
+                            >
+                                @foreach ($paragraphs as $paragraph)
+                                    <p>
+                                        {!! nl2br(
+                                            e($paragraph->content)
+                                        ) !!}
+                                    </p>
+                                @endforeach
+                            </div>
+                        </div>
+
+
+                        <div
+                            class="mt-8 flex items-start
+                                   gap-4 rounded-2xl
+                                   border border-blue-100
+                                   bg-blue-50/60 p-5"
+                        >
+                            <span
+                                class="flex h-10 w-10
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       bg-[#073763]
+                                       text-[#F4D66E]"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-building-columns"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <div>
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-800"
+                                >
+                                    Program Studi D-IV TMPP
+                                </p>
+
+                                <p
+                                    class="mt-1 text-sm
+                                           leading-7
+                                           text-slate-600"
+                                >
+                                    Jurusan Teknik Mesin,
+                                    Politeknik Negeri Malang.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 @endif
 
@@ -190,73 +322,154 @@
 
                 @if ($hasTimelines)
                     <div
-                        class="relative"
+                        class="{{ $hasParagraphs
+                            ? 'lg:col-span-6'
+                            : '' }}"
                         data-aos="fade-left"
                     >
                         <div
-                            class="absolute bottom-0 left-6 top-0
-                                   w-1 rounded-full bg-blue-100"
-                            aria-hidden="true"
-                        ></div>
+                            class="mb-7 flex
+                                   items-center
+                                   justify-between gap-4"
+                        >
+                            <div>
+                                <p
+                                    class="text-[10px]
+                                           font-bold uppercase
+                                           tracking-[0.2em]
+                                           text-[#075F9B]"
+                                >
+                                    Linimasa
+                                </p>
 
-                        <div class="space-y-8">
+                                <h3
+                                    class="mt-2 text-xl
+                                           font-bold
+                                           text-slate-900
+                                           sm:text-2xl"
+                                >
+                                    Perjalanan Program Studi
+                                </h3>
+                            </div>
 
-                            @foreach ($timelines as $timeline)
-                                <article class="relative pl-20">
+                            <span
+                                class="flex h-11 w-11
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       bg-yellow-50
+                                       text-yellow-700"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-timeline"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+                        </div>
 
-                                    {{-- Number --}}
-                                    <div
-                                        class="absolute left-0 top-1
-                                               flex h-12 w-12
-                                               items-center justify-center
-                                               rounded-full font-bold
-                                               text-white shadow-lg
-                                               {{ $loop->iteration % 2 === 0
-                                                    ? 'bg-yellow-400 text-slate-900'
-                                                    : 'bg-blue-700' }}"
+
+                        <div class="relative">
+                            <div
+                                class="absolute bottom-4
+                                       left-[19px] top-4
+                                       w-px bg-slate-200"
+                                aria-hidden="true"
+                            ></div>
+
+
+                            <div class="space-y-7">
+                                @foreach ($timelines as $timeline)
+                                    @php
+                                        $timelineTitle = trim(
+                                            (string) (
+                                                $timeline->title
+                                                ?? ''
+                                            )
+                                        );
+
+                                        $timelineContent = trim(
+                                            (string) (
+                                                $timeline->content
+                                                ?? ''
+                                            )
+                                        );
+                                    @endphp
+
+                                    <article
+                                        class="group relative
+                                               grid grid-cols-[40px_1fr]
+                                               gap-5"
+                                        data-aos="fade-up"
+                                        data-aos-delay="{{ min(
+                                            $loop->index * 80,
+                                            320
+                                        ) }}"
                                     >
-                                        {{ $loop->iteration }}
-                                    </div>
+                                        {{-- Titik Timeline --}}
+                                        <div
+                                            class="relative z-10
+                                                   flex h-10 w-10
+                                                   items-center
+                                                   justify-center
+                                                   rounded-full
+                                                   border-4
+                                                   border-white
+                                                   bg-[#075F9B]
+                                                   text-xs font-bold
+                                                   text-white
+                                                   shadow-md
+                                                   transition
+                                                   duration-300
+                                                   group-hover:bg-[#D7B33E]
+                                                   group-hover:text-slate-900"
+                                        >
+                                            {{ $loop->iteration }}
+                                        </div>
 
-                                    {{-- Card --}}
-                                    <div
-                                        class="rounded-2xl border
-                                               border-slate-100 bg-white
-                                               p-6 shadow-lg
-                                               transition duration-300
-                                               hover:-translate-y-1
-                                               hover:shadow-xl"
-                                    >
-                                        @if (trim((string) $timeline->title) !== '')
-                                            <h3
-                                                class="text-xl font-bold
-                                                       text-slate-800"
-                                            >
-                                                {{ $timeline->title }}
-                                            </h3>
-                                        @endif
 
-                                        @if (trim((string) $timeline->content) !== '')
-                                            <p
-                                                class="{{ trim((string) $timeline->title) !== ''
-                                                    ? 'mt-3'
-                                                    : '' }}
-                                                       leading-7 text-slate-600"
-                                            >
-                                                {!! nl2br(e($timeline->content)) !!}
-                                            </p>
-                                        @endif
-                                    </div>
+                                        {{-- Isi --}}
+                                        <div
+                                            class="border-b
+                                                   border-slate-200
+                                                   pb-7"
+                                        >
+                                            @if ($timelineTitle !== '')
+                                                <h4
+                                                    class="text-lg
+                                                           font-bold
+                                                           leading-7
+                                                           text-slate-900"
+                                                >
+                                                    {{ $timelineTitle }}
+                                                </h4>
+                                            @endif
 
-                                </article>
-                            @endforeach
-
+                                            @if ($timelineContent !== '')
+                                                <p
+                                                    class="{{ $timelineTitle !== ''
+                                                        ? 'mt-2'
+                                                        : '' }}
+                                                           text-justify
+                                                           text-sm
+                                                           leading-7
+                                                           text-slate-600
+                                                           sm:text-base
+                                                           sm:leading-8"
+                                                >
+                                                    {!! nl2br(
+                                                        e($timelineContent)
+                                                    ) !!}
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @endif
             </div>
-
         </div>
     </section>
-
 @endif

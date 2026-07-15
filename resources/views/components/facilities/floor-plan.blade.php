@@ -1,178 +1,359 @@
-<section class="relative py-24 bg-gradient-to-br from-slate-950 via-[#06172E] to-blue-950 overflow-hidden">
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | DENAH GEDUNG
+    |--------------------------------------------------------------------------
+    |
+    | Section hanya ditampilkan apabila dokumen PDF tersedia.
+    |
+    */
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 pointer-events-none">
+    $floorPlanRelativePath =
+        'assets/documents/denah-gedung-teknik-mesin.pdf';
 
-        <div class="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-blue-500/20 blur-[140px]"></div>
+    $floorPlanAvailable = file_exists(
+        public_path($floorPlanRelativePath)
+    );
 
-        <div class="absolute -bottom-40 -left-40 w-[520px] h-[520px] rounded-full bg-yellow-400/20 blur-[140px]"></div>
+    $floorPlanUrl = $floorPlanAvailable
+        ? asset($floorPlanRelativePath)
+        : null;
+@endphp
+
+
+@if ($floorPlanAvailable)
+    <section
+        id="denah-gedung"
+        class="relative overflow-hidden
+               bg-[#031D36] py-16
+               md:py-20 lg:py-24"
+    >
+        {{-- ===================================================== --}}
+        {{-- BACKGROUND --}}
+        {{-- ===================================================== --}}
 
         <div
-            class="absolute inset-0 opacity-[0.08]"
-            style="background-image: linear-gradient(#ffffff 1px, transparent 1px),
-            linear-gradient(to right,#ffffff 1px,transparent 1px);
-            background-size:70px 70px;">
+            class="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+        >
+            <div
+                class="absolute inset-0
+                       bg-gradient-to-br
+                       from-[#02182C]
+                       via-[#073763]
+                       to-[#075F9B]"
+            ></div>
+
+            <div
+                class="absolute -left-48 bottom-0
+                       h-[440px] w-[440px]
+                       rounded-full
+                       bg-blue-400/10
+                       blur-[145px]"
+            ></div>
+
+            <div
+                class="absolute -right-48 top-0
+                       h-[440px] w-[440px]
+                       rounded-full
+                       bg-yellow-400/10
+                       blur-[145px]"
+            ></div>
+
+            <div
+                class="absolute inset-x-0 top-0
+                       h-px
+                       bg-gradient-to-r
+                       from-transparent
+                       via-white/20
+                       to-transparent"
+            ></div>
         </div>
 
-    </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
+        <div
+            class="relative mx-auto
+                   max-w-7xl px-6"
+        >
+            <div
+                class="grid items-center gap-12
+                       lg:grid-cols-12
+                       lg:gap-16"
+            >
+                {{-- ================================================= --}}
+                {{-- INFORMASI --}}
+                {{-- ================================================= --}}
 
-        {{-- Heading --}}
-        <div class="grid lg:grid-cols-12 gap-10 items-center">
+                <div
+                    class="lg:col-span-5"
+                    data-aos="fade-right"
+                >
+                    <div
+                        class="flex items-center gap-3"
+                    >
+                        <span
+                            class="h-px w-8
+                                   bg-[#E2BD45]"
+                            aria-hidden="true"
+                        ></span>
 
-            {{-- Text --}}
-            <div class="lg:col-span-5" data-aos="fade-right">
-
-                <span class="uppercase tracking-[5px] text-yellow-300 font-semibold">
-                    Denah Gedung
-                </span>
-
-                <h2 class="mt-4 text-4xl md:text-5xl font-bold text-white leading-tight">
-                    Informasi Tata Ruang Gedung Teknik Mesin
-                </h2>
-
-                <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6"></div>
-
-                <p class="mt-7 text-white/75 leading-8 text-justify">
-                    Denah gedung digunakan sebagai informasi pendukung untuk membantu
-                    mahasiswa, dosen, tenaga kependidikan, dan pengunjung dalam mengenali
-                    tata letak ruang pembelajaran, laboratorium, workshop, ruang dosen,
-                    ruang administrasi, serta fasilitas pendukung lainnya di lingkungan
-                    Teknik Mesin.
-                </p>
-
-                <div class="mt-8 grid sm:grid-cols-2 gap-4">
-
-                    <div class="rounded-3xl bg-white/10 border border-white/15 backdrop-blur p-5">
-
-                        <div class="w-12 h-12 rounded-2xl bg-yellow-400 text-slate-900 flex items-center justify-center shadow-lg">
-                            <i class="fa-solid fa-layer-group text-xl"></i>
-                        </div>
-
-                        <h3 class="mt-4 text-xl font-bold text-white">
-                            Multi Lantai
-                        </h3>
-
-                        <p class="mt-2 text-sm text-white/65 leading-6">
-                            Mencakup denah basement, ground, dasar, dan lantai atas.
+                        <p
+                            class="text-[10px] font-bold
+                                   uppercase
+                                   tracking-[0.22em]
+                                   text-[#F2D56F]"
+                        >
+                            Informasi Lokasi
                         </p>
-
                     </div>
 
-                    <div class="rounded-3xl bg-white/10 border border-white/15 backdrop-blur p-5">
 
-                        <div class="w-12 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-lg">
-                            <i class="fa-solid fa-map-location-dot text-xl"></i>
-                        </div>
+                    <h2
+                        class="mt-5 max-w-xl
+                               text-3xl font-semibold
+                               leading-tight
+                               tracking-[-0.025em]
+                               text-white
+                               sm:text-4xl
+                               lg:text-5xl"
+                        style="
+                            font-family:
+                                'Space Grotesk',
+                                'Plus Jakarta Sans',
+                                sans-serif;
+                        "
+                    >
+                        Denah Gedung Jurusan Teknik Mesin
+                    </h2>
 
-                        <h3 class="mt-4 text-xl font-bold text-white">
-                            Panduan Lokasi
-                        </h3>
 
-                        <p class="mt-2 text-sm text-white/65 leading-6">
-                            Membantu mengetahui posisi ruang, laboratorium, dan fasilitas.
-                        </p>
+                    <p
+                        class="mt-6 max-w-xl
+                               text-sm leading-7
+                               text-blue-100/70
+                               sm:text-base
+                               sm:leading-8"
+                    >
+                        Dokumen denah gedung membantu mahasiswa,
+                        dosen, staf, dan pengunjung mengenali lokasi
+                        ruang pembelajaran serta fasilitas pendukung
+                        di lingkungan Jurusan Teknik Mesin
+                        Politeknik Negeri Malang.
+                    </p>
 
+
+                    <div
+                        class="mt-8 flex flex-col gap-3
+                               sm:flex-row sm:flex-wrap"
+                    >
+                        <a
+                            href="{{ $floorPlanUrl }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center
+                                   justify-center gap-3
+                                   rounded-xl
+                                   bg-[#E2BD45]
+                                   px-6 py-3.5
+                                   text-sm font-bold
+                                   text-[#031D36]
+                                   shadow-lg
+                                   shadow-yellow-900/10
+                                   transition
+                                   hover:bg-[#F2D56F]"
+                        >
+                            <i
+                                class="fa-solid
+                                       fa-up-right-from-square"
+                                aria-hidden="true"
+                            ></i>
+
+                            Lihat Denah
+                        </a>
+
+
+                        <a
+                            href="{{ $floorPlanUrl }}"
+                            download
+                            class="inline-flex items-center
+                                   justify-center gap-3
+                                   rounded-xl
+                                   border border-white/20
+                                   bg-white/[0.07]
+                                   px-6 py-3.5
+                                   text-sm font-bold
+                                   text-white
+                                   backdrop-blur-sm
+                                   transition
+                                   hover:border-white/35
+                                   hover:bg-white/[0.12]"
+                        >
+                            <i
+                                class="fa-solid fa-download"
+                                aria-hidden="true"
+                            ></i>
+
+                            Unduh PDF
+                        </a>
                     </div>
 
+
+                    <div
+                        class="mt-8 flex items-center gap-3
+                               text-xs font-medium
+                               text-white/45"
+                    >
+                        <i
+                            class="fa-regular fa-file-pdf"
+                            aria-hidden="true"
+                        ></i>
+
+                        <span>
+                            Dokumen denah dalam format PDF
+                        </span>
+                    </div>
                 </div>
 
-                <div class="mt-9 flex flex-col sm:flex-row gap-4">
 
-                    <a href="{{ asset('assets/documents/denah-gedung-teknik-mesin.pdf') }}"
-                        target="_blank"
-                        class="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl bg-yellow-400 text-slate-900 font-bold hover:bg-yellow-300 transition shadow-lg shadow-yellow-400/20">
+                {{-- ================================================= --}}
+                {{-- PREVIEW PDF --}}
+                {{-- ================================================= --}}
 
-                        <i class="fa-solid fa-eye"></i>
-                        Lihat Denah
-                    </a>
+                <div
+                    class="lg:col-span-7"
+                    data-aos="fade-left"
+                >
+                    <div
+                        class="overflow-hidden rounded-[1.75rem]
+                               border border-white/15
+                               bg-white/[0.08]
+                               p-2 shadow-2xl
+                               shadow-slate-950/30
+                               backdrop-blur-sm
+                               sm:p-3"
+                    >
+                        {{-- Header preview --}}
+                        <div
+                            class="flex items-center
+                                   justify-between gap-4
+                                   px-4 py-3
+                                   sm:px-5"
+                        >
+                            <div class="min-w-0">
+                                <p
+                                    class="text-[9px] font-bold
+                                           uppercase
+                                           tracking-[0.18em]
+                                           text-[#F2D56F]"
+                                >
+                                    Pratinjau Dokumen
+                                </p>
 
-                    <a href="{{ asset('assets/documents/denah-gedung-teknik-mesin.pdf') }}"
-                        download
-                        class="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl bg-white/10 border border-white/15 text-white font-bold hover:bg-white/20 transition">
-
-                        <i class="fa-solid fa-download"></i>
-                        Download PDF
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- Preview --}}
-            <div class="lg:col-span-7" data-aos="fade-left">
-
-                <div class="relative">
-
-                    {{-- Floating Badge --}}
-                    <div class="absolute -top-6 left-6 z-20 hidden md:block rounded-2xl bg-white shadow-2xl border border-slate-100 px-5 py-4">
-
-                        <p class="text-xs font-bold text-blue-700 uppercase tracking-wider">
-                            Preview Denah
-                        </p>
-
-                        <p class="text-sm font-semibold text-slate-700">
-                            Gedung Teknik Mesin
-                        </p>
-
-                    </div>
-
-                    {{-- PDF Card --}}
-                    <div class="rounded-[2.5rem] bg-white/95 backdrop-blur border border-white/20 shadow-2xl overflow-hidden">
-
-                        <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
-
-                        {{-- Desktop PDF Preview --}}
-                        <div class="hidden md:block p-5 bg-slate-100">
-
-                            <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-inner">
-
-                                <iframe
-                                    src="{{ asset('assets/documents/denah-gedung-teknik-mesin.pdf') }}#toolbar=1&navpanes=0&scrollbar=1"
-                                    class="w-full h-[620px]"
-                                    title="Denah Gedung Teknik Mesin">
-                                </iframe>
-
+                                <p
+                                    class="mt-1 truncate
+                                           text-sm font-semibold
+                                           text-white/85"
+                                >
+                                    Denah Gedung Teknik Mesin
+                                </p>
                             </div>
 
+
+                            <span
+                                class="flex h-9 w-9
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-lg
+                                       bg-white/10
+                                       text-red-300"
+                            >
+                                <i
+                                    class="fa-regular fa-file-pdf"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
                         </div>
 
-                        {{-- Mobile Placeholder --}}
-                        <div class="md:hidden p-7 text-center bg-white">
 
-                            <div class="w-20 h-20 mx-auto rounded-3xl bg-blue-100 text-blue-700 flex items-center justify-center">
-                                <i class="fa-solid fa-file-pdf text-4xl"></i>
-                            </div>
+                        {{-- Desktop --}}
+                        <div
+                            class="hidden overflow-hidden
+                                   rounded-[1.25rem]
+                                   bg-white
+                                   md:block"
+                        >
+                            <iframe
+                                src="{{ $floorPlanUrl }}#toolbar=1&navpanes=0&scrollbar=1"
+                                class="h-[560px] w-full"
+                                title="Denah Gedung Jurusan Teknik Mesin"
+                                loading="lazy"
+                            ></iframe>
+                        </div>
 
-                            <h3 class="mt-5 text-2xl font-bold text-slate-800">
+
+                        {{-- Mobile --}}
+                        <div
+                            class="rounded-[1.25rem]
+                                   bg-white px-6 py-10
+                                   text-center md:hidden"
+                        >
+                            <span
+                                class="mx-auto flex h-16 w-16
+                                       items-center justify-center
+                                       rounded-2xl bg-red-50
+                                       text-2xl text-red-600"
+                            >
+                                <i
+                                    class="fa-regular fa-file-pdf"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <h3
+                                class="mt-5 text-xl font-bold
+                                       text-slate-900"
+                            >
                                 Denah Gedung
                             </h3>
 
-                            <p class="mt-3 text-slate-500 leading-7">
-                                Preview PDF lebih nyaman dibuka melalui tombol lihat denah
-                                agar tampilan mobile tetap ringan.
+                            <p
+                                class="mx-auto mt-3 max-w-sm
+                                       text-sm leading-7
+                                       text-slate-500"
+                            >
+                                Buka dokumen untuk melihat denah
+                                dengan ukuran yang lebih nyaman
+                                pada perangkat Anda.
                             </p>
 
-                            <a href="{{ asset('assets/documents/denah-gedung-teknik-mesin.pdf') }}"
+                            <a
+                                href="{{ $floorPlanUrl }}"
                                 target="_blank"
-                                class="mt-6 inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-
-                                <i class="fa-solid fa-up-right-from-square"></i>
+                                rel="noopener noreferrer"
+                                class="mt-6 inline-flex
+                                       items-center
+                                       justify-center gap-2
+                                       rounded-xl
+                                       bg-[#075F9B]
+                                       px-5 py-3
+                                       text-sm font-bold
+                                       text-white
+                                       transition
+                                       hover:bg-[#073763]"
+                            >
                                 Buka PDF
+
+                                <i
+                                    class="fa-solid
+                                           fa-arrow-up-right-from-square
+                                           text-xs"
+                                    aria-hidden="true"
+                                ></i>
                             </a>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
-    </div>
-
-</section>
+    </section>
+@endif

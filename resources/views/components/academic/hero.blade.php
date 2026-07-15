@@ -1,115 +1,128 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | BANNER AKADEMIK
+    | HERO HALAMAN AKADEMIK
     |--------------------------------------------------------------------------
     */
 
-    $bannerRelativePath = 'assets/images/akademik-banner.jpg';
-
-    $bannerAvailable = file_exists(
-        public_path($bannerRelativePath)
+    $pageTitle = trim(
+        (string) ($page['title'] ?? 'Akademik')
     );
+
+    $pageSubtitle = trim(
+        (string) ($page['subtitle'] ?? '')
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | GAMBAR BANNER
+    |--------------------------------------------------------------------------
+    */
+
+    $bannerCandidates = [
+        'assets/images/akademik-banner.jpg',
+        'assets/images/academic-banner.jpg',
+        'assets/images/profile-banner.jpg',
+    ];
+
+    $bannerPath = collect($bannerCandidates)
+        ->first(function ($path) {
+            return file_exists(
+                public_path($path)
+            );
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI HALAMAN
+    |--------------------------------------------------------------------------
+    */
+
+    $pageLabels = [
+        'pedoman-akademik' => 'Pedoman Akademik',
+        'kalender-akademik' => 'Kalender Akademik',
+        'kurikulum' => 'Kurikulum Program Studi',
+        'jadwal-kuliah' => 'Jadwal Perkuliahan',
+        'laporan-ketercapaian' => 'Evaluasi Pembelajaran',
+        'panduan-laporan-tugas-akhir' => 'Panduan Tugas Akhir',
+        'panduan-laporan-pkl' => 'Panduan Magang Industri',
+    ];
+
+    $pageLabel = $pageLabels[$slug ?? '']
+        ?? 'Informasi Akademik';
 @endphp
 
 
 <section
-    class="relative flex min-h-[520px] items-center
-           overflow-hidden bg-blue-950 py-24
-           md:min-h-[600px] md:py-28"
+    id="academic-hero"
+    data-navbar-banner
+    class="relative flex min-h-[500px]
+           items-center overflow-hidden
+           bg-[#031D36]
+           sm:min-h-[540px]
+           lg:min-h-[580px]"
 >
     {{-- ========================================================= --}}
     {{-- BACKGROUND --}}
     {{-- ========================================================= --}}
 
     <div class="absolute inset-0">
-
-        @if ($bannerAvailable)
+        @if ($bannerPath)
             <img
-                src="{{ asset($bannerRelativePath) }}"
-                alt="Latar halaman {{ $page['title'] }}"
-                class="h-full w-full object-cover"
+                src="{{ asset($bannerPath) }}"
+                alt="{{ $pageTitle }}"
+                class="h-full w-full
+                       object-cover object-center"
             >
         @else
             <div
                 class="h-full w-full
                        bg-gradient-to-br
-                       from-blue-900 via-blue-800
-                       to-slate-950"
+                       from-[#031D36]
+                       via-[#073763]
+                       to-[#075F9B]"
             ></div>
         @endif
 
 
-        {{-- Overlay Utama --}}
+        {{-- Overlay horizontal --}}
         <div
             class="absolute inset-0"
             style="
-                background: linear-gradient(
-                    90deg,
-                    rgba(0, 35, 75, 0.86) 0%,
-                    rgba(0, 75, 145, 0.72) 45%,
-                    rgba(0, 35, 75, 0.94) 100%
-                );
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(2, 22, 41, 0.93) 0%,
+                        rgba(3, 37, 67, 0.80) 48%,
+                        rgba(3, 37, 67, 0.34) 78%,
+                        rgba(3, 37, 67, 0.18) 100%
+                    );
             "
         ></div>
 
 
-        {{-- Overlay Vertikal --}}
-        <div
-            class="absolute inset-0"
-            style="
-                background: linear-gradient(
-                    180deg,
-                    rgba(0, 25, 55, 0.12) 0%,
-                    rgba(0, 25, 55, 0.42) 100%
-                );
-            "
-        ></div>
-    </div>
-
-
-    {{-- ========================================================= --}}
-    {{-- BACKGROUND DECORATION --}}
-    {{-- ========================================================= --}}
-
-    <div
-        class="pointer-events-none absolute inset-0"
-        aria-hidden="true"
-    >
-        {{-- Grid --}}
+        {{-- Overlay bawah --}}
         <div
             class="absolute inset-0
-                   bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)]
-                   bg-[size:70px_70px]"
+                   bg-gradient-to-t
+                   from-[#02182C]/75
+                   via-transparent
+                   to-[#02182C]/15"
         ></div>
-
-        {{-- Blur Kuning --}}
-        <div
-            class="absolute -bottom-28 -left-32
-                   h-96 w-96 rounded-full
-                   bg-yellow-400/20 blur-[120px]"
-        ></div>
-
-        {{-- Blur Biru --}}
-        <div
-            class="absolute -right-40 top-0
-                   h-[420px] w-[420px]
-                   rounded-full bg-blue-400/20
-                   blur-[130px]"
-        ></div>
-
-        {{-- Watermark --}}
-        <div
-            class="absolute bottom-5 right-5
-                   select-none text-right
-                   text-[70px] font-black
-                   leading-none text-white/[0.035]
-                   md:bottom-10 md:right-10
-                   md:text-[130px]"
-        >
-            TMPP
-        </div>
     </div>
+
+
+    {{-- Cahaya lembut --}}
+    <div
+        class="pointer-events-none absolute
+               -left-40 top-1/2
+               h-[420px] w-[420px]
+               -translate-y-1/2
+               rounded-full
+               bg-blue-500/15
+               blur-[140px]"
+        aria-hidden="true"
+    ></div>
 
 
     {{-- ========================================================= --}}
@@ -118,112 +131,163 @@
 
     <div
         class="relative z-10 mx-auto
-               w-full max-w-7xl px-6"
+               w-full max-w-7xl
+               px-6 pb-16 pt-32
+               sm:px-8 sm:pt-36
+               lg:px-10"
     >
-        {{-- Breadcrumb --}}
-        <nav
-            aria-label="Breadcrumb"
-            class="mb-6"
-        >
-            <ol
-                class="flex flex-wrap items-center
-                       gap-x-2 gap-y-2 text-sm
-                       text-white/80"
+        <div class="max-w-3xl">
+
+            {{-- Breadcrumb --}}
+            <nav
+                aria-label="Breadcrumb"
+                data-aos="fade-right"
             >
-                <li>
-                    <a
-                        href="{{ route('home') }}"
-                        class="transition
-                               hover:text-yellow-300"
-                    >
-                        Beranda
-                    </a>
-                </li>
-
-                <li aria-hidden="true">/</li>
-
-                <li>
-                    <span>Akademik</span>
-                </li>
-
-                <li aria-hidden="true">/</li>
-
-                <li
-                    class="font-semibold
-                           text-yellow-300"
-                    aria-current="page"
+                <ol
+                    class="flex flex-wrap items-center
+                           gap-2 text-xs font-medium
+                           text-white/60
+                           sm:text-sm"
                 >
-                    {{ $page['title'] }}
-                </li>
-            </ol>
-        </nav>
+                    <li>
+                        <a
+                            href="{{ route('home') }}"
+                            class="transition hover:text-white"
+                        >
+                            Beranda
+                        </a>
+                    </li>
+
+                    <li
+                        class="text-white/30"
+                        aria-hidden="true"
+                    >
+                        /
+                    </li>
+
+                    <li>
+                        <span class="text-white/60">
+                            Akademik
+                        </span>
+                    </li>
+
+                    <li
+                        class="text-white/30"
+                        aria-hidden="true"
+                    >
+                        /
+                    </li>
+
+                    <li
+                        class="text-white/90"
+                        aria-current="page"
+                    >
+                        {{ $pageTitle }}
+                    </li>
+                </ol>
+            </nav>
 
 
-        {{-- Label --}}
-        <span
-            class="inline-flex items-center
-                   rounded-full border
-                   border-yellow-300/40
-                   bg-yellow-400/15
-                   px-4 py-2 text-xs
-                   font-bold uppercase
-                   tracking-[0.16em]
-                   text-yellow-300
-                   backdrop-blur-sm
-                   sm:px-5 sm:text-sm"
-        >
-            Informasi Akademik
-        </span>
-
-
-        {{-- Title --}}
-        <h1
-            class="mt-6 max-w-4xl
-                   text-4xl font-extrabold
-                   leading-tight text-white
-                   drop-shadow-lg
-                   sm:text-5xl md:text-6xl"
-        >
-            {{ $page['title'] }}
-        </h1>
-
-
-        {{-- Subtitle --}}
-        @if (trim((string) ($page['subtitle'] ?? '')) !== '')
-            <p
-                class="mt-6 max-w-3xl
-                       text-base leading-8
-                       text-white/90 drop-shadow
-                       md:text-lg"
+            {{-- Label --}}
+            <div
+                class="mt-8 flex items-center gap-3"
+                data-aos="fade-up"
+                data-aos-delay="80"
             >
-                {{ $page['subtitle'] }}
-            </p>
-        @endif
+                <span
+                    class="h-px w-8 bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.24em]
+                           text-[#F2D56F]
+                           sm:text-xs"
+                >
+                    {{ $pageLabel }}
+                </p>
+            </div>
 
 
-        {{-- Informasi Program --}}
-        <div
-            class="mt-8 flex flex-wrap gap-3"
-        >
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
+            {{-- Judul --}}
+            <h1
+                class="mt-5 max-w-3xl
+                       text-4xl font-semibold
+                       leading-[1.12]
+                       tracking-[-0.03em]
+                       text-white
+                       drop-shadow-md
+                       sm:text-5xl
+                       lg:text-6xl"
+                style="
+                    font-family:
+                        'Space Grotesk',
+                        'Plus Jakarta Sans',
+                        sans-serif;
+                "
+                data-aos="fade-up"
+                data-aos-delay="140"
             >
-                D-IV Teknik Mesin Produksi dan Perawatan
-            </span>
+                {{ $pageTitle }}
+            </h1>
 
-            <span
-                class="rounded-xl border
-                       border-white/15 bg-white/10
-                       px-4 py-2 text-sm
-                       font-semibold text-white
-                       backdrop-blur-sm"
+
+            {{-- Deskripsi --}}
+            @if ($pageSubtitle !== '')
+                <p
+                    class="mt-6 max-w-2xl
+                           text-sm leading-7
+                           text-white/75
+                           sm:text-base
+                           sm:leading-8"
+                    data-aos="fade-up"
+                    data-aos-delay="210"
+                >
+                    {{ $pageSubtitle }}
+                </p>
+            @endif
+
+
+            {{-- Identitas --}}
+            <div
+                class="mt-8 flex flex-wrap
+                       items-center gap-x-4 gap-y-2
+                       text-xs font-semibold
+                       text-white/70
+                       sm:text-sm"
+                data-aos="fade-up"
+                data-aos-delay="270"
             >
-                Politeknik Negeri Malang
-            </span>
+                <span>
+                    D-IV Teknik Mesin Produksi dan Perawatan
+                </span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+                    Politeknik Negeri Malang
+                </span>
+            </div>
         </div>
     </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- AKSEN BAWAH --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="absolute inset-x-0 bottom-0
+               z-10 h-1
+               bg-gradient-to-r
+               from-[#073763]
+               via-[#E2BD45]
+               to-[#0B67A5]"
+        aria-hidden="true"
+    ></div>
 </section>

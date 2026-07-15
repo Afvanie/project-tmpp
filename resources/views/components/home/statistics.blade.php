@@ -1,12 +1,8 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | Statistik Program Studi
+    | STATISTIK PROGRAM STUDI
     |--------------------------------------------------------------------------
-    |
-    | Hanya statistik yang memiliki nilai yang akan ditampilkan.
-    | Data yang masih kosong dapat dilengkapi melalui halaman admin.
-    |
     */
 
     $stats = collect($homeStats ?? [])
@@ -19,151 +15,177 @@
         ->values();
 @endphp
 
+
 <section
     id="statistics"
-    class="relative overflow-hidden bg-white py-20 md:py-24"
+    class="relative overflow-hidden bg-white py-14 md:py-16"
 >
-    {{-- BACKGROUND DECORATION --}}
+    {{-- Dekorasi ringan --}}
     <div
-        class="pointer-events-none absolute inset-0 overflow-hidden"
+        class="pointer-events-none absolute inset-0"
         aria-hidden="true"
     >
         <div
-            class="absolute -left-24 top-10
-                   h-72 w-72 rounded-full
+            class="absolute -left-24 top-0
+                   h-64 w-64 rounded-full
                    bg-blue-100/40 blur-3xl"
         ></div>
 
         <div
             class="absolute -right-24 bottom-0
-                   h-72 w-72 rounded-full
+                   h-64 w-64 rounded-full
                    bg-yellow-100/40 blur-3xl"
         ></div>
     </div>
 
-    <div class="relative mx-auto max-w-6xl px-6">
 
-        {{-- HEADING --}}
+    <div class="relative mx-auto max-w-6xl px-6">
+        {{-- Heading --}}
         <div
-            class="mx-auto max-w-3xl text-center"
+            class="mx-auto max-w-2xl text-center"
             data-aos="fade-up"
         >
-            <span
-                class="inline-flex items-center rounded-full
-                       bg-blue-50 px-4 py-2
-                       text-sm font-semibold text-blue-700"
+            <div
+                class="flex items-center justify-center gap-3"
             >
-                TMPP dalam Angka
-            </span>
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.2em]
+                           text-[#075F9B]"
+                >
+                    TMPP dalam Angka
+                </p>
+
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+            </div>
 
             <h2
-                class="mt-5 text-3xl font-bold
-                       leading-tight text-slate-800
-                       sm:text-4xl"
+                class="mt-4 text-2xl font-extrabold
+                       tracking-tight text-slate-900
+                       sm:text-3xl"
             >
                 Statistik Program Studi
             </h2>
 
-            <div
-                class="mx-auto mt-5 h-1 w-20
-                       rounded-full bg-yellow-400"
-            ></div>
-
             <p
-                class="mx-auto mt-5 max-w-2xl
-                       leading-7 text-slate-500"
+                class="mx-auto mt-3 max-w-xl
+                       text-sm leading-6 text-slate-500"
             >
-                Data singkat Program Studi D-IV Teknik Mesin
-                Produksi dan Perawatan Politeknik Negeri Malang.
+                Informasi singkat Program Studi D-IV Teknik Mesin
+                Produksi dan Perawatan.
             </p>
         </div>
 
-        {{-- STATISTIC CARDS --}}
+
         @if ($stats->isNotEmpty())
             <div
-                class="mt-12 grid grid-cols-2 gap-4
-                       md:grid-cols-4 md:gap-6"
+                class="mt-9 grid grid-cols-2
+                       gap-3 sm:gap-4
+                       lg:grid-cols-4"
             >
                 @foreach ($stats as $stat)
                     <article
-                        class="group relative overflow-hidden
-                               rounded-2xl border border-slate-100
-                               bg-slate-50 px-4 py-7 text-center
-                               shadow-sm transition duration-300
+                        class="group relative
+                               overflow-hidden rounded-xl
+                               border border-slate-200
+                               bg-white px-4 py-5
+                               text-center shadow-sm
+                               transition duration-300
                                hover:-translate-y-1
-                               hover:border-blue-100
-                               hover:bg-white
-                               hover:shadow-xl
-                               sm:px-6 sm:py-8"
+                               hover:border-blue-200
+                               hover:shadow-md
+                               sm:px-5 sm:py-6"
                         data-aos="fade-up"
-                        data-aos-delay="{{ min($loop->index * 100, 300) }}"
+                        data-aos-delay="{{ min(
+                            $loop->index * 80,
+                            240
+                        ) }}"
                     >
-                        {{-- DECORATION --}}
                         <div
-                            class="absolute -right-8 -top-8
-                                   h-20 w-20 rounded-full
-                                   bg-blue-100/60
+                            class="mx-auto flex h-9 w-9
+                                   items-center justify-center
+                                   rounded-lg bg-blue-50
+                                   text-sm text-[#075F9B]
                                    transition duration-300
-                                   group-hover:scale-125"
+                                   group-hover:bg-[#075F9B]
+                                   group-hover:text-white"
+                        >
+                            <i
+                                class="fa-solid fa-chart-simple"
+                                aria-hidden="true"
+                            ></i>
+                        </div>
+
+                        <h3
+                            class="mt-4 text-2xl font-extrabold
+                                   leading-none text-[#075F9B]
+                                   sm:text-3xl"
+                        >
+                            {{ $stat->value }}
+                        </h3>
+
+                        <p
+                            class="mt-2 text-xs font-semibold
+                                   leading-5 text-slate-500
+                                   sm:text-sm"
+                        >
+                            {{ $stat->label }}
+                        </p>
+
+                        <div
+                            class="absolute inset-x-0 bottom-0
+                                   h-0.5 origin-left scale-x-0
+                                   bg-[#D7B33E]
+                                   transition-transform duration-300
+                                   group-hover:scale-x-100"
                             aria-hidden="true"
                         ></div>
-
-                        <div class="relative">
-                            <h3
-                                class="text-3xl font-extrabold
-                                       leading-none text-blue-700
-                                       sm:text-4xl"
-                            >
-                                {{ $stat->value }}
-                            </h3>
-
-                            <p
-                                class="mt-3 text-sm font-medium
-                                       leading-6 text-slate-600
-                                       sm:text-base"
-                            >
-                                {{ $stat->label }}
-                            </p>
-                        </div>
                     </article>
                 @endforeach
             </div>
         @else
-            {{-- EMPTY STATE --}}
             <div
-                class="mx-auto mt-12 max-w-2xl
-                       rounded-2xl border border-dashed
-                       border-slate-300 bg-slate-50
-                       px-6 py-10 text-center"
+                class="mx-auto mt-9 max-w-xl
+                       rounded-xl border
+                       border-dashed border-slate-300
+                       bg-slate-50 px-6 py-7
+                       text-center"
                 data-aos="fade-up"
             >
                 <div
-                    class="mx-auto flex h-14 w-14
+                    class="mx-auto flex h-10 w-10
                            items-center justify-center
-                           rounded-full bg-blue-100
-                           text-2xl font-bold text-blue-700"
-                    aria-hidden="true"
+                           rounded-lg bg-blue-100
+                           text-[#075F9B]"
                 >
-                    i
+                    <i
+                        class="fa-solid fa-chart-column"
+                        aria-hidden="true"
+                    ></i>
                 </div>
 
                 <h3
-                    class="mt-4 text-lg font-bold
-                           text-slate-800"
+                    class="mt-3 font-bold text-slate-800"
                 >
                     Data Statistik Belum Tersedia
                 </h3>
 
                 <p
-                    class="mt-2 leading-7 text-slate-500"
+                    class="mt-2 text-sm leading-6
+                           text-slate-500"
                 >
-                    Informasi jumlah mahasiswa, dosen,
-                    laboratorium, dan tahun berdiri akan
-                    ditampilkan setelah dilengkapi oleh
-                    pengelola program studi.
+                    Statistik akan ditampilkan setelah dilengkapi
+                    melalui halaman admin.
                 </p>
             </div>
         @endif
-
     </div>
 </section>

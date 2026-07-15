@@ -3,39 +3,88 @@
     |--------------------------------------------------------------------------
     | PROFIL PROFESIONAL MANDIRI
     |--------------------------------------------------------------------------
-    |
-    | Hanya item aktif dan memiliki isi yang ditampilkan.
-    |
     */
 
     $items = isset($section) && $section
         ? collect($section->items ?? [])
             ->filter(function ($item) {
-                return (bool) $item->is_active
-                    && trim((string) $item->content) !== '';
+                return (bool) ($item->is_active ?? false)
+                    && strtolower(
+                        trim(
+                            (string) ($item->item_group ?? '')
+                        )
+                    ) === 'ppm'
+                    && trim(
+                        (string) ($item->content ?? '')
+                    ) !== '';
             })
             ->sortBy('sort_order')
             ->values()
         : collect();
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | INFORMASI SECTION
+    |--------------------------------------------------------------------------
+    */
+
+    $sectionTitle = isset($section)
+        ? trim(
+            (string) ($section->title ?? '')
+        )
+        : '';
+
+    $sectionSubtitle = isset($section)
+        ? trim(
+            (string) ($section->subtitle ?? '')
+        )
+        : '';
+
+    $sectionDescription = isset($section)
+        ? trim(
+            (string) ($section->description ?? '')
+        )
+        : '';
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS KONTEN
+    |--------------------------------------------------------------------------
+    */
+
     $hasContent = isset($section)
         && $section
         && $items->isNotEmpty();
 
-    $sectionDescription = isset($section)
-        ? trim((string) ($section->description ?? ''))
-        : '';
+
+    /*
+    |--------------------------------------------------------------------------
+    | IKON
+    |--------------------------------------------------------------------------
+    */
+
+    $icons = [
+        'fa-user-tie',
+        'fa-industry',
+        'fa-gears',
+        'fa-screwdriver-wrench',
+        'fa-chart-line',
+        'fa-people-group',
+    ];
 @endphp
 
 
 @if ($hasContent)
-
     <section
         id="professional-profile"
-        class="relative overflow-hidden bg-white py-20 md:py-24"
+        class="relative overflow-hidden
+               bg-white py-16
+               md:py-20 lg:py-24"
     >
         {{-- ===================================================== --}}
-        {{-- BACKGROUND DECORATION --}}
+        {{-- DEKORASI LATAR --}}
         {{-- ===================================================== --}}
 
         <div
@@ -43,201 +92,336 @@
             aria-hidden="true"
         >
             <div
-                class="absolute -left-40 top-20
-                       h-[500px] w-[500px]
-                       rounded-full bg-blue-200/25
-                       blur-[150px]"
+                class="absolute -left-48 bottom-0
+                       h-[420px] w-[420px]
+                       rounded-full
+                       bg-blue-100/40
+                       blur-[140px]"
             ></div>
 
             <div
-                class="absolute -right-40 bottom-10
-                       h-[500px] w-[500px]
-                       rounded-full bg-yellow-200/25
-                       blur-[150px]"
+                class="absolute -right-48 top-0
+                       h-[420px] w-[420px]
+                       rounded-full
+                       bg-yellow-100/35
+                       blur-[140px]"
             ></div>
-
-            <div
-                class="absolute inset-0 opacity-[0.03]"
-                style="
-                    background-image:
-                        linear-gradient(
-                            #0f172a 1px,
-                            transparent 1px
-                        ),
-                        linear-gradient(
-                            to right,
-                            #0f172a 1px,
-                            transparent 1px
-                        );
-                    background-size: 70px 70px;
-                "
-            ></div>
-
-            <div
-                class="absolute right-8 top-16
-                       select-none text-[90px]
-                       font-black leading-none
-                       text-blue-900/[0.025]
-                       md:text-[160px]"
-            >
-                PPM
-            </div>
-
-            <img
-                src="{{ asset('assets/images/logo.png') }}"
-                alt=""
-                class="absolute -left-24 bottom-0
-                       w-[340px] select-none
-                       grayscale opacity-[0.035]
-                       md:w-[480px]"
-            >
         </div>
 
 
         <div
-            class="relative z-10 mx-auto
+            class="relative mx-auto
                    max-w-7xl px-6"
         >
-            {{-- ================================================= --}}
-            {{-- HEADING --}}
-            {{-- ================================================= --}}
-
             <div
-                class="mx-auto mb-14 max-w-4xl
-                       text-center md:mb-16"
-                data-aos="fade-up"
+                class="grid items-start gap-12
+                       lg:grid-cols-12
+                       lg:gap-16"
             >
-                <span
-                    class="text-sm font-semibold uppercase
-                           tracking-[5px] text-blue-700"
-                >
-                    {{ $section->subtitle
-                        ?: 'Karakter Profesional Lulusan' }}
-                </span>
-
-                <h2
-                    class="mt-4 text-3xl font-bold
-                           leading-tight text-slate-800
-                           sm:text-4xl md:text-5xl"
-                >
-                    {{ $section->title
-                        ?: 'Profil Profesional Mandiri' }}
-                </h2>
+                {{-- ================================================= --}}
+                {{-- INFORMASI UTAMA --}}
+                {{-- ================================================= --}}
 
                 <div
-                    class="mx-auto mt-6 h-1 w-24
-                           rounded-full bg-yellow-400"
-                ></div>
-
-                @if ($sectionDescription !== '')
-                    <p
-                        class="mx-auto mt-6 max-w-3xl
-                               leading-8 text-slate-600"
+                    class="lg:col-span-4"
+                    data-aos="fade-right"
+                >
+                    <div
+                        class="lg:sticky lg:top-28"
                     >
-                        {{ $sectionDescription }}
-                    </p>
-                @endif
-            </div>
-
-
-            {{-- ================================================= --}}
-            {{-- DAFTAR PPM --}}
-            {{-- ================================================= --}}
-
-            <div
-                class="grid gap-6
-                       {{ $items->count() === 1
-                            ? 'mx-auto max-w-2xl grid-cols-1'
-                            : ($items->count() === 2
-                                ? 'mx-auto max-w-5xl md:grid-cols-2'
-                                : 'md:grid-cols-2 lg:grid-cols-3') }}"
-            >
-                @foreach ($items as $item)
-
-                    <article
-                        class="group relative overflow-hidden
-                               rounded-3xl border
-                               border-slate-100 bg-white
-                               p-7 shadow-lg
-                               transition-all duration-500
-                               hover:-translate-y-2
-                               hover:shadow-2xl"
-                        data-aos="fade-up"
-                        data-aos-delay="{{ min($loop->index * 100, 300) }}"
-                    >
-                        {{-- Ornamen --}}
                         <div
-                            class="absolute right-0 top-0
-                                   h-28 w-28 rounded-bl-full
-                                   bg-blue-50
-                                   transition duration-500
-                                   group-hover:bg-yellow-100"
-                            aria-hidden="true"
-                        ></div>
+                            class="flex items-center gap-3"
+                        >
+                            <span
+                                class="h-px w-9
+                                       bg-[#D7B33E]"
+                                aria-hidden="true"
+                            ></span>
 
-                        <div
-                            class="absolute -bottom-12 -left-12
-                                   h-32 w-32 rounded-full
-                                   bg-blue-100/40 blur-2xl"
-                            aria-hidden="true"
-                        ></div>
-
-
-                        <div class="relative">
-
-                            {{-- Nomor --}}
-                            <div
-                                class="flex h-14 w-14
-                                       items-center justify-center
-                                       rounded-2xl bg-blue-50
-                                       text-xl font-black
-                                       text-blue-700
-                                       transition duration-300
-                                       group-hover:bg-blue-700
-                                       group-hover:text-white
-                                       group-hover:shadow-lg"
-                            >
-                                {{ $loop->iteration }}
-                            </div>
-
-
-                            {{-- Judul --}}
-                            @if (trim((string) $item->title) !== '')
-                                <h3
-                                    class="mt-6 text-xl font-bold
-                                           leading-7 text-slate-800"
-                                >
-                                    {{ $item->title }}
-                                </h3>
-                            @endif
-
-
-                            {{-- Konten --}}
                             <p
-                                class="{{ trim((string) $item->title) !== ''
-                                    ? 'mt-4'
-                                    : 'mt-6' }}
-                                       text-justify leading-8
+                                class="text-[11px] font-bold
+                                       uppercase
+                                       tracking-[0.22em]
+                                       text-[#075F9B]"
+                            >
+                                {{ $sectionSubtitle !== ''
+                                    ? $sectionSubtitle
+                                    : 'Karakter Profesional Lulusan' }}
+                            </p>
+                        </div>
+
+
+                        <h2
+                            class="mt-5 text-3xl
+                                   font-semibold leading-tight
+                                   tracking-[-0.025em]
+                                   text-slate-900
+                                   sm:text-4xl
+                                   lg:text-5xl"
+                            style="
+                                font-family:
+                                    'Space Grotesk',
+                                    'Plus Jakarta Sans',
+                                    sans-serif;
+                            "
+                        >
+                            {{ $sectionTitle !== ''
+                                ? $sectionTitle
+                                : 'Profil Profesional Mandiri' }}
+                        </h2>
+
+
+                        @if ($sectionDescription !== '')
+                            <p
+                                class="mt-6 text-base
+                                       leading-8
                                        text-slate-600"
                             >
-                                {!! nl2br(e($item->content)) !!}
+                                {{ $sectionDescription }}
                             </p>
+                        @endif
 
 
-                            {{-- Garis Aksen --}}
-                            <div
-                                class="mt-7 h-1 w-16
-                                       rounded-full bg-yellow-400
-                                       transition-all duration-300
-                                       group-hover:w-28"
-                            ></div>
+                        <div
+                            class="mt-7 flex items-center gap-3"
+                            aria-hidden="true"
+                        >
+                            <span
+                                class="h-1 w-14
+                                       rounded-full
+                                       bg-[#075F9B]"
+                            ></span>
+
+                            <span
+                                class="h-1 w-7
+                                       rounded-full
+                                       bg-[#D7B33E]"
+                            ></span>
                         </div>
-                    </article>
 
-                @endforeach
+
+                        {{-- Jumlah PPM --}}
+                        <div
+                            class="mt-9 flex items-center
+                                   gap-5 border-t
+                                   border-slate-200 pt-7"
+                        >
+                            <span
+                                class="text-5xl font-bold
+                                       tracking-[-0.04em]
+                                       text-[#075F9B]"
+                            >
+                                {{ str_pad(
+                                    (string) $items->count(),
+                                    2,
+                                    '0',
+                                    STR_PAD_LEFT
+                                ) }}
+                            </span>
+
+                            <div>
+                                <p
+                                    class="text-xs font-bold
+                                           uppercase
+                                           tracking-[0.16em]
+                                           text-slate-400"
+                                >
+                                    Profil Profesional
+                                </p>
+
+                                <p
+                                    class="mt-1 text-sm
+                                           text-slate-500"
+                                >
+                                    Dikelola melalui admin
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- DAFTAR PPM --}}
+                {{-- ================================================= --}}
+
+                <div
+                    class="lg:col-span-8"
+                    data-aos="fade-left"
+                >
+                    <div
+                        class="overflow-hidden
+                               rounded-[1.75rem]
+                               border border-slate-200
+                               bg-[#F8FAFC]"
+                    >
+                        @foreach ($items as $item)
+                            @php
+                                $itemTitle = trim(
+                                    (string) (
+                                        $item->title
+                                        ?? ''
+                                    )
+                                );
+
+                                $itemContent = trim(
+                                    (string) (
+                                        $item->content
+                                        ?? ''
+                                    )
+                                );
+
+                                $icon = $icons[
+                                    $loop->index
+                                    % count($icons)
+                                ];
+                            @endphp
+
+
+                            <article
+                                class="group relative
+                                       px-5 py-7
+                                       transition duration-300
+                                       hover:bg-white
+                                       sm:px-8 sm:py-8
+                                       {{ !$loop->last
+                                            ? 'border-b border-slate-200'
+                                            : '' }}"
+                                data-aos="fade-up"
+                                data-aos-delay="{{ min(
+                                    $loop->index * 90,
+                                    270
+                                ) }}"
+                            >
+                                <div
+                                    class="grid
+                                           grid-cols-[48px_1fr]
+                                           gap-4
+                                           sm:grid-cols-[60px_1fr]
+                                           sm:gap-6"
+                                >
+                                    {{-- Ikon --}}
+                                    <div>
+                                        <span
+                                            class="flex h-12 w-12
+                                                   items-center
+                                                   justify-center
+                                                   rounded-2xl
+                                                   border
+                                                   border-blue-100
+                                                   bg-white
+                                                   text-[#075F9B]
+                                                   shadow-sm
+                                                   transition
+                                                   duration-300
+                                                   group-hover:border-[#075F9B]
+                                                   group-hover:bg-[#075F9B]
+                                                   group-hover:text-white
+                                                   sm:h-14 sm:w-14"
+                                        >
+                                            <i
+                                                class="fa-solid {{ $icon }}"
+                                                aria-hidden="true"
+                                            ></i>
+                                        </span>
+                                    </div>
+
+
+                                    {{-- Isi --}}
+                                    <div class="min-w-0">
+                                        <div
+                                            class="flex flex-wrap
+                                                   items-center gap-3"
+                                        >
+                                            <span
+                                                class="text-[10px]
+                                                       font-bold uppercase
+                                                       tracking-[0.2em]
+                                                       text-[#075F9B]"
+                                            >
+                                                PPM
+                                                {{ str_pad(
+                                                    (string) $loop->iteration,
+                                                    2,
+                                                    '0',
+                                                    STR_PAD_LEFT
+                                                ) }}
+                                            </span>
+
+                                            <span
+                                                class="h-px w-8
+                                                       bg-[#D7B33E]"
+                                                aria-hidden="true"
+                                            ></span>
+                                        </div>
+
+
+                                        @if ($itemTitle !== '')
+                                            <h3
+                                                class="mt-3 text-lg
+                                                       font-bold
+                                                       leading-7
+                                                       text-slate-900
+                                                       sm:text-xl"
+                                            >
+                                                {{ $itemTitle }}
+                                            </h3>
+                                        @endif
+
+
+                                        <p
+                                            class="{{ $itemTitle !== ''
+                                                ? 'mt-3'
+                                                : 'mt-2' }}
+                                                   text-justify
+                                                   text-sm leading-7
+                                                   text-slate-600
+                                                   sm:text-base
+                                                   sm:leading-8"
+                                        >
+                                            {!! nl2br(
+                                                e($itemContent)
+                                            ) !!}
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                                {{-- Nomor dekoratif --}}
+                                <span
+                                    class="pointer-events-none
+                                           absolute right-5 top-5
+                                           text-4xl font-black
+                                           leading-none
+                                           text-slate-900/[0.035]
+                                           sm:right-8 sm:top-7
+                                           sm:text-5xl"
+                                    aria-hidden="true"
+                                >
+                                    {{ str_pad(
+                                        (string) $loop->iteration,
+                                        2,
+                                        '0',
+                                        STR_PAD_LEFT
+                                    ) }}
+                                </span>
+
+
+                                {{-- Garis hover --}}
+                                <div
+                                    class="absolute bottom-0
+                                           left-0 h-0.5
+                                           w-0 bg-[#D7B33E]
+                                           transition-all
+                                           duration-500
+                                           group-hover:w-full"
+                                    aria-hidden="true"
+                                ></div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-
         </div>
     </section>
-
 @endif

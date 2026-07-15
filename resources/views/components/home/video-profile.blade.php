@@ -4,220 +4,396 @@
     | VIDEO PROFIL TMPP
     |--------------------------------------------------------------------------
     |
-    | Section hanya ditampilkan apabila video resmi TMPP sudah tersedia.
-    |
-    | Simpan video resmi nantinya di:
-    | public/assets/videos/profile-tmpp.mp4
+    | Untuk sementara video masih menggunakan file statis.
+    | Pengaturan video dinamis melalui admin dikerjakan setelah desain selesai.
     |
     */
 
     $videoRelativePath = 'assets/videos/profile-tmpp.mp4';
-    $videoUrl = asset($videoRelativePath);
-    $videoAvailable = file_exists(public_path($videoRelativePath));
+
+    $videoAvailable = file_exists(
+        public_path($videoRelativePath)
+    );
+
+    $videoUrl = $videoAvailable
+        ? asset($videoRelativePath)
+        : null;
 @endphp
 
-@if ($videoAvailable)
 
+@if ($videoAvailable)
     <section
         id="video-profile"
-        class="relative overflow-hidden bg-slate-50 py-20 md:py-24"
+        class="relative overflow-hidden
+               bg-[#F5F8FB] py-16
+               md:py-20 lg:py-24"
     >
-        {{-- BACKGROUND DECORATION --}}
+        {{-- ===================================================== --}}
+        {{-- DEKORASI LATAR --}}
+        {{-- ===================================================== --}}
+
         <div
             class="pointer-events-none absolute inset-0"
             aria-hidden="true"
         >
             <div
-                class="absolute -left-40 top-20
-                       h-[520px] w-[520px]
-                       rounded-full bg-blue-200/30
-                       blur-[150px]"
+                class="absolute -left-40 top-10
+                       h-96 w-96 rounded-full
+                       bg-blue-200/30 blur-[130px]"
             ></div>
 
             <div
-                class="absolute -right-40 bottom-20
-                       h-[520px] w-[520px]
-                       rounded-full bg-yellow-200/30
-                       blur-[150px]"
+                class="absolute -right-32 bottom-0
+                       h-96 w-96 rounded-full
+                       bg-yellow-200/25 blur-[130px]"
             ></div>
 
             <div
-                class="absolute inset-0 opacity-[0.035]"
-                style="
-                    background-image:
-                        linear-gradient(
-                            #0f172a 1px,
-                            transparent 1px
-                        ),
-                        linear-gradient(
-                            to right,
-                            #0f172a 1px,
-                            transparent 1px
-                        );
-                    background-size: 70px 70px;
-                "
+                class="absolute right-0 top-0
+                       hidden h-full w-[38%]
+                       bg-gradient-to-l
+                       from-blue-50/80
+                       to-transparent
+                       lg:block"
             ></div>
         </div>
 
+
         <div
-            class="relative z-10 mx-auto
+            class="relative mx-auto
                    max-w-7xl px-6"
         >
             <div
-                class="grid items-center gap-14
-                       lg:grid-cols-2"
+                class="grid items-center gap-12
+                       lg:grid-cols-12
+                       lg:gap-16"
             >
-                {{-- TEXT --}}
-                <div data-aos="fade-right">
+                {{-- ================================================= --}}
+                {{-- INFORMASI --}}
+                {{-- ================================================= --}}
 
-                    <span
-                        class="text-sm font-semibold uppercase
-                               tracking-[5px] text-blue-700"
-                    >
-                        Video Profil
-                    </span>
-
-                    <h2
-                        class="mt-4 text-3xl font-bold
-                               leading-tight text-slate-800
-                               sm:text-4xl md:text-5xl"
-                    >
-                        Mengenal Program Studi D-IV Teknik Mesin
-                        Produksi dan Perawatan
-                    </h2>
-
+                <div
+                    class="lg:col-span-7"
+                    data-aos="fade-right"
+                >
                     <div
-                        class="mb-8 mt-6 h-1 w-24
-                               rounded-full bg-yellow-400"
-                    ></div>
-
-                    <p
-                        class="text-justify leading-8
-                               text-slate-600"
+                        class="flex items-center gap-3"
                     >
-                        Video profil ini memberikan pengenalan mengenai
-                        Program Studi D-IV Teknik Mesin Produksi dan
-                        Perawatan, Jurusan Teknik Mesin, Politeknik
-                        Negeri Malang.
-                    </p>
-
-                    <p
-                        class="mt-6 text-justify leading-8
-                               text-slate-600"
-                    >
-                        Melalui video ini, pengunjung dapat mengenal
-                        proses pembelajaran vokasi, kompetensi bidang
-                        produksi dan perawatan, fasilitas pendukung,
-                        kegiatan mahasiswa, serta arah pengembangan
-                        program studi dalam menghadapi kebutuhan
-                        dunia industri.
-                    </p>
-
-                    <div class="mt-8 flex flex-wrap gap-3">
-
                         <span
-                            class="rounded-xl bg-blue-700
-                                   px-4 py-2 text-sm
-                                   font-semibold text-white
-                                   shadow"
-                        >
-                            Program Studi
-                        </span>
+                            class="h-px w-10
+                                   bg-[#D7B33E]"
+                            aria-hidden="true"
+                        ></span>
 
-                        <span
-                            class="rounded-xl border
-                                   border-slate-200 bg-white
-                                   px-4 py-2 text-sm
-                                   font-semibold text-slate-700
-                                   shadow-sm"
+                        <p
+                            class="text-xs font-bold
+                                   uppercase
+                                   tracking-[0.22em]
+                                   text-[#075F9B]"
                         >
-                            D-IV TMPP
-                        </span>
-
-                        <span
-                            class="rounded-xl bg-yellow-400
-                                   px-4 py-2 text-sm
-                                   font-semibold text-slate-900
-                                   shadow"
-                        >
-                            Polinema
-                        </span>
-
+                            Video Profil
+                        </p>
                     </div>
 
-                </div>
 
-                {{-- VIDEO --}}
-                <div
-                    class="relative"
-                    data-aos="fade-left"
-                >
-                    {{-- DECORATIVE BACKGROUND --}}
+                    <h2
+                        class="mt-5 max-w-3xl
+                               text-3xl font-extrabold
+                               leading-tight tracking-tight
+                               text-slate-900
+                               sm:text-4xl
+                               lg:text-5xl"
+                    >
+                        Mengenal Lebih Dekat
+                        Program Studi D-IV TMPP
+                    </h2>
+
+
                     <div
-                        class="absolute -right-10 -top-10
-                               h-44 w-44 rounded-full
-                               bg-blue-300/30 blur-3xl"
+                        class="mt-6 flex items-center gap-3"
                         aria-hidden="true"
-                    ></div>
+                    >
+                        <span
+                            class="h-1 w-16
+                                   rounded-full
+                                   bg-[#075F9B]"
+                        ></span>
 
+                        <span
+                            class="h-1 w-8
+                                   rounded-full
+                                   bg-[#D7B33E]"
+                        ></span>
+                    </div>
+
+
+                    <p
+                        class="mt-7 max-w-3xl
+                               text-justify
+                               text-base leading-8
+                               text-slate-600
+                               sm:text-lg
+                               sm:leading-9"
+                    >
+                        Video profil memperkenalkan Program Studi
+                        D-IV Teknik Mesin Produksi dan Perawatan,
+                        lingkungan pembelajaran vokasi, fasilitas
+                        pendukung, kegiatan mahasiswa, serta
+                        kompetensi yang dikembangkan sesuai
+                        kebutuhan dunia industri.
+                    </p>
+
+
+                    {{-- Fokus Informasi --}}
                     <div
-                        class="absolute -bottom-10 -left-10
-                               h-44 w-44 rounded-full
-                               bg-yellow-300/40 blur-3xl"
-                        aria-hidden="true"
-                    ></div>
-
-                    {{-- MAIN VIDEO CARD --}}
-                    <div class="relative mx-auto max-w-md">
-
-                        {{-- FLOATING LABEL --}}
+                        class="mt-8 grid gap-4
+                               sm:grid-cols-3"
+                    >
                         <div
-                            class="absolute -top-5 left-6 z-20
-                                   rounded-2xl border
-                                   border-slate-100 bg-white
-                                   px-5 py-3 shadow-xl"
+                            class="flex items-center gap-3
+                                   border-l-2
+                                   border-[#075F9B]
+                                   pl-4"
                         >
-                            <p
-                                class="text-xs font-bold uppercase
-                                       tracking-wider text-blue-700"
+                            <span
+                                class="flex h-10 w-10
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       bg-blue-50
+                                       text-[#075F9B]"
                             >
-                                Video Profil
+                                <i
+                                    class="fa-solid
+                                           fa-graduation-cap"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <div>
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-800"
+                                >
+                                    Pembelajaran
+                                </p>
+
+                                <p
+                                    class="mt-1 text-xs
+                                           text-slate-500"
+                                >
+                                    Pendidikan vokasi
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div
+                            class="flex items-center gap-3
+                                   border-l-2
+                                   border-[#075F9B]
+                                   pl-4"
+                        >
+                            <span
+                                class="flex h-10 w-10
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       bg-blue-50
+                                       text-[#075F9B]"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-gears"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <div>
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-800"
+                                >
+                                    Kompetensi
+                                </p>
+
+                                <p
+                                    class="mt-1 text-xs
+                                           text-slate-500"
+                                >
+                                    Produksi dan perawatan
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div
+                            class="flex items-center gap-3
+                                   border-l-2
+                                   border-[#D7B33E]
+                                   pl-4"
+                        >
+                            <span
+                                class="flex h-10 w-10
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       bg-yellow-50
+                                       text-yellow-700"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-industry"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <div>
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-800"
+                                >
+                                    Industri
+                                </p>
+
+                                <p
+                                    class="mt-1 text-xs
+                                           text-slate-500"
+                                >
+                                    Kebutuhan dunia kerja
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div
+                        class="mt-9 inline-flex
+                               items-center gap-3
+                               rounded-xl border
+                               border-slate-200
+                               bg-white px-5 py-3
+                               shadow-sm"
+                    >
+                        <span
+                            class="flex h-9 w-9
+                                   items-center justify-center
+                                   rounded-lg
+                                   bg-[#073763]
+                                   text-[#F4D66E]"
+                        >
+                            <i
+                                class="fa-solid fa-play"
+                                aria-hidden="true"
+                            ></i>
+                        </span>
+
+                        <div>
+                            <p
+                                class="text-sm font-bold
+                                       text-slate-800"
+                            >
+                                Video Profil Resmi
                             </p>
 
                             <p
-                                class="text-sm font-semibold
-                                       text-slate-700"
+                                class="mt-0.5 text-xs
+                                       text-slate-500"
                             >
-                                Program Studi D-IV TMPP
+                                D-IV Teknik Mesin Produksi dan Perawatan
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- VIDEO --}}
+                {{-- ================================================= --}}
+
+                <div
+                    class="lg:col-span-5"
+                    data-aos="fade-left"
+                >
+                    <div
+                        class="relative mx-auto
+                               max-w-[360px]"
+                    >
+                        {{-- Ornamen --}}
+                        <div
+                            class="absolute -left-5 top-12
+                                   h-28 w-28
+                                   rounded-3xl
+                                   border-2
+                                   border-[#D7B33E]/35"
+                            aria-hidden="true"
+                        ></div>
+
+                        <div
+                            class="absolute -right-6 bottom-10
+                                   h-36 w-36
+                                   rounded-full
+                                   bg-blue-300/30
+                                   blur-3xl"
+                            aria-hidden="true"
+                        ></div>
+
+
+                        {{-- Label --}}
+                        <div
+                            class="absolute -left-4 top-8
+                                   z-20 rounded-xl
+                                   bg-[#073763]
+                                   px-4 py-3
+                                   shadow-xl
+                                   sm:-left-8"
+                        >
+                            <p
+                                class="text-[10px] font-bold
+                                       uppercase
+                                       tracking-[0.18em]
+                                       text-[#F4D66E]"
+                            >
+                                D-IV TMPP
+                            </p>
+
+                            <p
+                                class="mt-1 text-xs
+                                       font-semibold
+                                       text-white"
+                            >
+                                Politeknik Negeri Malang
                             </p>
                         </div>
 
-                        {{-- VIDEO FRAME --}}
+
+                        {{-- Frame Video --}}
                         <div
                             class="relative overflow-hidden
-                                   rounded-[2rem] border
-                                   border-white bg-white/80
-                                   p-4 shadow-2xl
-                                   backdrop-blur-xl"
+                                   rounded-[2rem]
+                                   border border-white
+                                   bg-white p-3
+                                   shadow-[0_28px_70px_rgba(15,23,42,0.20)]"
                         >
-                            {{-- TOP ACCENT --}}
                             <div
-                                class="absolute left-0 right-0 top-0
-                                       h-2 bg-gradient-to-r
-                                       from-blue-700
-                                       via-yellow-400
-                                       to-blue-700"
+                                class="absolute left-0
+                                       right-0 top-0
+                                       z-10 h-1.5
+                                       bg-gradient-to-r
+                                       from-[#073763]
+                                       via-[#D7B33E]
+                                       to-[#075F9B]"
+                                aria-hidden="true"
                             ></div>
 
-                            {{-- VIDEO PLAYER --}}
                             <div
-                                class="relative mt-3 overflow-hidden
+                                class="overflow-hidden
                                        rounded-[1.5rem]
-                                       bg-slate-100 shadow-inner"
+                                       bg-slate-900"
                             >
                                 <video
                                     class="aspect-[9/16]
-                                           max-h-[620px]
+                                           max-h-[580px]
                                            w-full object-cover"
                                     controls
                                     playsinline
@@ -233,69 +409,55 @@
                                     pemutar video.
                                 </video>
                             </div>
-
-                            {{-- BOTTOM INFORMATION --}}
-                            <div
-                                class="mt-5 flex items-center
-                                       gap-4"
-                            >
-                                <div
-                                    class="flex h-12 w-12
-                                           shrink-0 items-center
-                                           justify-center rounded-2xl
-                                           bg-blue-700 text-white
-                                           shadow-lg"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-6 w-6"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M14.752 11.168l-5.197-3.027A1 1 0 008 9.027v5.946a1 1 0 001.555.832l5.197-2.973a1 1 0 000-1.664z"
-                                        />
-
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div class="min-w-0">
-                                    <h3
-                                        class="font-bold
-                                               text-slate-800"
-                                    >
-                                        Video Profil TMPP
-                                    </h3>
-
-                                    <p
-                                        class="mt-1 text-sm
-                                               leading-5 text-slate-500"
-                                    >
-                                        D-IV Teknik Mesin Produksi
-                                        dan Perawatan
-                                    </p>
-                                </div>
-                            </div>
-
                         </div>
 
+
+                        {{-- Keterangan Bawah --}}
+                        <div
+                            class="relative mx-5
+                                   -mt-5 flex
+                                   items-center gap-3
+                                   rounded-xl
+                                   border border-slate-100
+                                   bg-white px-4 py-3
+                                   shadow-lg"
+                        >
+                            <span
+                                class="flex h-9 w-9
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-lg
+                                       bg-blue-50
+                                       text-[#075F9B]"
+                            >
+                                <i
+                                    class="fa-solid
+                                           fa-circle-play"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                            <div class="min-w-0">
+                                <p
+                                    class="truncate
+                                           text-sm font-bold
+                                           text-slate-800"
+                                >
+                                    Video Profil TMPP
+                                </p>
+
+                                <p
+                                    class="mt-0.5 truncate
+                                           text-xs
+                                           text-slate-500"
+                                >
+                                    Program Sarjana Terapan
+                                </p>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </section>
-
 @endif

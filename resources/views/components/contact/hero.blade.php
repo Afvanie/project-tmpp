@@ -1,121 +1,295 @@
 @php
-    $bannerPath = 'assets/images/contact-banner.jpg';
+    /*
+    |--------------------------------------------------------------------------
+    | HERO KONTAK
+    |--------------------------------------------------------------------------
+    */
 
-    $bannerAvailable = file_exists(
-        public_path($bannerPath)
-    );
+    $bannerCandidates = [
+        'assets/images/contact-banner.jpg',
+        'assets/images/kontak-banner.jpg',
+        'assets/images/profile-banner.jpg',
+    ];
+
+    $bannerPath = collect($bannerCandidates)
+        ->first(function (string $path): bool {
+            return file_exists(
+                public_path($path)
+            );
+        });
 @endphp
 
-<section
-    class="relative flex min-h-[520px]
-           items-center overflow-hidden
-           py-24 md:min-h-[60vh]"
->
-    <div class="absolute inset-0">
 
-        @if ($bannerAvailable)
+<section
+    id="contact-hero"
+    data-navbar-banner
+    class="relative flex min-h-[500px]
+           items-center overflow-hidden
+           bg-[#031D36]
+           sm:min-h-[540px]
+           lg:min-h-[580px]"
+>
+    {{-- ========================================================= --}}
+    {{-- BACKGROUND --}}
+    {{-- ========================================================= --}}
+
+    <div class="absolute inset-0">
+        @if ($bannerPath)
             <img
                 src="{{ asset($bannerPath) }}"
                 alt="Kontak Program Studi D-IV Teknik Mesin Produksi dan Perawatan"
-                class="h-full w-full object-cover"
+                class="h-full w-full
+                       object-cover object-center"
             >
         @else
             <div
                 class="h-full w-full
                        bg-gradient-to-br
-                       from-blue-900 via-blue-700
-                       to-slate-900"
+                       from-[#031D36]
+                       via-[#073763]
+                       to-[#0B67A5]"
             ></div>
         @endif
 
-        <div
-            class="absolute inset-0"
-            style="
-                background: linear-gradient(
-                    90deg,
-                    rgba(0, 59, 115, 0.38) 0%,
-                    rgba(0, 91, 172, 0.68) 42%,
-                    rgba(0, 43, 85, 0.94) 100%
-                );
-            "
-        ></div>
 
         <div
             class="absolute inset-0"
             style="
-                background: linear-gradient(
-                    180deg,
-                    rgba(0, 43, 85, 0.08) 0%,
-                    rgba(0, 43, 85, 0.28) 100%
-                );
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(2, 22, 41, 0.94) 0%,
+                        rgba(3, 37, 67, 0.82) 48%,
+                        rgba(3, 37, 67, 0.34) 78%,
+                        rgba(3, 37, 67, 0.16) 100%
+                    );
             "
+        ></div>
+
+
+        <div
+            class="absolute inset-0
+                   bg-gradient-to-t
+                   from-[#02182C]/70
+                   via-transparent
+                   to-[#02182C]/15"
         ></div>
     </div>
 
+
+    {{-- Cahaya lembut --}}
     <div
-        class="absolute inset-0
-               bg-[linear-gradient(to_right,rgba(255,255,255,.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,.08)_1px,transparent_1px)]
-               bg-[size:70px_70px]"
+        class="pointer-events-none absolute
+               -left-40 top-1/2
+               h-[420px] w-[420px]
+               -translate-y-1/2
+               rounded-full
+               bg-blue-500/15
+               blur-[140px]"
         aria-hidden="true"
     ></div>
 
-    <div
-        class="absolute -left-32 bottom-0
-               h-96 w-96 rounded-full
-               bg-yellow-400/20 blur-[120px]"
-        aria-hidden="true"
-    ></div>
+
+    {{-- ========================================================= --}}
+    {{-- CONTENT --}}
+    {{-- ========================================================= --}}
 
     <div
         class="relative z-10 mx-auto
-               w-full max-w-7xl px-6"
+               w-full max-w-7xl
+               px-6 pb-16 pt-32
+               sm:px-8 sm:pt-36
+               lg:px-10"
     >
-        <nav
-            class="mb-6 flex items-center gap-2
-                   text-sm text-white/80"
-            aria-label="Breadcrumb"
-        >
-            <a
-                href="{{ route('home') }}"
-                class="transition hover:text-yellow-300"
+        <div class="max-w-3xl">
+
+            {{-- Breadcrumb --}}
+            <nav
+                aria-label="Breadcrumb"
+                data-aos="fade-right"
             >
-                Beranda
+                <ol
+                    class="flex flex-wrap items-center
+                           gap-2 text-xs font-medium
+                           text-white/60
+                           sm:text-sm"
+                >
+                    <li>
+                        <a
+                            href="{{ route('home') }}"
+                            class="transition
+                                   hover:text-white"
+                        >
+                            Beranda
+                        </a>
+                    </li>
+
+                    <li
+                        class="text-white/30"
+                        aria-hidden="true"
+                    >
+                        /
+                    </li>
+
+                    <li
+                        class="text-white/90"
+                        aria-current="page"
+                    >
+                        Kontak
+                    </li>
+                </ol>
+            </nav>
+
+
+            {{-- Label --}}
+            <div
+                class="mt-8 flex items-center gap-3"
+                data-aos="fade-up"
+                data-aos-delay="80"
+            >
+                <span
+                    class="h-px w-8 bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase
+                           tracking-[0.24em]
+                           text-[#F2D56F]
+                           sm:text-xs"
+                >
+                    Hubungi Program Studi
+                </p>
+            </div>
+
+
+            {{-- Judul --}}
+            <h1
+                class="mt-5 max-w-3xl
+                       text-4xl font-semibold
+                       leading-[1.12]
+                       tracking-[-0.03em]
+                       text-white
+                       drop-shadow-md
+                       sm:text-5xl
+                       lg:text-6xl"
+                style="
+                    font-family:
+                        'Space Grotesk',
+                        'Plus Jakarta Sans',
+                        sans-serif;
+                "
+                data-aos="fade-up"
+                data-aos-delay="140"
+            >
+                Informasi dan Layanan
+
+                <span
+                    class="mt-2 block
+                           font-bold text-[#F1CE57]"
+                >
+                    Kontak D-IV TMPP
+                </span>
+            </h1>
+
+
+            {{-- Deskripsi --}}
+            <p
+                class="mt-6 max-w-2xl
+                       text-sm leading-7
+                       text-white/75
+                       sm:text-base
+                       sm:leading-8"
+                data-aos="fade-up"
+                data-aos-delay="210"
+            >
+                Terhubung dengan Program Studi D-IV Teknik Mesin
+                Produksi dan Perawatan untuk kebutuhan informasi
+                akademik, administrasi, kerja sama, serta komunikasi
+                lainnya.
+            </p>
+
+
+            {{-- Navigasi ringkas --}}
+            <div
+                class="mt-8 flex flex-wrap
+                       items-center gap-x-4 gap-y-2
+                       text-xs font-semibold
+                       text-white/70
+                       sm:text-sm"
+                data-aos="fade-up"
+                data-aos-delay="270"
+            >
+                <span>Informasi Kontak</span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>Lokasi Kampus</span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>Layanan Informasi</span>
+
+                <span
+                    class="h-1 w-1 rounded-full
+                           bg-[#E2BD45]"
+                    aria-hidden="true"
+                ></span>
+
+                <span>Media Sosial</span>
+            </div>
+
+
+            <a
+                href="#informasi-kontak"
+                class="mt-9 inline-flex
+                       items-center gap-3
+                       text-xs font-bold
+                       uppercase
+                       tracking-[0.15em]
+                       text-white/75
+                       transition
+                       hover:text-[#F2D56F]"
+                data-aos="fade-up"
+                data-aos-delay="320"
+            >
+                <span
+                    class="flex h-9 w-9
+                           items-center justify-center
+                           rounded-full
+                           border border-white/20
+                           bg-white/10
+                           backdrop-blur-sm"
+                >
+                    <i
+                        class="fa-solid fa-arrow-down"
+                        aria-hidden="true"
+                    ></i>
+                </span>
+
+                Lihat Informasi
             </a>
-
-            <span aria-hidden="true">/</span>
-
-            <span class="font-semibold text-yellow-300">
-                Kontak
-            </span>
-        </nav>
-
-        <span
-            class="inline-flex rounded-full
-                   border border-yellow-400/40
-                   bg-yellow-400/20 px-5 py-2
-                   text-sm font-semibold
-                   text-yellow-300"
-        >
-            HUBUNGI KAMI
-        </span>
-
-        <h1
-            class="mt-6 max-w-4xl text-4xl
-                   font-extrabold leading-tight
-                   text-white drop-shadow-lg
-                   sm:text-5xl md:text-6xl"
-        >
-            Kontak Program Studi
-        </h1>
-
-        <p
-            class="mt-6 max-w-3xl text-base
-                   leading-8 text-white/90
-                   drop-shadow md:text-lg"
-        >
-            Informasi komunikasi Program Studi D-IV Teknik Mesin
-            Produksi dan Perawatan, Jurusan Teknik Mesin,
-            Politeknik Negeri Malang.
-        </p>
+        </div>
     </div>
+
+
+    {{-- Aksen bawah --}}
+    <div
+        class="absolute inset-x-0 bottom-0
+               z-10 h-1
+               bg-gradient-to-r
+               from-[#073763]
+               via-[#E2BD45]
+               to-[#0B67A5]"
+        aria-hidden="true"
+    ></div>
 </section>

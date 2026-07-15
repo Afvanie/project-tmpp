@@ -1,146 +1,268 @@
-<section class="relative py-24 bg-slate-50 overflow-hidden">
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | KOMPETENSI PENDUKUNG
+    |--------------------------------------------------------------------------
+    |
+    | Bagian ini merupakan informasi pendukung statis.
+    | Data fasilitas dan dokumentasi tetap dikelola melalui admin.
+    |
+    */
 
-    {{-- Background Decoration --}}
-    <div class="absolute inset-0 pointer-events-none">
+    $competencies = [
+        [
+            'title' => 'Praktik Teknis',
+            'description' =>
+                'Mendukung kegiatan produksi, perakitan, penggunaan peralatan, dan perawatan mesin.',
+            'icon' => 'fa-screwdriver-wrench',
+            'theme' => 'blue',
+        ],
 
-        <div class="absolute -left-40 bottom-10 w-[480px] h-[480px] rounded-full bg-blue-200/25 blur-[140px]"></div>
+        [
+            'title' => 'Pengujian',
+            'description' =>
+                'Mendukung proses pengukuran, pengujian, analisis data, dan pemecahan masalah teknik.',
+            'icon' => 'fa-flask-vial',
+            'theme' => 'gold',
+        ],
 
-        <div class="absolute -right-40 top-10 w-[480px] h-[480px] rounded-full bg-yellow-200/25 blur-[140px]"></div>
+        [
+            'title' => 'Pembelajaran Teori',
+            'description' =>
+                'Mendukung pembelajaran konsep dasar dan terapan melalui diskusi, presentasi, dan penguatan materi.',
+            'icon' => 'fa-chalkboard-user',
+            'theme' => 'blue',
+        ],
 
+        [
+            'title' => 'Aktivitas Mahasiswa',
+            'description' =>
+                'Mendukung praktikum, proyek mahasiswa, serta kegiatan pengembangan kompetensi.',
+            'icon' => 'fa-people-group',
+            'theme' => 'gold',
+        ],
+    ];
+@endphp
+
+
+<section
+    id="kompetensi-pendukung"
+    class="relative overflow-hidden
+           border-b border-slate-200
+           bg-[#F8FAFC] py-14
+           md:py-16 lg:py-20"
+>
+    {{-- ========================================================= --}}
+    {{-- BACKGROUND DECORATION --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+    >
+        <div
+            class="absolute -left-40 top-0
+                   h-80 w-80 rounded-full
+                   bg-blue-100/40
+                   blur-[120px]"
+        ></div>
+
+        <div
+            class="absolute -right-40 bottom-0
+                   h-80 w-80 rounded-full
+                   bg-yellow-100/40
+                   blur-[120px]"
+        ></div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
 
-        <div class="grid lg:grid-cols-2 gap-14 items-center">
+    <div
+        class="relative mx-auto
+               max-w-7xl px-6"
+    >
+        <div
+            class="grid items-start gap-10
+                   lg:grid-cols-12
+                   lg:gap-14"
+        >
+            {{-- ================================================= --}}
+            {{-- INFORMASI UTAMA --}}
+            {{-- ================================================= --}}
 
-            {{-- Left Content --}}
-            <div data-aos="fade-right">
+            <div
+                class="lg:col-span-5"
+                data-aos="fade-right"
+            >
+                <div
+                    class="flex items-center gap-3"
+                >
+                    <span
+                        class="h-px w-8
+                               bg-[#D7B33E]"
+                        aria-hidden="true"
+                    ></span>
 
-                <span class="uppercase tracking-[5px] text-blue-700 font-semibold">
-                    Pembelajaran Berbasis Praktik
-                </span>
+                    <p
+                        class="text-[10px] font-bold
+                               uppercase
+                               tracking-[0.22em]
+                               text-[#075F9B]"
+                    >
+                        Pembelajaran Berbasis Praktik
+                    </p>
+                </div>
 
-                <h2 class="mt-4 text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
-                    Mendukung Kompetensi Lulusan
+
+                <h2
+                    class="mt-4 max-w-xl
+                           text-3xl font-semibold
+                           leading-tight
+                           tracking-[-0.025em]
+                           text-slate-900
+                           sm:text-4xl"
+                    style="
+                        font-family:
+                            'Space Grotesk',
+                            'Plus Jakarta Sans',
+                            sans-serif;
+                    "
+                >
+                    Fasilitas Pendukung Kompetensi Lulusan
                 </h2>
 
-                <div class="w-24 h-1 bg-yellow-400 rounded-full mt-6 mb-8"></div>
 
-                <p class="text-slate-600 leading-8 text-justify">
-                    Fasilitas Program Studi D-IV Teknik Mesin Produksi dan Perawatan mendukung proses
-                    pembelajaran berbasis kompetensi melalui kegiatan praktik,
-                    pengujian, perawatan, perancangan, dan penyelesaian permasalahan
-                    teknik secara terukur.
+                <p
+                    class="mt-5 max-w-xl
+                           text-sm leading-7
+                           text-slate-600
+                           sm:text-base
+                           sm:leading-8"
+                >
+                    Laboratorium, workshop, ruang kelas, dan
+                    fasilitas pendukung digunakan untuk memperkuat
+                    keterampilan teknis, kemampuan analitis, serta
+                    kesiapan mahasiswa menghadapi kebutuhan industri.
                 </p>
 
-                <p class="mt-6 text-slate-600 leading-8 text-justify">
-                    Melalui pemanfaatan workshop, laboratorium, ruang kelas, serta
-                    dokumentasi kegiatan akademik, mahasiswa diarahkan untuk memiliki
-                    keterampilan teknis, kedisiplinan, kemampuan analitis, etika kerja,
-                    dan kesiapan menghadapi kebutuhan dunia industri.
-                </p>
 
-                <div class="mt-8 flex flex-wrap gap-3">
+                <div
+                    class="mt-7 flex items-center gap-3"
+                    aria-hidden="true"
+                >
+                    <span
+                        class="h-1 w-12 rounded-full
+                               bg-[#075F9B]"
+                    ></span>
 
-                    <span class="px-4 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold shadow">
-                        Praktik
-                    </span>
-
-                    <span class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold shadow-sm">
-                        Pengujian
-                    </span>
-
-                    <span class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold shadow-sm">
-                        Perawatan
-                    </span>
-
-                    <span class="px-4 py-2 rounded-xl bg-yellow-400 text-slate-900 text-sm font-semibold shadow">
-                        Industri
-                    </span>
-
+                    <span
+                        class="h-1 w-6 rounded-full
+                               bg-[#D7B33E]"
+                    ></span>
                 </div>
-
             </div>
 
-            {{-- Right Cards --}}
-            <div class="grid sm:grid-cols-2 gap-5" data-aos="fade-left">
 
-                {{-- Card 1 --}}
-                <div class="group rounded-3xl bg-white p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+            {{-- ================================================= --}}
+            {{-- DAFTAR KOMPETENSI --}}
+            {{-- ================================================= --}}
 
-                    <h3 class="text-5xl font-black text-blue-700">
-                        01
-                    </h3>
+            <div
+                class="grid gap-x-8
+                       sm:grid-cols-2
+                       lg:col-span-7"
+                data-aos="fade-left"
+            >
+                @foreach ($competencies as $competency)
+                    @php
+                        $isGold =
+                            $competency['theme'] === 'gold';
+                    @endphp
 
-                    <p class="mt-5 text-xl font-bold text-slate-800">
-                        Praktik Teknis
-                    </p>
+                    <article
+                        class="group relative
+                               border-t border-slate-200
+                               py-6
+                               first:border-t-0
+                               sm:[&:nth-child(2)]:border-t-0"
+                        data-aos="fade-up"
+                        data-aos-delay="{{ min(
+                            $loop->index * 70,
+                            210
+                        ) }}"
+                    >
+                        <div
+                            class="flex items-start gap-4"
+                        >
+                            {{-- Ikon --}}
+                            <span
+                                class="flex h-11 w-11
+                                       shrink-0 items-center
+                                       justify-center
+                                       rounded-xl
+                                       transition duration-300
 
-                    <p class="mt-3 text-sm text-slate-500 leading-7">
-                        Mendukung keterampilan mahasiswa dalam kegiatan praktik
-                        produksi, perakitan, perawatan, dan penggunaan peralatan teknik.
-                    </p>
+                                       {{ $isGold
+                                            ? 'bg-yellow-50 text-yellow-700 group-hover:bg-[#D7B33E] group-hover:text-[#031D36]'
+                                            : 'bg-blue-50 text-[#075F9B] group-hover:bg-[#075F9B] group-hover:text-white' }}"
+                            >
+                                <i
+                                    class="fa-solid
+                                           {{ $competency['icon'] }}"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
 
-                </div>
 
-                {{-- Card 2 --}}
-                <div class="group rounded-3xl bg-white p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
+                            {{-- Isi --}}
+                            <div class="min-w-0">
+                                <div
+                                    class="flex items-center gap-3"
+                                >
+                                    <span
+                                        class="text-[10px]
+                                               font-bold
+                                               text-slate-300"
+                                    >
+                                        {{ str_pad(
+                                            (string) $loop->iteration,
+                                            2,
+                                            '0',
+                                            STR_PAD_LEFT
+                                        ) }}
+                                    </span>
 
-                    <h3 class="text-5xl font-black text-yellow-500">
-                        02
-                    </h3>
+                                    <span
+                                        class="h-px w-6
+                                               {{ $isGold
+                                                    ? 'bg-[#D7B33E]'
+                                                    : 'bg-[#075F9B]' }}"
+                                        aria-hidden="true"
+                                    ></span>
+                                </div>
 
-                    <p class="mt-5 text-xl font-bold text-slate-800">
-                        Pengujian
-                    </p>
 
-                    <p class="mt-3 text-sm text-slate-500 leading-7">
-                        Mendukung kegiatan pengukuran, pengujian, analisis data,
-                        dan pemecahan masalah teknik secara sistematis.
-                    </p>
+                                <h3
+                                    class="mt-2 text-base
+                                           font-bold leading-6
+                                           text-slate-900
+                                           sm:text-lg"
+                                >
+                                    {{ $competency['title'] }}
+                                </h3>
 
-                </div>
 
-                {{-- Card 3 --}}
-                <div class="group rounded-3xl bg-white p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-
-                    <h3 class="text-5xl font-black text-yellow-500">
-                        03
-                    </h3>
-
-                    <p class="mt-5 text-xl font-bold text-slate-800">
-                        Pembelajaran Teori
-                    </p>
-
-                    <p class="mt-3 text-sm text-slate-500 leading-7">
-                        Mendukung proses pembelajaran konsep dasar dan terapan
-                        melalui ruang kelas, diskusi, presentasi, dan penguatan materi.
-                    </p>
-
-                </div>
-
-                {{-- Card 4 --}}
-                <div class="group rounded-3xl bg-white p-6 shadow-lg border border-slate-100 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500">
-
-                    <h3 class="text-5xl font-black text-blue-700">
-                        04
-                    </h3>
-
-                    <p class="mt-5 text-xl font-bold text-slate-800">
-                        Dokumentasi Kegiatan
-                    </p>
-
-                    <p class="mt-3 text-sm text-slate-500 leading-7">
-                        Menampilkan aktivitas akademik, praktikum, proyek mahasiswa,
-                        serta kegiatan pengembangan kompetensi di lingkungan program studi.
-                    </p>
-
-                </div>
-
+                                <p
+                                    class="mt-2 text-sm
+                                           leading-7
+                                           text-slate-500"
+                                >
+                                    {{ $competency['description'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
             </div>
-
         </div>
-
     </div>
-
 </section>
