@@ -101,88 +101,10 @@
                 <div
                     class="mt-8 space-y-4"
                 >
-                    {{-- Status form --}}
-                    <div
-                        class="flex items-start gap-4
-                               rounded-2xl
-                               border border-blue-100
-                               bg-blue-50/60 p-5"
-                    >
-                        <span
-                            class="flex h-10 w-10
-                                   shrink-0 items-center
-                                   justify-center
-                                   rounded-xl bg-white
-                                   text-[#075F9B]
-                                   shadow-sm"
-                        >
-                            <i
-                                class="fa-solid fa-code"
-                                aria-hidden="true"
-                            ></i>
-                        </span>
-
-                        <div>
-                            <h3
-                                class="text-sm font-bold
-                                       text-slate-900"
-                            >
-                                Status Formulir
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm
-                                       leading-7
-                                       text-slate-600"
-                            >
-                                Form masih berupa tampilan frontend
-                                dan belum terhubung dengan email,
-                                database, atau dashboard admin.
-                            </p>
-                        </div>
-                    </div>
+                   
 
 
-                    {{-- Waktu layanan --}}
-                    <div
-                        class="flex items-start gap-4
-                               rounded-2xl
-                               border border-yellow-100
-                               bg-yellow-50/60 p-5"
-                    >
-                        <span
-                            class="flex h-10 w-10
-                                   shrink-0 items-center
-                                   justify-center
-                                   rounded-xl bg-white
-                                   text-yellow-700
-                                   shadow-sm"
-                        >
-                            <i
-                                class="fa-regular fa-clock"
-                                aria-hidden="true"
-                            ></i>
-                        </span>
-
-                        <div>
-                            <h3
-                                class="text-sm font-bold
-                                       text-slate-900"
-                            >
-                                Tindak Lanjut
-                            </h3>
-
-                            <p
-                                class="mt-1 text-sm
-                                       leading-7
-                                       text-slate-600"
-                            >
-                                Pesan yang telah terhubung ke backend
-                                nantinya dapat ditindaklanjuti pada
-                                jam layanan program studi.
-                            </p>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
 
