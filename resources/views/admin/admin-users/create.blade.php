@@ -1,59 +1,79 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Admin')
+@section('title', 'Tambah Pengelola')
 
 @section('content')
 
-<div class="space-y-8">
 
-    {{-- ========================================================= --}}
-    {{-- HEADER --}}
-    {{-- ========================================================= --}}
 
-    <div>
+
+<div class="mx-auto max-w-5xl space-y-6">
+
+    <header>
         <a
-            href="{{ route('admin.admin-users.index') }}"
-            class="mb-4 inline-flex items-center
-                   text-sm font-bold text-blue-700
-                   transition hover:underline"
+            href="{{ route(
+                'admin.admin-users.index'
+            ) }}"
+            class="inline-flex items-center
+                   gap-2 text-sm font-bold
+                   text-[#075F9B]
+                   hover:underline"
         >
-            ← Kembali ke Pengelola Admin
+            <span aria-hidden="true">←</span>
+            <span>Kembali ke Pengelola Admin</span>
         </a>
 
+        <div class="mt-5 flex items-center gap-3">
+            <span
+                class="h-px w-8 bg-[#D7B33E]"
+                aria-hidden="true"
+            ></span>
+
+            <p
+                class="text-[11px] font-bold
+                       uppercase tracking-[0.16em]
+                       text-[#075F9B]"
+            >
+                Tambah Akun
+            </p>
+        </div>
+
         <h1
-            class="text-3xl font-black
-                   text-slate-800 md:text-4xl"
+            class="mt-3 text-2xl font-extrabold
+                   tracking-tight text-slate-900
+                   sm:text-3xl"
         >
-            Tambah Admin
+            Tambah Pengelola
         </h1>
 
         <p
-            class="mt-3 max-w-3xl
-                   leading-7 text-slate-500"
+            class="mt-2 max-w-3xl
+                   text-sm leading-7
+                   text-slate-500"
         >
-            Tambahkan akun pengelola baru untuk mengakses panel
-            administrasi website Program Studi D-IV Teknik Mesin
-            Produksi dan Perawatan.
+            Tambahkan akun baru untuk mengelola isi website.
         </p>
-    </div>
+    </header>
 
 
-    {{-- ========================================================= --}}
-    {{-- ERROR SUMMARY --}}
-    {{-- ========================================================= --}}
+    
+
 
     @if ($errors->any())
         <div
-            class="rounded-2xl border
+            class="rounded-xl border
                    border-red-200 bg-red-50
-                   px-6 py-4 text-red-700"
+                   px-4 py-4 text-red-800"
             role="alert"
         >
-            <p class="font-bold">
-                Akun admin belum dapat disimpan.
+            <p class="text-sm font-bold">
+                Akun belum dapat disimpan:
             </p>
 
-            <ul class="mt-3 list-disc space-y-1 pl-5 text-sm">
+            <ul
+                class="mt-2 list-inside list-disc
+                       space-y-1 text-sm"
+            >
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -62,482 +82,373 @@
     @endif
 
 
-    {{-- ========================================================= --}}
-    {{-- FORM --}}
-    {{-- ========================================================= --}}
-
-    <section
-        class="overflow-hidden rounded-[2rem]
-               border border-slate-100
-               bg-white/95 shadow-xl
-               backdrop-blur"
+    <form
+        id="adminCreateForm"
+        action="{{ route(
+            'admin.admin-users.store'
+        ) }}"
+        method="POST"
+        class="overflow-hidden rounded-2xl
+               border border-slate-200
+               bg-white"
     >
-        <div
-            class="h-2 bg-gradient-to-r
-                   from-blue-700 via-yellow-400
-                   to-blue-700"
-        ></div>
+        @csrf
+        
 
-        <form
-            id="adminCreateForm"
-            action="{{ route('admin.admin-users.store') }}"
-            method="POST"
-            class="space-y-7 p-6 sm:p-7 md:p-8"
-        >
-            @csrf
 
-            <div>
+        <div class="px-5 py-7 sm:px-6 lg:px-8">
+            <div
+                class="border-b border-slate-200
+                       pb-6"
+            >
                 <h2
-                    class="text-2xl font-black
-                           text-slate-800"
+                    class="text-lg font-extrabold
+                           text-slate-900"
                 >
-                    Informasi Akun Admin
+                    Informasi Akun
                 </h2>
 
                 <p
-                    class="mt-2 max-w-3xl
+                    class="mt-1 text-sm
                            leading-7 text-slate-500"
                 >
-                    Email dan kata sandi berikut akan digunakan
-                    untuk masuk ke halaman admin.
+                    Email dan kata sandi digunakan
+                    untuk masuk ke panel admin.
                 </p>
             </div>
 
 
-            <div class="grid gap-6 md:grid-cols-2">
-
-                {{-- ================================================= --}}
-                {{-- NAMA --}}
-                {{-- ================================================= --}}
-
-                <div>
-                    <label
-                        for="adminName"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        Nama Admin
-                        <span class="text-red-600">*</span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="adminName"
-                        name="name"
-                        value="{{ old('name') }}"
-                        maxlength="255"
-                        autocomplete="name"
-                        placeholder="Contoh: Administrator"
-                        required
-                        autofocus
-                        @class([
-                            'w-full rounded-2xl border',
-                            'bg-slate-50 px-5 py-4',
-                            'transition focus:bg-white',
-                            'focus:outline-none focus:ring-2',
-                            'focus:ring-blue-500',
-                            'border-red-300' =>
-                                $errors->has('name'),
-                            'border-slate-200' =>
-                                !$errors->has('name'),
-                        ])
-                    >
-
-                    @error('name')
-                        <p
-                            class="mt-2 text-sm
-                                   font-semibold text-red-600"
+            <div class="mt-6 space-y-6">
+                <div
+                    class="grid gap-5
+                           md:grid-cols-2"
+                >
+                    <div>
+                        <label
+                            for="adminName"
+                            class="block text-sm
+                                   font-bold text-slate-800"
                         >
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
+                            Nama pengelola
+                        </label>
 
-
-                {{-- ================================================= --}}
-                {{-- EMAIL --}}
-                {{-- ================================================= --}}
-
-                <div>
-                    <label
-                        for="adminEmail"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        Email
-                        <span class="text-red-600">*</span>
-                    </label>
-
-                    <input
-                        type="email"
-                        id="adminEmail"
-                        name="email"
-                        value="{{ old('email') }}"
-                        maxlength="255"
-                        autocomplete="email"
-                        inputmode="email"
-                        placeholder="contoh@email.com"
-                        required
-                        @class([
-                            'w-full rounded-2xl border',
-                            'bg-slate-50 px-5 py-4',
-                            'transition focus:bg-white',
-                            'focus:outline-none focus:ring-2',
-                            'focus:ring-blue-500',
-                            'border-red-300' =>
-                                $errors->has('email'),
-                            'border-slate-200' =>
-                                !$errors->has('email'),
-                        ])
-                    >
-
-                    <p class="mt-2 text-sm text-slate-500">
-                        Gunakan email yang belum terdaftar.
-                    </p>
-
-                    @error('email')
-                        <p
-                            class="mt-2 text-sm
-                                   font-semibold text-red-600"
-                        >
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-
-                {{-- ================================================= --}}
-                {{-- KATA SANDI --}}
-                {{-- ================================================= --}}
-
-                <div>
-                    <label
-                        for="adminPassword"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        Kata Sandi
-                        <span class="text-red-600">*</span>
-                    </label>
-
-                    <div class="relative">
                         <input
-                            type="password"
-                            id="adminPassword"
-                            name="password"
-                            minlength="8"
+                            id="adminName"
+                            type="text"
+                            name="name"
+                            value="{{ old('name') }}"
                             maxlength="255"
-                            autocomplete="new-password"
-                            placeholder="Minimal 8 karakter"
+                            autocomplete="name"
+                            placeholder="Contoh: Administrator"
                             required
-                            data-password-input
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-slate-50 py-4 pl-5 pr-16',
-                                'transition focus:bg-white',
-                                'focus:outline-none focus:ring-2',
-                                'focus:ring-blue-500',
-                                'border-red-300' =>
-                                    $errors->has('password'),
-                                'border-slate-200' =>
-                                    !$errors->has('password'),
-                            ])
+                            autofocus
+                            class="mt-2 w-full
+                                   rounded-xl border
+                                   border-slate-200
+                                   px-4 py-3 text-sm
+                                   text-slate-800 outline-none
+                                   transition
+                                   focus:border-[#075F9B]
+                                   focus:ring-4
+                                   focus:ring-blue-100"
                         >
 
-                        <button
-                            type="button"
-                            class="absolute right-3 top-1/2
-                                   flex h-10 w-10
-                                   -translate-y-1/2
-                                   items-center justify-center
-                                   rounded-xl text-slate-500
-                                   transition hover:bg-slate-200
-                                   hover:text-blue-700"
-                            data-password-toggle
-                            aria-label="Tampilkan kata sandi"
-                            aria-pressed="false"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                                data-show-icon
+                        @error('name')
+                            <p
+                                class="mt-2 text-sm
+                                       font-semibold text-red-600"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                            </svg>
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="hidden h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                                data-hide-icon
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 3l18 18M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58M9.88 5.09A9.85 9.85 0 0112 5c4.477 0 8.268 2.943 9.542 7a11.05 11.05 0 01-2.06 3.64M6.61 6.61A11.13 11.13 0 002.458 12C3.732 16.057 7.523 19 12 19a9.83 9.83 0 004.13-.9"
-                                />
-                            </svg>
-                        </button>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    <p class="mt-2 text-sm text-slate-500">
-                        Gunakan minimal 8 karakter.
-                    </p>
 
-                    @error('password')
-                        <p
-                            class="mt-2 text-sm
-                                   font-semibold text-red-600"
+                    <div>
+                        <label
+                            for="adminEmail"
+                            class="block text-sm
+                                   font-bold text-slate-800"
                         >
-                            {{ $message }}
-                        </p>
-                    @enderror
+                            Email
+                        </label>
+
+                        <input
+                            id="adminEmail"
+                            type="email"
+                            name="email"
+                            value="{{ old('email') }}"
+                            maxlength="255"
+                            autocomplete="email"
+                            inputmode="email"
+                            placeholder="nama@email.com"
+                            required
+                            class="mt-2 w-full
+                                   rounded-xl border
+                                   border-slate-200
+                                   px-4 py-3 text-sm
+                                   text-slate-800 outline-none
+                                   transition
+                                   focus:border-[#075F9B]
+                                   focus:ring-4
+                                   focus:ring-blue-100"
+                        >
+
+                        @error('email')
+                            <p
+                                class="mt-2 text-sm
+                                       font-semibold text-red-600"
+                            >
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
                 </div>
 
 
-                {{-- ================================================= --}}
-                {{-- KONFIRMASI KATA SANDI --}}
-                {{-- ================================================= --}}
-
-                <div>
-                    <label
-                        for="adminPasswordConfirmation"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        Konfirmasi Kata Sandi
-                        <span class="text-red-600">*</span>
-                    </label>
-
-                    <div class="relative">
-                        <input
-                            type="password"
-                            id="adminPasswordConfirmation"
-                            name="password_confirmation"
-                            minlength="8"
-                            maxlength="255"
-                            autocomplete="new-password"
-                            placeholder="Masukkan kembali kata sandi"
-                            required
-                            data-password-input
-                            class="w-full rounded-2xl
-                                   border border-slate-200
-                                   bg-slate-50 py-4 pl-5 pr-16
-                                   transition focus:bg-white
-                                   focus:outline-none
-                                   focus:ring-2
-                                   focus:ring-blue-500"
+                <div
+                    class="grid gap-5
+                           border-t border-slate-200
+                           pt-6 md:grid-cols-2"
+                >
+                    <div>
+                        <label
+                            for="adminPassword"
+                            class="block text-sm
+                                   font-bold text-slate-800"
                         >
+                            Kata sandi
+                        </label>
 
-                        <button
-                            type="button"
-                            class="absolute right-3 top-1/2
-                                   flex h-10 w-10
-                                   -translate-y-1/2
-                                   items-center justify-center
-                                   rounded-xl text-slate-500
-                                   transition hover:bg-slate-200
-                                   hover:text-blue-700"
-                            data-password-toggle
-                            aria-label="Tampilkan konfirmasi kata sandi"
-                            aria-pressed="false"
+                        <div class="relative mt-2">
+                            <input
+                                id="adminPassword"
+                                type="password"
+                                name="password"
+                                minlength="8"
+                                maxlength="255"
+                                autocomplete="new-password"
+                                placeholder="Minimal 8 karakter"
+                                required
+                                data-password-input
+                                class="w-full rounded-xl
+                                       border border-slate-200
+                                       py-3 pl-4 pr-20
+                                       text-sm text-slate-800
+                                       outline-none transition
+                                       focus:border-[#075F9B]
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            >
+
+                            <button
+                                type="button"
+                                data-password-toggle
+                                class="absolute right-2
+                                       top-1/2 -translate-y-1/2
+                                       rounded-lg px-3 py-2
+                                       text-xs font-bold
+                                       text-[#075F9B]
+                                       hover:bg-blue-50"
+                            >
+                                Lihat
+                            </button>
+                        </div>
+
+                        <p
+                            class="mt-2 text-xs
+                                   leading-6 text-slate-500"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                                data-show-icon
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
+                            Gunakan minimal 8 karakter.
+                        </p>
 
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                            </svg>
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="hidden h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                                data-hide-icon
+                        @error('password')
+                            <p
+                                class="mt-2 text-sm
+                                       font-semibold text-red-600"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 3l18 18M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58M9.88 5.09A9.85 9.85 0 0112 5c4.477 0 8.268 2.943 9.542 7a11.05 11.05 0 01-2.06 3.64M6.61 6.61A11.13 11.13 0 002.458 12C3.732 16.057 7.523 19 12 19a9.83 9.83 0 004.13-.9"
-                                />
-                            </svg>
-                        </button>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
-                    <p
-                        id="passwordMatchMessage"
-                        class="mt-2 hidden text-sm font-semibold"
-                        aria-live="polite"
-                    ></p>
+
+                    <div>
+                        <label
+                            for="adminPasswordConfirmation"
+                            class="block text-sm
+                                   font-bold text-slate-800"
+                        >
+                            Konfirmasi kata sandi
+                        </label>
+
+                        <div class="relative mt-2">
+                            <input
+                                id="adminPasswordConfirmation"
+                                type="password"
+                                name="password_confirmation"
+                                minlength="8"
+                                maxlength="255"
+                                autocomplete="new-password"
+                                placeholder="Masukkan kembali kata sandi"
+                                required
+                                data-password-input
+                                class="w-full rounded-xl
+                                       border border-slate-200
+                                       py-3 pl-4 pr-20
+                                       text-sm text-slate-800
+                                       outline-none transition
+                                       focus:border-[#075F9B]
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            >
+
+                            <button
+                                type="button"
+                                data-password-toggle
+                                class="absolute right-2
+                                       top-1/2 -translate-y-1/2
+                                       rounded-lg px-3 py-2
+                                       text-xs font-bold
+                                       text-[#075F9B]
+                                       hover:bg-blue-50"
+                            >
+                                Lihat
+                            </button>
+                        </div>
+
+                        <p
+                            id="passwordMatchMessage"
+                            class="mt-2 hidden
+                                   text-xs font-semibold"
+                            aria-live="polite"
+                        ></p>
+                    </div>
                 </div>
             </div>
+        </div>
 
+
+        <footer
+            class="flex flex-col gap-4
+                   border-t border-slate-200
+                   bg-slate-50 px-5 py-5
+                   sm:flex-row sm:items-center
+                   sm:justify-between
+                   sm:px-6 lg:px-8"
+        >
+            <p
+                class="text-sm leading-6
+                       text-slate-500"
+            >
+                Berikan akses hanya kepada pengelola website yang berwenang.
+            </p>
 
             <div
-                class="flex flex-col gap-4
-                       border-t border-slate-100
-                       pt-6 md:flex-row
-                       md:items-center
-                       md:justify-between"
+                class="flex flex-col gap-3
+                       sm:flex-row"
             >
-                <p
-                    class="max-w-xl text-sm
-                           leading-6 text-slate-500"
+                <a
+                    href="{{ route(
+                        'admin.admin-users.index'
+                    ) }}"
+                    class="inline-flex items-center
+                           justify-center rounded-xl
+                           border border-slate-200
+                           bg-white px-5 py-3
+                           text-sm font-bold
+                           text-slate-700
+                           hover:bg-slate-100"
                 >
-                    Berikan akses admin hanya kepada pengelola
-                    website yang berwenang.
-                </p>
+                    Batal
+                </a>
 
                 <button
+                    id="adminSubmit"
                     type="submit"
-                    id="adminCreateSubmit"
                     class="inline-flex items-center
-                           justify-center rounded-2xl
-                           bg-blue-700 px-7 py-4
-                           font-bold text-white
-                           shadow-lg shadow-blue-700/20
-                           transition hover:bg-blue-800
+                           justify-center rounded-xl
+                           bg-[#075F9B] px-6 py-3
+                           text-sm font-bold text-white
+                           transition hover:bg-[#064B7B]
                            disabled:cursor-not-allowed
-                           disabled:opacity-60"
+                           disabled:opacity-70"
                 >
-                    Simpan Admin
+                    Simpan Pengelola
                 </button>
             </div>
-        </form>
-    </section>
+        </footer>
+    </form>
 </div>
 
 
-@once
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById(
-                'adminCreateForm'
-            );
+<script>
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+            const form =
+                document.getElementById(
+                    'adminCreateForm'
+                );
 
-            const submitButton = document.getElementById(
-                'adminCreateSubmit'
-            );
+            const submitButton =
+                document.getElementById(
+                    'adminSubmit'
+                );
 
-            const passwordInput = document.getElementById(
-                'adminPassword'
-            );
+            const passwordInput =
+                document.getElementById(
+                    'adminPassword'
+                );
 
-            const confirmationInput = document.getElementById(
-                'adminPasswordConfirmation'
-            );
+            const confirmationInput =
+                document.getElementById(
+                    'adminPasswordConfirmation'
+                );
 
-            const matchMessage = document.getElementById(
-                'passwordMatchMessage'
-            );
+            const matchMessage =
+                document.getElementById(
+                    'passwordMatchMessage'
+                );
 
 
             document
-                .querySelectorAll('[data-password-toggle]')
-                .forEach(function (button) {
-                    const container = button.parentElement;
-
-                    const input = container
-                        ? container.querySelector(
-                            '[data-password-input]'
-                        )
-                        : null;
-
-                    const showIcon = button.querySelector(
-                        '[data-show-icon]'
-                    );
-
-                    const hideIcon = button.querySelector(
-                        '[data-hide-icon]'
-                    );
-
-                    if (!input) {
-                        return;
-                    }
-
-                    button.addEventListener(
-                        'click',
-                        function () {
-                            const isVisible =
-                                input.type === 'text';
-
-                            input.type = isVisible
-                                ? 'password'
-                                : 'text';
-
-                            button.setAttribute(
-                                'aria-pressed',
-                                isVisible
-                                    ? 'false'
-                                    : 'true'
-                            );
-
-                            button.setAttribute(
-                                'aria-label',
-                                isVisible
-                                    ? 'Tampilkan kata sandi'
-                                    : 'Sembunyikan kata sandi'
-                            );
-
-                            if (showIcon) {
-                                showIcon.classList.toggle(
-                                    'hidden',
-                                    !isVisible
+                .querySelectorAll(
+                    '[data-password-toggle]'
+                )
+                .forEach(
+                    function (button) {
+                        const input =
+                            button.parentElement
+                                ?.querySelector(
+                                    '[data-password-input]'
                                 );
-                            }
 
-                            if (hideIcon) {
-                                hideIcon.classList.toggle(
-                                    'hidden',
-                                    isVisible
-                                );
-                            }
-
-                            input.focus();
+                        if (!input) {
+                            return;
                         }
-                    );
-                });
+
+                        button.addEventListener(
+                            'click',
+                            function () {
+                                const isVisible =
+                                    input.type === 'text';
+
+                                input.type =
+                                    isVisible
+                                        ? 'password'
+                                        : 'text';
+
+                                button.textContent =
+                                    isVisible
+                                        ? 'Lihat'
+                                        : 'Sembunyikan';
+
+                                input.focus();
+                            }
+                        );
+                    }
+                );
 
 
             function validatePasswordMatch() {
@@ -549,74 +460,105 @@
                     return true;
                 }
 
-                if (confirmationInput.value === '') {
+                const password =
+                    passwordInput.value;
+
+                const confirmation =
+                    confirmationInput.value;
+
+                if (
+                    password === ''
+                    && confirmation === ''
+                ) {
                     matchMessage.textContent = '';
-                    matchMessage.classList.add('hidden');
+                    matchMessage.classList.add(
+                        'hidden'
+                    );
+
+                    confirmationInput.setCustomValidity(
+                        ''
+                    );
 
                     return true;
                 }
 
-                const passwordsMatch =
-                    passwordInput.value ===
-                    confirmationInput.value;
+                const matches =
+                    password !== ''
+                    && password === confirmation;
 
                 matchMessage.classList.remove(
                     'hidden',
-                    'text-green-600',
+                    'text-emerald-600',
                     'text-red-600'
                 );
 
-                if (passwordsMatch) {
+                if (matches) {
                     matchMessage.textContent =
                         'Konfirmasi kata sandi sesuai.';
 
                     matchMessage.classList.add(
-                        'text-green-600'
+                        'text-emerald-600'
                     );
-                } else {
-                    matchMessage.textContent =
-                        'Konfirmasi kata sandi belum sesuai.';
 
-                    matchMessage.classList.add(
-                        'text-red-600'
+                    confirmationInput.setCustomValidity(
+                        ''
                     );
+
+                    return true;
                 }
 
-                return passwordsMatch;
-            }
+                matchMessage.textContent =
+                    'Konfirmasi kata sandi belum sesuai.';
 
-
-            if (passwordInput) {
-                passwordInput.addEventListener(
-                    'input',
-                    validatePasswordMatch
+                matchMessage.classList.add(
+                    'text-red-600'
                 );
-            }
 
-            if (confirmationInput) {
-                confirmationInput.addEventListener(
-                    'input',
-                    validatePasswordMatch
+                confirmationInput.setCustomValidity(
+                    'Konfirmasi kata sandi belum sesuai.'
                 );
+
+                return false;
             }
 
 
-            if (form && submitButton) {
-                form.addEventListener('submit', function (event) {
+            passwordInput?.addEventListener(
+                'input',
+                validatePasswordMatch
+            );
+
+            confirmationInput?.addEventListener(
+                'input',
+                validatePasswordMatch
+            );
+
+
+            form?.addEventListener(
+                'submit',
+                function (event) {
                     if (!validatePasswordMatch()) {
                         event.preventDefault();
 
-                        confirmationInput.focus();
+                        confirmationInput
+                            ?.reportValidity();
+
+                        confirmationInput
+                            ?.focus();
 
                         return;
                     }
 
+                    if (!submitButton) {
+                        return;
+                    }
+
                     submitButton.disabled = true;
-                    submitButton.textContent = 'Menyimpan...';
-                });
-            }
-        });
-    </script>
-@endonce
+                    submitButton.textContent =
+                        'Menyimpan...';
+                }
+            );
+        }
+    );
+</script>
 
 @endsection

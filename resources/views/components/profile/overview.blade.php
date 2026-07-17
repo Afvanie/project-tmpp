@@ -90,17 +90,50 @@
 
     /*
     |--------------------------------------------------------------------------
-    | GAMBAR
+    | GAMBAR DINAMIS
     |--------------------------------------------------------------------------
     */
 
-    $overviewImagePath = 'assets/images/about.png';
+    $overviewImageItem = $overviewSection
+        ? $overviewSection->items
+            ->firstWhere('item_group', 'image')
+        : null;
 
-    $overviewImageUrl = file_exists(
-        public_path($overviewImagePath)
-    )
-        ? asset($overviewImagePath)
-        : asset('assets/images/profile-banner.jpg');
+    $overviewImagePath = trim(
+        (string) (
+            $overviewImageItem?->content
+            ?? ''
+        )
+    );
+
+    $dynamicOverviewImageExists =
+        $overviewImagePath !== ''
+        && \Illuminate\Support\Facades\Storage::disk(
+            'public'
+        )->exists($overviewImagePath);
+
+    $overviewImageUrl =
+        $dynamicOverviewImageExists
+            ? asset(
+                'storage/'
+                . ltrim(
+                    $overviewImagePath,
+                    '/'
+                )
+            )
+            : (
+                file_exists(
+                    public_path(
+                        'assets/images/about.png'
+                    )
+                )
+                    ? asset(
+                        'assets/images/about.png'
+                    )
+                    : asset(
+                        'assets/images/profile-banner.jpg'
+                    )
+            );
 @endphp
 
 
@@ -303,7 +336,7 @@
                                            tracking-[0.2em]
                                            text-[#F4D66E]"
                                 >
-                                    Jurusan Teknik Mesin
+                                    D-IV TMPP
                                 </p>
 
                                 <p

@@ -1,7 +1,7 @@
 @php
     /*
     |--------------------------------------------------------------------------
-    | IDENTITAS HALAMAN LOGIN
+    | IDENTITAS HALAMAN LOGIN ADMIN
     |--------------------------------------------------------------------------
     */
 
@@ -28,6 +28,11 @@
         content="{{ csrf_token() }}"
     >
 
+    <meta
+        name="theme-color"
+        content="#071A2F"
+    >
+
     <title>
         Login Admin - D-IV TMPP Polinema
     </title>
@@ -43,7 +48,7 @@
     >
 
     <link
-        href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800,900"
+        href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600,700,800"
         rel="stylesheet"
     >
 
@@ -51,21 +56,29 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+
+        .login-focus:focus-visible,
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: 3px solid rgba(215, 179, 62, 0.55);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 
 <body
-    class="min-h-screen bg-slate-950
+    class="min-h-screen bg-[#071A2F]
            text-slate-800 antialiased"
 >
     <main
         class="relative flex min-h-screen
                items-center justify-center
-               overflow-hidden px-5 py-10
+               overflow-hidden px-4 py-8
                sm:px-6"
     >
         {{-- ===================================================== --}}
-        {{-- BACKGROUND --}}
+        {{-- LATAR BELAKANG --}}
         {{-- ===================================================== --}}
 
         <div
@@ -75,27 +88,27 @@
             <div
                 class="absolute inset-0
                        bg-gradient-to-br
-                       from-[#002D59]
-                       via-[#005BAC]
-                       to-[#06172E]"
+                       from-[#071A2F]
+                       via-[#0A3154]
+                       to-[#075F9B]"
             ></div>
 
             <div
-                class="absolute -left-32 top-1/4
-                       h-[420px] w-[420px]
-                       rounded-full bg-yellow-400/20
+                class="absolute -left-28 top-16
+                       h-80 w-80 rounded-full
+                       bg-yellow-400/15
+                       blur-[110px]"
+            ></div>
+
+            <div
+                class="absolute -right-28 bottom-10
+                       h-96 w-96 rounded-full
+                       bg-blue-300/15
                        blur-[130px]"
             ></div>
 
             <div
-                class="absolute -right-32 bottom-1/4
-                       h-[480px] w-[480px]
-                       rounded-full bg-blue-300/20
-                       blur-[150px]"
-            ></div>
-
-            <div
-                class="absolute inset-0 opacity-[0.08]"
+                class="absolute inset-0 opacity-[0.045]"
                 style="
                     background-image:
                         linear-gradient(
@@ -107,42 +120,31 @@
                             rgba(255, 255, 255, 0.8) 1px,
                             transparent 1px
                         );
-                    background-size: 70px 70px;
+                    background-size: 58px 58px;
                 "
             ></div>
-
-            <div
-                class="absolute bottom-6 right-6
-                       select-none text-right
-                       text-[58px] font-black
-                       leading-none text-white/[0.04]
-                       sm:text-[80px]
-                       lg:text-[110px]"
-            >
-                TMPP
-            </div>
         </div>
 
 
         {{-- ===================================================== --}}
-        {{-- LOGIN CONTAINER --}}
+        {{-- KARTU LOGIN --}}
         {{-- ===================================================== --}}
 
         <div
             class="relative z-10 grid w-full
-                   max-w-5xl overflow-hidden
-                   rounded-[2rem] bg-white
-                   shadow-2xl
-                   lg:grid-cols-2
-                   lg:rounded-[2.5rem]"
+                   max-w-4xl overflow-hidden
+                   rounded-[1.75rem]
+                   border border-white/10
+                   bg-white shadow-2xl
+                   lg:grid-cols-[0.88fr_1.12fr]"
         >
             {{-- ================================================= --}}
-            {{-- INFORMASI PROGRAM STUDI --}}
+            {{-- PANEL INFORMASI --}}
             {{-- ================================================= --}}
 
             <section
                 class="relative hidden overflow-hidden
-                       bg-[#06172E] p-10
+                       bg-[#071A2F] px-9 py-10
                        text-white lg:flex
                        lg:flex-col
                        lg:justify-between"
@@ -153,102 +155,93 @@
                 >
                     <div
                         class="absolute -right-24 -top-24
-                               h-72 w-72 rounded-full
-                               bg-blue-500/25 blur-3xl"
+                               h-64 w-64 rounded-full
+                               bg-blue-500/20 blur-3xl"
                     ></div>
 
                     <div
                         class="absolute -bottom-24 -left-24
-                               h-72 w-72 rounded-full
-                               bg-yellow-400/20 blur-3xl"
-                    ></div>
-
-                    <div
-                        class="absolute inset-0 opacity-[0.07]"
-                        style="
-                            background-image:
-                                linear-gradient(
-                                    #ffffff 1px,
-                                    transparent 1px
-                                ),
-                                linear-gradient(
-                                    to right,
-                                    #ffffff 1px,
-                                    transparent 1px
-                                );
-                            background-size: 55px 55px;
-                        "
+                               h-64 w-64 rounded-full
+                               bg-yellow-400/15 blur-3xl"
                     ></div>
                 </div>
 
 
                 <div class="relative">
-
                     <div
-                        class="flex h-20 w-20
+                        class="flex h-14 w-14
                                items-center justify-center
-                               rounded-3xl bg-white
+                               rounded-2xl bg-white
                                shadow-xl"
                     >
                         @if ($logoAvailable)
                             <img
-                                src="{{ asset(
-                                    $logoRelativePath
-                                ) }}"
+                                src="{{ asset($logoRelativePath) }}"
                                 alt="Logo Politeknik Negeri Malang"
-                                class="h-14 w-14 object-contain"
+                                class="h-10 w-10 object-contain"
                             >
                         @else
                             <span
-                                class="text-xl font-black
-                                       text-blue-800"
+                                class="text-sm font-extrabold
+                                       text-[#075F9B]"
                             >
                                 TM
                             </span>
                         @endif
                     </div>
 
-                    <span
-                        class="mt-10 inline-flex
-                               rounded-full border
-                               border-yellow-400/40
-                               bg-yellow-400/15
-                               px-4 py-2 text-xs
-                               font-bold uppercase
-                               tracking-[0.18em]
-                               text-yellow-300"
+
+                    <div
+                        class="mt-8 flex items-center gap-3"
                     >
-                        Admin Website
-                    </span>
+                        <span
+                            class="h-px w-8 bg-[#D7B33E]"
+                            aria-hidden="true"
+                        ></span>
+
+                        <p
+                            class="text-[10px] font-extrabold
+                                   uppercase tracking-[0.18em]
+                                   text-[#F2D56F]"
+                        >
+                            Admin Website
+                        </p>
+                    </div>
+
 
                     <h1
-                        class="mt-6 text-4xl
-                               font-black leading-tight"
+                        class="mt-4 text-3xl font-extrabold
+                               leading-tight tracking-[-0.025em]"
                     >
                         D-IV Teknik Mesin Produksi dan Perawatan
                     </h1>
 
+
                     <p
-                        class="mt-5 max-w-md
-                               leading-8 text-white/70"
+                        class="mt-4 text-sm leading-7
+                               text-slate-300"
                     >
-                        Sistem pengelolaan konten website Program
-                        Studi D-IV Teknik Mesin Produksi dan
-                        Perawatan Politeknik Negeri Malang.
+                        Kelola konten website program studi melalui
+                        satu panel administrasi yang terintegrasi.
                     </p>
                 </div>
 
 
                 <div
                     class="relative mt-10
-                           border-t border-white/10
-                           pt-6"
+                           border-t border-white/10 pt-5"
                 >
-                    <p class="text-sm font-bold text-white">
+                    <p
+                        class="text-xs font-bold
+                               text-white"
+                    >
                         Politeknik Negeri Malang
                     </p>
 
-                    <p class="mt-1 text-sm text-white/55">
+                    <p
+                        class="mt-1 text-[11px]
+                               text-slate-400"
+                    >
                         Jurusan Teknik Mesin
                     </p>
                 </div>
@@ -262,72 +255,95 @@
             <section
                 class="flex items-center
                        px-6 py-8
-                       sm:px-10 sm:py-10
-                       lg:px-12 lg:py-14"
+                       sm:px-9 sm:py-10
+                       lg:px-12 lg:py-12"
             >
                 <div class="w-full">
 
-                    {{-- Logo Mobile --}}
-                    <div class="mb-8 text-center lg:hidden">
-
-                        <div
-                            class="mx-auto flex h-20 w-20
-                                   items-center justify-center
-                                   rounded-3xl bg-white
-                                   shadow-xl ring-1
-                                   ring-slate-100"
+                    {{-- Identitas mobile --}}
+                    <div
+                        class="mb-7 flex items-center
+                               gap-3 lg:hidden"
+                    >
+                        <span
+                            class="flex h-12 w-12
+                                   shrink-0 items-center
+                                   justify-center rounded-xl
+                                   bg-white shadow-md
+                                   ring-1 ring-slate-100"
                         >
                             @if ($logoAvailable)
                                 <img
-                                    src="{{ asset(
-                                        $logoRelativePath
-                                    ) }}"
+                                    src="{{ asset($logoRelativePath) }}"
                                     alt="Logo Politeknik Negeri Malang"
-                                    class="h-14 w-14 object-contain"
+                                    class="h-9 w-9 object-contain"
                                 >
                             @else
                                 <span
-                                    class="text-xl font-black
-                                           text-blue-800"
+                                    class="text-sm font-extrabold
+                                           text-[#075F9B]"
                                 >
                                     TM
                                 </span>
                             @endif
-                        </div>
-
-                        <p
-                            class="mt-4 text-sm font-bold
-                                   text-blue-700"
-                        >
-                            D-IV TMPP POLINEMA
-                        </p>
-                    </div>
-
-
-                    <div>
-                        <span
-                            class="text-sm font-bold uppercase
-                                   tracking-[0.18em]
-                                   text-blue-700"
-                        >
-                            Area Pengelola
                         </span>
 
-                        <h2
-                            class="mt-3 text-3xl font-black
-                                   text-slate-800 sm:text-4xl"
-                        >
-                            Login Admin
-                        </h2>
+                        <div class="min-w-0">
+                            <p
+                                class="truncate text-sm
+                                       font-extrabold
+                                       text-slate-900"
+                            >
+                                Admin TMPP
+                            </p>
+
+                            <p
+                                class="mt-0.5 truncate
+                                       text-[10px] font-semibold
+                                       uppercase tracking-[0.1em]
+                                       text-slate-400"
+                            >
+                                Politeknik Negeri Malang
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div
+                        class="flex items-center gap-3"
+                    >
+                        <span
+                            class="h-px w-8 bg-[#D7B33E]"
+                            aria-hidden="true"
+                        ></span>
 
                         <p
-                            class="mt-3 leading-7
-                                   text-slate-500"
+                            class="text-[10px] font-extrabold
+                                   uppercase tracking-[0.18em]
+                                   text-[#075F9B]"
                         >
-                            Masukkan akun admin untuk mengelola
-                            konten website D-IV TMPP.
+                            Area Pengelola
                         </p>
                     </div>
+
+
+                    <h2
+                        class="mt-4 text-3xl font-extrabold
+                               tracking-[-0.025em]
+                               text-slate-900
+                               sm:text-4xl"
+                    >
+                        Masuk ke Admin
+                    </h2>
+
+
+                    <p
+                        class="mt-3 text-sm leading-7
+                               text-slate-500"
+                    >
+                        Gunakan akun administrator yang terdaftar
+                        untuk mengakses pengelolaan website.
+                    </p>
 
 
                     {{-- ========================================= --}}
@@ -336,30 +352,53 @@
 
                     @if (session('error'))
                         <div
-                            class="mt-6 rounded-2xl border
+                            class="mt-6 flex items-start gap-3
+                                   rounded-xl border
                                    border-red-200 bg-red-50
-                                   px-5 py-4 text-sm
-                                   font-semibold text-red-700"
+                                   px-4 py-3.5
+                                   text-sm text-red-700"
                             role="alert"
                         >
-                            {{ session('error') }}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="mt-0.5 h-5 w-5 shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                                />
+                            </svg>
+
+                            <p class="leading-6">
+                                {{ session('error') }}
+                            </p>
                         </div>
                     @endif
 
+
                     @if ($errors->any())
                         <div
-                            class="mt-6 rounded-2xl border
-                                   border-red-200 bg-red-50
-                                   px-5 py-4 text-red-700"
+                            class="mt-6 rounded-xl
+                                   border border-red-200
+                                   bg-red-50 px-4 py-3.5
+                                   text-red-700"
                             role="alert"
                         >
-                            <p class="font-bold">
+                            <p
+                                class="text-sm font-bold"
+                            >
                                 Login belum dapat diproses.
                             </p>
 
                             <ul
-                                class="mt-2 list-disc
-                                       space-y-1 pl-5 text-sm"
+                                class="mt-2 list-disc space-y-1
+                                       pl-5 text-sm leading-6"
                             >
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -385,36 +424,65 @@
                         <div>
                             <label
                                 for="adminEmail"
-                                class="mb-2 block text-sm
-                                       font-bold text-slate-700"
+                                class="mb-2 block
+                                       text-sm font-bold
+                                       text-slate-700"
                             >
                                 Email
                             </label>
 
-                            <input
-                                type="email"
-                                id="adminEmail"
-                                name="email"
-                                value="{{ old('email') }}"
-                                maxlength="255"
-                                autocomplete="username"
-                                inputmode="email"
-                                required
-                                autofocus
-                                placeholder="Masukkan email admin"
-                                @class([
-                                    'w-full rounded-2xl border',
-                                    'bg-slate-50 px-5 py-4',
-                                    'transition focus:bg-white',
-                                    'focus:outline-none',
-                                    'focus:ring-2',
-                                    'focus:ring-blue-500',
-                                    'border-red-300' =>
-                                        $errors->has('email'),
-                                    'border-slate-200' =>
-                                        !$errors->has('email'),
-                                ])
-                            >
+                            <div class="relative">
+                                <span
+                                    class="pointer-events-none
+                                           absolute left-4 top-1/2
+                                           -translate-y-1/2
+                                           text-slate-400"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M3 8l9 6 9-6M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"
+                                        />
+                                    </svg>
+                                </span>
+
+                                <input
+                                    type="email"
+                                    id="adminEmail"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    maxlength="255"
+                                    autocomplete="username"
+                                    inputmode="email"
+                                    required
+                                    autofocus
+                                    placeholder="admin@polinema.com"
+                                    @class([
+                                        'login-focus w-full rounded-xl',
+                                        'border bg-slate-50',
+                                        'py-3.5 pl-12 pr-4',
+                                        'text-sm text-slate-900',
+                                        'outline-none transition',
+                                        'placeholder:text-slate-400',
+                                        'focus:bg-white',
+                                        'focus:ring-4',
+                                        'focus:ring-blue-100',
+                                        'border-red-300 focus:border-red-400' =>
+                                            $errors->has('email'),
+                                        'border-slate-200 focus:border-[#075F9B]' =>
+                                            !$errors->has('email'),
+                                    ])
+                                >
+                            </div>
 
                             @error('email')
                                 <p
@@ -432,13 +500,36 @@
                         <div>
                             <label
                                 for="adminPassword"
-                                class="mb-2 block text-sm
-                                       font-bold text-slate-700"
+                                class="mb-2 block
+                                       text-sm font-bold
+                                       text-slate-700"
                             >
                                 Kata Sandi
                             </label>
 
                             <div class="relative">
+                                <span
+                                    class="pointer-events-none
+                                           absolute left-4 top-1/2
+                                           -translate-y-1/2
+                                           text-slate-400"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M7 11V8a5 5 0 0110 0v3M6 11h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z"
+                                        />
+                                    </svg>
+                                </span>
 
                                 <input
                                     type="password"
@@ -448,16 +539,18 @@
                                     required
                                     placeholder="Masukkan kata sandi"
                                     @class([
-                                        'w-full rounded-2xl border',
-                                        'bg-slate-50 py-4',
-                                        'pl-5 pr-16 transition',
+                                        'login-focus w-full rounded-xl',
+                                        'border bg-slate-50',
+                                        'py-3.5 pl-12 pr-14',
+                                        'text-sm text-slate-900',
+                                        'outline-none transition',
+                                        'placeholder:text-slate-400',
                                         'focus:bg-white',
-                                        'focus:outline-none',
-                                        'focus:ring-2',
-                                        'focus:ring-blue-500',
-                                        'border-red-300' =>
+                                        'focus:ring-4',
+                                        'focus:ring-blue-100',
+                                        'border-red-300 focus:border-red-400' =>
                                             $errors->has('password'),
-                                        'border-slate-200' =>
+                                        'border-slate-200 focus:border-[#075F9B]' =>
                                             !$errors->has('password'),
                                     ])
                                 >
@@ -465,18 +558,19 @@
                                 <button
                                     type="button"
                                     id="toggleAdminPassword"
-                                    class="absolute right-3 top-1/2
-                                           flex h-10 w-10
+                                    class="login-focus absolute
+                                           right-2.5 top-1/2
+                                           flex h-9 w-9
                                            -translate-y-1/2
                                            items-center justify-center
-                                           rounded-xl text-slate-500
+                                           rounded-lg
+                                           text-slate-400
                                            transition
                                            hover:bg-slate-200
-                                           hover:text-blue-700"
+                                           hover:text-[#075F9B]"
                                     aria-label="Tampilkan kata sandi"
                                     aria-pressed="false"
                                 >
-                                    {{-- Ikon Lihat --}}
                                     <svg
                                         id="passwordVisibleIcon"
                                         xmlns="http://www.w3.org/2000/svg"
@@ -501,7 +595,6 @@
                                         />
                                     </svg>
 
-                                    {{-- Ikon Sembunyikan --}}
                                     <svg
                                         id="passwordHiddenIcon"
                                         xmlns="http://www.w3.org/2000/svg"
@@ -536,34 +629,95 @@
                         <button
                             type="submit"
                             id="adminLoginSubmit"
-                            class="inline-flex w-full
-                                   items-center justify-center
-                                   rounded-2xl bg-blue-700
-                                   px-6 py-4 font-bold
+                            class="login-focus inline-flex
+                                   w-full items-center
+                                   justify-center gap-3
+                                   rounded-xl bg-[#075F9B]
+                                   px-6 py-3.5
+                                   text-sm font-bold
                                    text-white shadow-lg
-                                   shadow-blue-700/20
-                                   transition hover:bg-blue-800
+                                   shadow-blue-900/15
+                                   transition
+                                   hover:bg-[#064B7B]
                                    disabled:cursor-not-allowed
                                    disabled:opacity-60"
                         >
-                            Masuk
+                            <span id="adminLoginButtonText">
+                                Masuk
+                            </span>
+
+                            <svg
+                                id="adminLoginButtonIcon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                />
+                            </svg>
+
+                            <svg
+                                id="adminLoginSpinner"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="hidden h-4 w-4 animate-spin"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <circle
+                                    class="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    stroke-width="4"
+                                ></circle>
+
+                                <path
+                                    class="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                            </svg>
                         </button>
                     </form>
 
 
                     <div
                         class="mt-7 border-t
-                               border-slate-100 pt-6
-                               text-center"
+                               border-slate-100 pt-5"
                     >
                         <a
                             href="{{ route('home') }}"
-                            class="inline-flex items-center
-                                   gap-2 text-sm font-bold
-                                   text-slate-500 transition
-                                   hover:text-blue-700"
+                            class="login-focus inline-flex
+                                   items-center gap-2
+                                   text-xs font-bold
+                                   text-slate-500
+                                   transition
+                                   hover:text-[#075F9B]"
                         >
-                            <span aria-hidden="true">←</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 19l-7-7 7-7"
+                                />
+                            </svg>
 
                             Kembali ke Website
                         </a>
@@ -575,87 +729,135 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById(
-                'adminLoginForm'
-            );
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+                const form =
+                    document.getElementById(
+                        'adminLoginForm'
+                    );
 
-            const submitButton = document.getElementById(
-                'adminLoginSubmit'
-            );
+                const submitButton =
+                    document.getElementById(
+                        'adminLoginSubmit'
+                    );
 
-            const passwordInput = document.getElementById(
-                'adminPassword'
-            );
+                const submitButtonText =
+                    document.getElementById(
+                        'adminLoginButtonText'
+                    );
 
-            const togglePasswordButton = document.getElementById(
-                'toggleAdminPassword'
-            );
+                const submitButtonIcon =
+                    document.getElementById(
+                        'adminLoginButtonIcon'
+                    );
 
-            const visibleIcon = document.getElementById(
-                'passwordVisibleIcon'
-            );
+                const submitSpinner =
+                    document.getElementById(
+                        'adminLoginSpinner'
+                    );
 
-            const hiddenIcon = document.getElementById(
-                'passwordHiddenIcon'
-            );
+                const passwordInput =
+                    document.getElementById(
+                        'adminPassword'
+                    );
+
+                const togglePasswordButton =
+                    document.getElementById(
+                        'toggleAdminPassword'
+                    );
+
+                const visibleIcon =
+                    document.getElementById(
+                        'passwordVisibleIcon'
+                    );
+
+                const hiddenIcon =
+                    document.getElementById(
+                        'passwordHiddenIcon'
+                    );
 
 
-            if (
-                passwordInput
-                && togglePasswordButton
-            ) {
-                togglePasswordButton.addEventListener(
-                    'click',
-                    function () {
-                        const passwordIsVisible =
-                            passwordInput.type === 'text';
+                if (
+                    passwordInput
+                    && togglePasswordButton
+                ) {
+                    togglePasswordButton.addEventListener(
+                        'click',
+                        function () {
+                            const passwordIsVisible =
+                                passwordInput.type === 'text';
 
-                        passwordInput.type = passwordIsVisible
-                            ? 'password'
-                            : 'text';
-
-                        togglePasswordButton.setAttribute(
-                            'aria-pressed',
-                            passwordIsVisible
-                                ? 'false'
-                                : 'true'
-                        );
-
-                        togglePasswordButton.setAttribute(
-                            'aria-label',
-                            passwordIsVisible
-                                ? 'Tampilkan kata sandi'
-                                : 'Sembunyikan kata sandi'
-                        );
-
-                        if (visibleIcon) {
-                            visibleIcon.classList.toggle(
-                                'hidden',
-                                !passwordIsVisible
-                            );
-                        }
-
-                        if (hiddenIcon) {
-                            hiddenIcon.classList.toggle(
-                                'hidden',
+                            passwordInput.type =
                                 passwordIsVisible
+                                    ? 'password'
+                                    : 'text';
+
+                            togglePasswordButton.setAttribute(
+                                'aria-pressed',
+                                passwordIsVisible
+                                    ? 'false'
+                                    : 'true'
                             );
+
+                            togglePasswordButton.setAttribute(
+                                'aria-label',
+                                passwordIsVisible
+                                    ? 'Tampilkan kata sandi'
+                                    : 'Sembunyikan kata sandi'
+                            );
+
+                            if (visibleIcon) {
+                                visibleIcon.classList.toggle(
+                                    'hidden',
+                                    !passwordIsVisible
+                                );
+                            }
+
+                            if (hiddenIcon) {
+                                hiddenIcon.classList.toggle(
+                                    'hidden',
+                                    passwordIsVisible
+                                );
+                            }
+
+                            passwordInput.focus();
                         }
+                    );
+                }
 
-                        passwordInput.focus();
-                    }
-                );
+
+                if (form && submitButton) {
+                    form.addEventListener(
+                        'submit',
+                        function () {
+                            if (!form.checkValidity()) {
+                                return;
+                            }
+
+                            submitButton.disabled = true;
+
+                            if (submitButtonText) {
+                                submitButtonText.textContent =
+                                    'Memproses...';
+                            }
+
+                            if (submitButtonIcon) {
+                                submitButtonIcon.classList.add(
+                                    'hidden'
+                                );
+                            }
+
+                            if (submitSpinner) {
+                                submitSpinner.classList.remove(
+                                    'hidden'
+                                );
+                            }
+                        }
+                    );
+                }
             }
-
-
-            if (form && submitButton) {
-                form.addEventListener('submit', function () {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Memproses...';
-                });
-            }
-        });
+        );
     </script>
 </body>
 

@@ -5,48 +5,35 @@
 @section('content')
 
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | KOLEKSI DOKUMEN
-    |--------------------------------------------------------------------------
-    */
-
-    $documentCollection = $documents instanceof \Illuminate\Pagination\AbstractPaginator
-        ? $documents->getCollection()
-        : collect($documents);
+    $documentCollection =
+        $documents instanceof \Illuminate\Pagination\AbstractPaginator
+            ? $documents->getCollection()
+            : collect($documents);
 
     $totalDocuments = $documentCollection->count();
 
-    $activeDocuments = $documentCollection
+    $shownDocuments = $documentCollection
         ->where('is_active', true)
         ->count();
 
-    $inactiveDocuments = $documentCollection
-        ->where('is_active', false)
-        ->count();
+    $hiddenDocuments = $totalDocuments - $shownDocuments;
 
-    /*
-    |--------------------------------------------------------------------------
-    | INFORMASI FILE DAN TAUTAN
-    |--------------------------------------------------------------------------
-    */
+    $getDocumentMeta = static function ($document): array {
+        $filePath = trim(
+            (string) $document->file_path
+        );
 
-    $getDocumentMeta = function ($document): array {
-        $filePath = trim((string) $document->file_path);
-
-        $fileExists = $filePath !== ''
-            && \Illuminate\Support\Facades\Storage::disk('public')
-                ->exists($filePath);
-
-        $fileUrl = $fileExists
-            ? asset('storage/' . $filePath)
-            : null;
+        $fileExists =
+            $filePath !== ''
+            && \Illuminate\Support\Facades\Storage::disk(
+                'public'
+            )->exists($filePath);
 
         $externalLink = trim(
             (string) $document->external_link
         );
 
-        $externalScheme = $externalLink !== ''
+        $scheme = $externalLink !== ''
             ? strtolower(
                 (string) parse_url(
                     $externalLink,
@@ -55,13 +42,14 @@
             )
             : '';
 
-        $hasSafeExternalLink = $externalLink !== ''
+        $safeExternalLink =
+            $externalLink !== ''
             && filter_var(
                 $externalLink,
                 FILTER_VALIDATE_URL
             )
             && in_array(
-                $externalScheme,
+                $scheme,
                 ['http', 'https'],
                 true
             );
@@ -74,20 +62,28 @@
         );
 
         $searchText = \Illuminate\Support\Str::lower(
-            implode(' ', [
-                (string) $document->title,
-                $categoryLabel,
-                (string) $document->academic_year,
-                (string) $document->description,
-            ])
+            implode(
+                ' ',
+                [
+                    (string) $document->title,
+                    $categoryLabel,
+                    (string) $document->academic_year,
+                    (string) $document->description,
+                ]
+            )
         );
 
         return [
             'file_path' => $filePath,
             'file_exists' => $fileExists,
-            'file_url' => $fileUrl,
+            'file_url' => $fileExists
+                ? asset(
+                    'storage/'
+                    . ltrim($filePath, '/')
+                )
+                : null,
             'external_link' => $externalLink,
-            'has_safe_external_link' => $hasSafeExternalLink,
+            'safe_external_link' => $safeExternalLink,
             'category_label' => $categoryLabel,
             'search_text' => $searchText,
         ];
@@ -95,614 +91,442 @@
 @endphp
 
 
-<div class="space-y-8">
+<div class="mx-auto max-w-7xl space-y-6">
 
-    {{-- ========================================================= --}}
     {{-- HEADER --}}
-    {{-- ========================================================= --}}
-
-    <div
-        class="flex flex-col gap-5
-               lg:flex-row lg:items-center
+    <header
+        class="flex flex-col gap-4
+               lg:flex-row lg:items-end
                lg:justify-between"
     >
         <div>
+            <div class="flex items-center gap-3">
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.16em]
+                           text-[#075F9B]"
+                >
+                    Pengelolaan Akademik
+                </p>
+            </div>
+
             <h1
-                class="text-3xl font-black
-                       text-slate-800 md:text-4xl"
+                class="mt-3 text-2xl font-extrabold
+                       tracking-tight text-slate-900
+                       sm:text-3xl"
             >
                 Dokumen Akademik
             </h1>
 
             <p
-                class="mt-3 max-w-4xl
-                       leading-7 text-slate-500"
+                class="mt-2 max-w-3xl
+                       text-sm leading-7
+                       text-slate-500"
             >
-                Kelola Pedoman Akademik, Kalender Akademik,
-                Kurikulum, Jadwal Kuliah, Laporan Ketercapaian,
-                Panduan Tugas Akhir, dan Panduan Magang Industri
-                Program Studi D-IV Teknik Mesin Produksi dan
-                Perawatan.
+                Kelola pedoman, kalender, kurikulum,
+                jadwal, laporan, serta panduan akademik
+                Program Studi D-IV TMPP.
             </p>
         </div>
 
         <a
-            href="{{ route('admin.academic-documents.create') }}"
-            class="inline-flex items-center
-                   justify-center gap-3 rounded-2xl
-                   bg-blue-700 px-6 py-4
-                   font-bold text-white shadow-lg
-                   shadow-blue-700/20 transition
-                   hover:bg-blue-800"
+            href="{{ route(
+                'admin.academic-documents.create'
+            ) }}"
+            class="inline-flex w-full items-center
+                   justify-center gap-2 rounded-xl
+                   bg-[#075F9B] px-5 py-3
+                   text-sm font-bold text-white
+                   transition hover:bg-[#064B7B]
+                   sm:w-auto"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4"
-                />
-            </svg>
-
+            <span aria-hidden="true">+</span>
             Tambah Dokumen
         </a>
-    </div>
+    </header>
 
 
-    {{-- ========================================================= --}}
     {{-- ALERT --}}
-    {{-- ========================================================= --}}
-
     @if (session('success'))
         <div
-            class="rounded-2xl border
-                   border-green-200 bg-green-50
-                   px-6 py-4 font-semibold
-                   text-green-700"
-            role="alert"
+            class="rounded-xl border
+                   border-emerald-200
+                   bg-emerald-50 px-4 py-3
+                   text-sm font-semibold
+                   text-emerald-800"
+            role="status"
         >
             {{ session('success') }}
         </div>
     @endif
 
-    @if ($errors->any())
+    @if (session('error'))
         <div
-            class="rounded-2xl border
+            class="rounded-xl border
                    border-red-200 bg-red-50
-                   px-6 py-4 text-red-700"
+                   px-4 py-3 text-sm
+                   font-semibold text-red-700"
             role="alert"
         >
-            <p class="font-bold">
-                Terdapat data yang perlu diperbaiki.
-            </p>
-
-            <ul class="mt-3 list-disc space-y-1 pl-5 text-sm">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            {{ session('error') }}
         </div>
     @endif
 
 
-    {{-- ========================================================= --}}
-    {{-- STATISTIK --}}
-    {{-- ========================================================= --}}
-
-    <div class="grid gap-6 md:grid-cols-3">
-
-        {{-- Total --}}
-        <div
-            class="rounded-[2rem] border
-                   border-slate-100 bg-white/95
-                   p-6 shadow-xl backdrop-blur"
-        >
-            <div
-                class="flex items-center
-                       justify-between gap-4"
+    {{-- RINGKASAN --}}
+    <section
+        class="flex flex-col gap-4
+               rounded-2xl border
+               border-slate-200 bg-white
+               px-5 py-4
+               sm:flex-row sm:items-center
+               sm:justify-between sm:px-6"
+    >
+        <div>
+            <h2
+                class="text-sm font-extrabold
+                       text-slate-900"
             >
-                <div>
-                    <p
-                        class="text-sm font-bold
-                               text-slate-500"
-                    >
-                        Total Dokumen
-                    </p>
+                Ringkasan Dokumen
+            </h2>
 
-                    <h2
-                        class="mt-3 text-4xl font-black
-                               text-slate-800"
-                    >
-                        {{ $totalDocuments }}
-                    </h2>
-                </div>
-
-                <div
-                    class="flex h-14 w-14
-                           items-center justify-center
-                           rounded-2xl bg-blue-700
-                           text-white shadow-lg"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-7 w-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
-                        />
-                    </svg>
-                </div>
-            </div>
+            <p
+                class="mt-1 text-xs
+                       leading-5 text-slate-500"
+            >
+                Hanya dokumen yang ditampilkan yang dapat
+                dilihat oleh pengunjung website.
+            </p>
         </div>
 
-
-        {{-- Aktif --}}
         <div
-            class="rounded-[2rem] border
-                   border-slate-100 bg-white/95
-                   p-6 shadow-xl backdrop-blur"
+            class="grid grid-cols-3
+                   divide-x divide-slate-200
+                   text-center"
         >
-            <div
-                class="flex items-center
-                       justify-between gap-4"
-            >
-                <div>
-                    <p
-                        class="text-sm font-bold
-                               text-slate-500"
-                    >
-                        Dokumen Aktif
-                    </p>
-
-                    <h2
-                        class="mt-3 text-4xl font-black
-                               text-slate-800"
-                    >
-                        {{ $activeDocuments }}
-                    </h2>
-                </div>
-
-                <div
-                    class="flex h-14 w-14
-                           items-center justify-center
-                           rounded-2xl bg-green-600
-                           text-white shadow-lg"
+            <div class="px-4">
+                <p
+                    class="text-xl font-extrabold
+                           text-slate-900"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-7 w-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M5 13l4 4L19 7"
-                        />
-                    </svg>
-                </div>
+                    {{ $totalDocuments }}
+                </p>
+
+                <p class="mt-1 text-[10px] text-slate-500">
+                    Total
+                </p>
+            </div>
+
+            <div class="px-4">
+                <p
+                    class="text-xl font-extrabold
+                           text-emerald-600"
+                >
+                    {{ $shownDocuments }}
+                </p>
+
+                <p class="mt-1 text-[10px] text-slate-500">
+                    Ditampilkan
+                </p>
+            </div>
+
+            <div class="px-4">
+                <p
+                    class="text-xl font-extrabold
+                           text-slate-500"
+                >
+                    {{ $hiddenDocuments }}
+                </p>
+
+                <p class="mt-1 text-[10px] text-slate-500">
+                    Disembunyikan
+                </p>
             </div>
         </div>
+    </section>
 
 
-        {{-- Nonaktif --}}
-        <div
-            class="rounded-[2rem] border
-                   border-slate-100 bg-white/95
-                   p-6 shadow-xl backdrop-blur"
-        >
-            <div
-                class="flex items-center
-                       justify-between gap-4"
-            >
-                <div>
-                    <p
-                        class="text-sm font-bold
-                               text-slate-500"
-                    >
-                        Dokumen Nonaktif
-                    </p>
-
-                    <h2
-                        class="mt-3 text-4xl font-black
-                               text-slate-800"
-                    >
-                        {{ $inactiveDocuments }}
-                    </h2>
-                </div>
-
-                <div
-                    class="flex h-14 w-14
-                           items-center justify-center
-                           rounded-2xl bg-yellow-400
-                           text-slate-900 shadow-lg"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-7 w-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z"
-                        />
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-    {{-- ========================================================= --}}
-    {{-- MAIN CARD --}}
-    {{-- ========================================================= --}}
-
-    <div
-        class="overflow-hidden rounded-[2rem]
-               border border-slate-100
-               bg-white/95 shadow-xl
-               backdrop-blur"
+    {{-- DAFTAR --}}
+    <section
+        class="overflow-hidden rounded-2xl
+               border border-slate-200
+               bg-white"
+        aria-labelledby="documentListTitle"
     >
         <div
-            class="h-2 bg-gradient-to-r
-                   from-blue-700 via-yellow-400
-                   to-blue-700"
-        ></div>
-
-
-        {{-- ===================================================== --}}
-        {{-- TOOLBAR --}}
-        {{-- ===================================================== --}}
-
-        <div
-            class="border-b border-slate-100
-                   p-6 md:p-8"
+            class="flex flex-col gap-4
+                   border-b border-slate-200
+                   px-5 py-5 sm:px-6
+                   lg:flex-row lg:items-end
+                   lg:justify-between"
         >
-            <div
-                class="flex flex-col gap-5
-                       lg:flex-row lg:items-center
-                       lg:justify-between"
-            >
-                <div>
-                    <h2
-                        class="text-2xl font-black
-                               text-slate-800"
-                    >
-                        Daftar Dokumen Akademik
-                    </h2>
+            <div>
+                <h2
+                    id="documentListTitle"
+                    class="text-lg font-extrabold
+                           text-slate-900"
+                >
+                    Daftar Dokumen
+                </h2>
 
-                    <p class="mt-2 text-slate-500">
-                        Dokumen aktif akan tampil pada halaman
-                        akademik website publik.
-                    </p>
-                </div>
+                <p
+                    class="mt-1 text-sm
+                           text-slate-500"
+                >
+                    Cari berdasarkan judul, kategori,
+                    atau tahun akademik.
+                </p>
+            </div>
 
-                <div class="relative w-full lg:w-96">
-                    <label
-                        for="academicDocumentSearch"
-                        class="sr-only"
-                    >
-                        Cari dokumen akademik
-                    </label>
+            <div class="w-full lg:w-96">
+                <label
+                    for="academicDocumentSearch"
+                    class="sr-only"
+                >
+                    Cari dokumen akademik
+                </label>
 
-                    <input
-                        type="search"
-                        id="academicDocumentSearch"
-                        placeholder="Cari judul, kategori, atau tahun..."
-                        autocomplete="off"
-                        class="w-full rounded-2xl
-                               border border-slate-200
-                               bg-slate-50 px-5 py-4
-                               pl-12 transition
-                               focus:bg-white
-                               focus:outline-none
-                               focus:ring-2
-                               focus:ring-blue-500"
-                    >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="absolute left-4 top-1/2
-                               h-5 w-5 -translate-y-1/2
-                               text-slate-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
-                        />
-                    </svg>
-                </div>
+                <input
+                    id="academicDocumentSearch"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Cari dokumen..."
+                    class="w-full rounded-xl
+                           border border-slate-200
+                           bg-slate-50
+                           px-4 py-2.5 text-sm
+                           text-slate-700 outline-none
+                           transition
+                           focus:border-[#075F9B]
+                           focus:bg-white"
+                >
             </div>
         </div>
 
 
-        {{-- ===================================================== --}}
-        {{-- DESKTOP TABLE --}}
-        {{-- ===================================================== --}}
-
-        <div class="hidden overflow-x-auto xl:block">
-
+        {{-- DESKTOP --}}
+        <div class="hidden overflow-x-auto lg:block">
             <table class="w-full">
-
                 <thead
-                    class="border-b border-slate-100
+                    class="border-b border-slate-200
                            bg-slate-50"
                 >
                     <tr>
                         <th
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Dokumen
                         </th>
 
                         <th
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Kategori
                         </th>
 
                         <th
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Tahun
                         </th>
 
                         <th
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Status
                         </th>
 
                         <th
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
-                            File / Tautan
+                            Akses
                         </th>
 
                         <th
                             class="px-6 py-4 text-right
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Aksi
                         </th>
                     </tr>
                 </thead>
 
-
-                <tbody class="divide-y divide-slate-100">
-
+                <tbody class="divide-y divide-slate-200">
                     @forelse ($documentCollection as $document)
-
                         @php
-                            $meta = $getDocumentMeta($document);
+                            $meta = $getDocumentMeta(
+                                $document
+                            );
                         @endphp
 
                         <tr
-                            class="transition
-                                   hover:bg-slate-50/70"
+                            class="hover:bg-slate-50/70"
                             data-document-card
                             data-document-id="{{ $document->id }}"
                             data-search="{{ $meta['search_text'] }}"
                         >
-                            {{-- Dokumen --}}
-                            <td class="px-6 py-5">
-
-                                <div class="flex items-start gap-4">
-
-                                    <div
-                                        class="flex h-14 w-14
-                                               shrink-0 items-center
-                                               justify-center
-                                               rounded-2xl bg-blue-700
-                                               text-white shadow-lg"
+                            <td class="px-6 py-4">
+                                <div class="max-w-md">
+                                    <p
+                                        class="font-bold
+                                               leading-6
+                                               text-slate-800"
                                     >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-7 w-7"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
-                                            />
-                                        </svg>
-                                    </div>
+                                        {{ $document->title }}
+                                    </p>
 
-                                    <div class="min-w-0">
-                                        <h3
-                                            class="break-words font-bold
-                                                   text-slate-800"
+                                    @if (
+                                        trim(
+                                            (string) $document->description
+                                        ) !== ''
+                                    )
+                                        <p
+                                            class="mt-1 text-sm
+                                                   leading-6
+                                                   text-slate-500"
                                         >
-                                            {{ $document->title }}
-                                        </h3>
-
-                                        @if (
-                                            trim((string) $document->description) !== ''
-                                        )
-                                            <p
-                                                class="mt-1 text-sm
-                                                       leading-6
-                                                       text-slate-500"
-                                            >
-                                                {{ \Illuminate\Support\Str::limit(
-                                                    $document->description,
-                                                    90
-                                                ) }}
-                                            </p>
-                                        @else
-                                            <p
-                                                class="mt-1 text-sm
-                                                       text-slate-400"
-                                            >
-                                                Tidak ada deskripsi.
-                                            </p>
-                                        @endif
-                                    </div>
+                                            {{ \Illuminate\Support\Str::limit(
+                                                $document->description,
+                                                90
+                                            ) }}
+                                        </p>
+                                    @endif
                                 </div>
                             </td>
 
-
-                            {{-- Kategori --}}
-                            <td class="px-6 py-5">
+                            <td class="px-6 py-4">
                                 <span
                                     class="inline-flex rounded-full
-                                           bg-blue-50 px-3 py-1
+                                           bg-blue-50
+                                           px-2.5 py-1
                                            text-xs font-bold
-                                           text-blue-700"
+                                           text-[#075F9B]"
                                 >
                                     {{ $meta['category_label'] }}
                                 </span>
                             </td>
 
-
-                            {{-- Tahun --}}
-                            <td class="px-6 py-5 text-slate-600">
-                                {{ trim((string) $document->academic_year) !== ''
+                            <td
+                                class="px-6 py-4
+                                       text-sm text-slate-600"
+                            >
+                                {{ trim(
+                                    (string) $document->academic_year
+                                ) !== ''
                                     ? $document->academic_year
                                     : '-' }}
                             </td>
 
-
-                            {{-- Status --}}
-                            <td class="px-6 py-5">
-                                @if ($document->is_active)
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-green-50 px-3 py-1
-                                               text-xs font-bold
-                                               text-green-700"
-                                    >
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-slate-100 px-3 py-1
-                                               text-xs font-bold
-                                               text-slate-500"
-                                    >
-                                        Nonaktif
-                                    </span>
-                                @endif
+                            <td class="px-6 py-4">
+                                <span
+                                    @class([
+                                        'inline-flex rounded-full',
+                                        'px-2.5 py-1 text-xs',
+                                        'font-bold',
+                                        'bg-emerald-50 text-emerald-700' =>
+                                            $document->is_active,
+                                        'bg-slate-100 text-slate-500' =>
+                                            !$document->is_active,
+                                    ])
+                                >
+                                    {{ $document->is_active
+                                        ? 'Ditampilkan'
+                                        : 'Disembunyikan' }}
+                                </span>
                             </td>
 
-
-                            {{-- File dan Link --}}
-                            <td class="px-6 py-5">
-                                <div class="flex flex-col gap-2">
-
+                            <td class="px-6 py-4">
+                                <div
+                                    class="flex flex-col
+                                           items-start gap-1.5"
+                                >
                                     @if ($meta['file_url'])
                                         <a
                                             href="{{ $meta['file_url'] }}"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="inline-flex text-sm
-                                                   font-bold text-blue-700
+                                            class="text-sm font-bold
+                                                   text-[#075F9B]
                                                    hover:underline"
                                         >
-                                            Lihat File
+                                            Buka File
                                         </a>
                                     @elseif ($meta['file_path'] !== '')
                                         <span
-                                            class="inline-flex text-sm
-                                                   font-semibold
+                                            class="text-xs font-semibold
                                                    text-red-600"
                                         >
                                             File tidak ditemukan
                                         </span>
                                     @endif
 
-
-                                    @if ($meta['has_safe_external_link'])
+                                    @if ($meta['safe_external_link'])
                                         <a
                                             href="{{ $meta['external_link'] }}"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="inline-flex text-sm
-                                                   font-bold text-yellow-600
+                                            class="text-sm font-bold
+                                                   text-amber-700
                                                    hover:underline"
                                         >
                                             Buka Tautan
                                         </a>
                                     @endif
 
-
                                     @if (
                                         !$meta['file_url']
                                         && $meta['file_path'] === ''
-                                        && !$meta['has_safe_external_link']
+                                        && !$meta['safe_external_link']
                                     )
-                                        <span class="text-sm text-slate-400">
-                                            -
+                                        <span
+                                            class="text-sm
+                                                   text-slate-400"
+                                        >
+                                            Belum tersedia
                                         </span>
                                     @endif
                                 </div>
                             </td>
 
-
-                            {{-- Aksi --}}
-                            <td class="px-6 py-5">
+                            <td class="px-6 py-4">
                                 <div
-                                    class="flex justify-end gap-3"
+                                    class="flex justify-end gap-2"
                                 >
                                     <a
                                         href="{{ route(
                                             'admin.academic-documents.edit',
                                             $document
                                         ) }}"
-                                        class="rounded-xl bg-blue-50
-                                               px-4 py-2 text-sm
-                                               font-bold text-blue-700
-                                               transition
-                                               hover:bg-blue-700
-                                               hover:text-white"
+                                        class="inline-flex items-center
+                                               justify-center rounded-lg
+                                               bg-blue-50 px-3 py-2
+                                               text-xs font-bold
+                                               text-[#075F9B]
+                                               hover:bg-blue-100"
                                     >
-                                        Edit
+                                        Ubah
                                     </a>
 
                                     <form
@@ -712,7 +536,7 @@
                                         ) }}"
                                         method="POST"
                                         onsubmit="return confirm(
-                                            'Yakin ingin menghapus dokumen ini? File yang tersimpan juga akan dihapus.'
+                                            'Hapus dokumen ini? File yang tersimpan juga akan dihapus.'
                                         )"
                                     >
                                         @csrf
@@ -720,12 +544,15 @@
 
                                         <button
                                             type="submit"
-                                            class="rounded-xl bg-red-50
-                                                   px-4 py-2 text-sm
-                                                   font-bold text-red-700
-                                                   transition
-                                                   hover:bg-red-600
-                                                   hover:text-white"
+                                            class="inline-flex
+                                                   items-center
+                                                   justify-center
+                                                   rounded-lg
+                                                   bg-red-50
+                                                   px-3 py-2
+                                                   text-xs font-bold
+                                                   text-red-600
+                                                   hover:bg-red-100"
                                         >
                                             Hapus
                                         </button>
@@ -733,133 +560,109 @@
                                 </div>
                             </td>
                         </tr>
-
                     @empty
-
                         <tr>
                             <td
                                 colspan="6"
-                                class="px-6 py-14 text-center"
+                                class="px-6 py-14
+                                       text-center"
                             >
-                                <h3
-                                    class="text-xl font-bold
-                                           text-slate-800"
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-700"
                                 >
-                                    Belum Ada Dokumen Akademik
-                                </h3>
+                                    Belum ada dokumen akademik
+                                </p>
 
-                                <p class="mt-2 text-slate-500">
+                                <p
+                                    class="mt-2 text-sm
+                                           text-slate-500"
+                                >
                                     Tambahkan dokumen akademik
                                     terlebih dahulu.
                                 </p>
                             </td>
                         </tr>
-
                     @endforelse
-
                 </tbody>
             </table>
         </div>
 
 
-        {{-- ===================================================== --}}
-        {{-- MOBILE DAN TABLET --}}
-        {{-- ===================================================== --}}
-
-        <div class="space-y-4 p-5 md:p-6 xl:hidden">
-
+        {{-- MOBILE --}}
+        <div
+            class="divide-y divide-slate-200
+                   lg:hidden"
+        >
             @forelse ($documentCollection as $document)
-
                 @php
-                    $meta = $getDocumentMeta($document);
+                    $meta = $getDocumentMeta(
+                        $document
+                    );
                 @endphp
 
                 <article
-                    class="rounded-3xl border
-                           border-slate-100 bg-slate-50
-                           p-5"
+                    class="px-5 py-5 sm:px-6"
                     data-document-card
                     data-document-id="{{ $document->id }}"
                     data-search="{{ $meta['search_text'] }}"
                 >
-                    <div class="flex items-start gap-4">
-
-                        <div
-                            class="flex h-14 w-14
-                                   shrink-0 items-center
-                                   justify-center rounded-2xl
-                                   bg-blue-700 text-white
-                                   shadow-lg"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
-                                />
-                            </svg>
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-
+                    <div
+                        class="flex items-start
+                               justify-between gap-3"
+                    >
+                        <div class="min-w-0">
                             <h3
-                                class="break-words font-bold
+                                class="font-bold
+                                       leading-6
                                        text-slate-800"
                             >
                                 {{ $document->title }}
                             </h3>
 
                             <div
-                                class="mt-3 flex flex-wrap gap-2"
+                                class="mt-2 flex
+                                       flex-wrap gap-2"
                             >
                                 <span
                                     class="inline-flex rounded-full
-                                           bg-blue-50 px-3 py-1
-                                           text-xs font-bold
-                                           text-blue-700"
+                                           bg-blue-50
+                                           px-2.5 py-1
+                                           text-[10px] font-bold
+                                           text-[#075F9B]"
                                 >
                                     {{ $meta['category_label'] }}
                                 </span>
 
+                                <span
+                                    @class([
+                                        'inline-flex rounded-full',
+                                        'px-2.5 py-1',
+                                        'text-[10px] font-bold',
+                                        'bg-emerald-50 text-emerald-700' =>
+                                            $document->is_active,
+                                        'bg-slate-100 text-slate-500' =>
+                                            !$document->is_active,
+                                    ])
+                                >
+                                    {{ $document->is_active
+                                        ? 'Ditampilkan'
+                                        : 'Disembunyikan' }}
+                                </span>
+
                                 @if (
-                                    trim((string) $document->academic_year) !== ''
+                                    trim(
+                                        (string) $document->academic_year
+                                    ) !== ''
                                 )
                                     <span
                                         class="inline-flex rounded-full
-                                               border border-slate-100
-                                               bg-white px-3 py-1
-                                               text-xs font-bold
+                                               border border-slate-200
+                                               px-2.5 py-1
+                                               text-[10px] font-bold
                                                text-slate-600"
                                     >
                                         {{ $document->academic_year }}
-                                    </span>
-                                @endif
-
-                                @if ($document->is_active)
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-green-50 px-3 py-1
-                                               text-xs font-bold
-                                               text-green-700"
-                                    >
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-slate-100 px-3 py-1
-                                               text-xs font-bold
-                                               text-slate-500"
-                                    >
-                                        Nonaktif
                                     </span>
                                 @endif
                             </div>
@@ -868,63 +671,54 @@
 
 
                     @if (
-                        trim((string) $document->description) !== ''
+                        trim(
+                            (string) $document->description
+                        ) !== ''
                     )
                         <p
-                            class="mt-4 text-sm leading-6
-                                   text-slate-500"
+                            class="mt-3 text-sm
+                                   leading-6 text-slate-500"
                         >
                             {{ \Illuminate\Support\Str::limit(
                                 $document->description,
-                                150
+                                130
                             ) }}
                         </p>
                     @endif
 
 
-                    {{-- File dan Tautan --}}
-                    <div class="mt-5 flex flex-wrap gap-3">
-
+                    <div
+                        class="mt-4 flex
+                               flex-wrap gap-3"
+                    >
                         @if ($meta['file_url'])
                             <a
                                 href="{{ $meta['file_url'] }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center
-                                       justify-center rounded-xl
-                                       border border-slate-200
-                                       bg-white px-4 py-2
-                                       text-sm font-bold
-                                       text-blue-700 transition
-                                       hover:bg-blue-50"
+                                class="text-sm font-bold
+                                       text-[#075F9B]
+                                       hover:underline"
                             >
-                                Lihat File
+                                Buka File
                             </a>
                         @elseif ($meta['file_path'] !== '')
                             <span
-                                class="inline-flex items-center
-                                       rounded-xl border
-                                       border-red-200 bg-red-50
-                                       px-4 py-2 text-sm
-                                       font-bold text-red-700"
+                                class="text-xs font-semibold
+                                       text-red-600"
                             >
-                                File Tidak Ditemukan
+                                File tidak ditemukan
                             </span>
                         @endif
 
-
-                        @if ($meta['has_safe_external_link'])
+                        @if ($meta['safe_external_link'])
                             <a
                                 href="{{ $meta['external_link'] }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center
-                                       justify-center rounded-xl
-                                       border border-slate-200
-                                       bg-white px-4 py-2
-                                       text-sm font-bold
-                                       text-yellow-600 transition
-                                       hover:bg-yellow-50"
+                                class="text-sm font-bold
+                                       text-amber-700
+                                       hover:underline"
                             >
                                 Buka Tautan
                             </a>
@@ -932,20 +726,23 @@
                     </div>
 
 
-                    {{-- Aksi --}}
-                    <div class="mt-5 grid grid-cols-2 gap-3">
-
+                    <div
+                        class="mt-4 grid
+                               grid-cols-2 gap-2"
+                    >
                         <a
                             href="{{ route(
                                 'admin.academic-documents.edit',
                                 $document
                             ) }}"
-                            class="rounded-xl bg-blue-700
-                                   px-4 py-3 text-center
+                            class="inline-flex items-center
+                                   justify-center rounded-xl
+                                   bg-[#075F9B]
+                                   px-4 py-2.5
                                    text-sm font-bold text-white
-                                   transition hover:bg-blue-800"
+                                   hover:bg-[#064B7B]"
                         >
-                            Edit
+                            Ubah
                         </a>
 
                         <form
@@ -955,7 +752,7 @@
                             ) }}"
                             method="POST"
                             onsubmit="return confirm(
-                                'Yakin ingin menghapus dokumen ini? File yang tersimpan juga akan dihapus.'
+                                'Hapus dokumen ini? File yang tersimpan juga akan dihapus.'
                             )"
                         >
                             @csrf
@@ -963,80 +760,59 @@
 
                             <button
                                 type="submit"
-                                class="w-full rounded-xl
-                                       bg-red-600 px-4 py-3
-                                       text-sm font-bold text-white
-                                       transition hover:bg-red-700"
+                                class="inline-flex w-full
+                                       items-center justify-center
+                                       rounded-xl bg-red-50
+                                       px-4 py-2.5
+                                       text-sm font-bold
+                                       text-red-600
+                                       hover:bg-red-100"
                             >
                                 Hapus
                             </button>
                         </form>
                     </div>
                 </article>
-
             @empty
-
-                <div
-                    class="rounded-3xl border
-                           border-slate-100 bg-slate-50
-                           p-10 text-center"
-                >
-                    <h3
-                        class="text-xl font-bold
-                               text-slate-800"
+                <div class="px-6 py-12 text-center">
+                    <p
+                        class="text-sm font-bold
+                               text-slate-700"
                     >
-                        Belum Ada Dokumen Akademik
-                    </h3>
-
-                    <p class="mt-2 text-slate-500">
-                        Tambahkan dokumen akademik terlebih dahulu.
+                        Belum ada dokumen akademik
                     </p>
 
-                    <a
-                        href="{{ route(
-                            'admin.academic-documents.create'
-                        ) }}"
-                        class="mt-6 inline-flex items-center
-                               justify-center rounded-xl
-                               bg-blue-700 px-5 py-3
-                               text-sm font-bold text-white
-                               transition hover:bg-blue-800"
+                    <p
+                        class="mt-2 text-sm
+                               text-slate-500"
                     >
-                        Tambah Dokumen
-                    </a>
+                        Tambahkan dokumen terlebih dahulu.
+                    </p>
                 </div>
-
             @endforelse
         </div>
 
 
-        {{-- ===================================================== --}}
-        {{-- EMPTY SEARCH --}}
-        {{-- ===================================================== --}}
-
         <div
             id="academicDocumentEmptySearch"
-            class="hidden border-t
-                   border-slate-100 p-10 text-center"
+            class="hidden px-6 py-12 text-center"
         >
-            <h3
-                class="text-xl font-bold
-                       text-slate-800"
+            <p
+                class="text-sm font-bold
+                       text-slate-700"
             >
-                Dokumen Tidak Ditemukan
-            </h3>
+                Dokumen tidak ditemukan
+            </p>
 
-            <p class="mt-2 text-slate-500">
-                Coba gunakan kata kunci pencarian lain.
+            <p
+                class="mt-2 text-sm
+                       text-slate-500"
+            >
+                Coba gunakan kata pencarian lain.
             </p>
         </div>
+    </section>
 
-    </div>
-
-
-    {{-- ========================================================= --}}
-    {{-- PAGINATION --}}
-    {{-- ========================================================= --}}
 
     @if (
         $documents instanceof \Illuminate\Pagination\AbstractPaginator
@@ -1046,75 +822,84 @@
             {{ $documents->links() }}
         </div>
     @endif
-
 </div>
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById(
-            'academicDocumentSearch'
-        );
-
-        const documentCards = Array.from(
-            document.querySelectorAll(
-                '[data-document-card]'
-            )
-        );
-
-        const emptySearch = document.getElementById(
-            'academicDocumentEmptySearch'
-        );
-
-        if (!searchInput) {
-            return;
-        }
-
-        function filterDocuments() {
-            const keyword = searchInput.value
-                .toLocaleLowerCase('id-ID')
-                .trim();
-
-            const matchingDocumentIds = new Set();
-
-            documentCards.forEach(function (card) {
-                const searchText = (
-                    card.dataset.search || ''
-                ).toLocaleLowerCase('id-ID');
-
-                const isMatch =
-                    keyword === ''
-                    || searchText.includes(keyword);
-
-                card.classList.toggle(
-                    'hidden',
-                    !isMatch
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+            const searchInput =
+                document.getElementById(
+                    'academicDocumentSearch'
                 );
 
-                if (isMatch) {
-                    matchingDocumentIds.add(
-                        card.dataset.documentId
-                    );
-                }
-            });
+            const documentCards =
+                Array.from(
+                    document.querySelectorAll(
+                        '[data-document-card]'
+                    )
+                );
 
-            const showEmptySearch =
-                documentCards.length > 0
-                && matchingDocumentIds.size === 0;
+            const emptySearch =
+                document.getElementById(
+                    'academicDocumentEmptySearch'
+                );
 
-            if (emptySearch) {
-                emptySearch.classList.toggle(
+            if (!searchInput) {
+                return;
+            }
+
+            function filterDocuments() {
+                const keyword =
+                    searchInput.value
+                        .toLocaleLowerCase('id-ID')
+                        .trim();
+
+                const matchingIds = new Set();
+
+                documentCards.forEach(
+                    function (card) {
+                        const searchText =
+                            (
+                                card.dataset.search
+                                || ''
+                            ).toLocaleLowerCase(
+                                'id-ID'
+                            );
+
+                        const isMatch =
+                            keyword === ''
+                            || searchText.includes(
+                                keyword
+                            );
+
+                        card.classList.toggle(
+                            'hidden',
+                            !isMatch
+                        );
+
+                        if (isMatch) {
+                            matchingIds.add(
+                                card.dataset.documentId
+                            );
+                        }
+                    }
+                );
+
+                emptySearch?.classList.toggle(
                     'hidden',
-                    !showEmptySearch
+                    documentCards.length === 0
+                    || matchingIds.size > 0
                 );
             }
-        }
 
-        searchInput.addEventListener(
-            'input',
-            filterDocuments
-        );
-    });
+            searchInput.addEventListener(
+                'input',
+                filterDocuments
+            );
+        }
+    );
 </script>
 
 @endsection

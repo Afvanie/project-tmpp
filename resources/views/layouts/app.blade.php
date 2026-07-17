@@ -8,6 +8,23 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <link
+        rel="icon"
+        type="image/png"
+        href="{{ asset('assets/images/logo.png') }}?v=1"
+    >
+
+    <link
+        rel="shortcut icon"
+        type="image/png"
+        href="{{ asset('assets/images/logo.png') }}?v=1"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="{{ asset('assets/images/logo.png') }}?v=1"
+    >
+
     <meta
         name="theme-color"
         content="#071A2F"

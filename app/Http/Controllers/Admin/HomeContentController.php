@@ -53,8 +53,9 @@ class HomeContentController extends Controller
         );
     }
 
-    public function update(Request $request): RedirectResponse
-    {
+    public function update(
+        Request $request
+    ): RedirectResponse {
         $validated = $request->validate(
             [
                 'badge' => [
@@ -72,18 +73,6 @@ class HomeContentController extends Controller
                 'description' => [
                     'required',
                     'string',
-                ],
-
-                'button_text' => [
-                    'nullable',
-                    'string',
-                    'max:255',
-                ],
-
-                'button_url' => [
-                    'nullable',
-                    'string',
-                    'max:255',
                 ],
 
                 'image' => [
@@ -129,14 +118,38 @@ class HomeContentController extends Controller
                 ],
             ],
             [
-                'hero_video.mimes' =>
-                    'Video hero harus berformat MP4 atau WebM.',
+                'title.required' =>
+                    'Judul bagian harus diisi.',
 
-                'hero_video.max' =>
-                    'Ukuran video hero maksimal 50 MB.',
+                'title.max' =>
+                    'Judul bagian maksimal 255 karakter.',
+
+                'description.required' =>
+                    'Isi deskripsi harus diisi.',
+
+                'image.image' =>
+                    'File gambar yang dipilih tidak dapat dibaca sebagai gambar.',
+
+                'image.mimes' =>
+                    'Gambar harus berformat JPG, JPEG, PNG, atau WebP.',
 
                 'image.max' =>
                     'Ukuran gambar maksimal 4 MB.',
+
+                'hero_video.file' =>
+                    'Video yang dipilih tidak dapat dibaca.',
+
+                'hero_video.mimes' =>
+                    'Video harus berformat MP4 atau WebM.',
+
+                'hero_video.max' =>
+                    'Ukuran video maksimal 50 MB.',
+
+                'statistics.*.label.required' =>
+                    'Nama statistik harus diisi.',
+
+                'statistics.*.value.required' =>
+                    'Nilai statistik harus diisi.',
             ]
         );
 
@@ -150,14 +163,13 @@ class HomeContentController extends Controller
             'badge' => $validated['badge'] ?? null,
             'title' => $validated['title'],
             'description' => $validated['description'],
-            'button_text' => $validated['button_text'] ?? null,
-            'button_url' => $validated['button_url'] ?? null,
             'is_active' => true,
         ];
 
+
         /*
         |--------------------------------------------------------------------------
-        | GAMBAR DESKRIPSI
+        | GAMBAR PENDAMPING
         |--------------------------------------------------------------------------
         */
 
@@ -176,9 +188,10 @@ class HomeContentController extends Controller
             $data['image'] = $newImagePath;
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | VIDEO HERO
+        | VIDEO BANNER
         |--------------------------------------------------------------------------
         */
 
@@ -207,6 +220,7 @@ class HomeContentController extends Controller
 
         $homeContent->update($data);
 
+
         /*
         |--------------------------------------------------------------------------
         | STATISTIK
@@ -231,7 +245,7 @@ class HomeContentController extends Controller
             ->route('admin.home-content.index')
             ->with(
                 'success',
-                'Konten beranda berhasil diperbarui.'
+                'Perubahan beranda sudah disimpan.'
             );
     }
 

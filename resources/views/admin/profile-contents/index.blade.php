@@ -5,422 +5,315 @@
 @section('content')
 
 @php
-    $totalSections = $sections->count();
-    $activeSections = $sections->where('is_active', true)->count();
-    $totalItems = $sections->sum('items_count');
+    $sectionSettings = [
+        'overview' => [
+            'name' => 'Gambaran Umum Program Studi',
+            'description' => 'Ubah pengenalan singkat Program Studi D-IV TMPP.',
+        ],
+        'history' => [
+            'name' => 'Sejarah Program Studi',
+            'description' => 'Ubah narasi sejarah dan perjalanan program studi.',
+        ],
+        'visi-misi' => [
+            'name' => 'Visi dan Misi',
+            'description' => 'Kelola arah dan komitmen Program Studi D-IV TMPP.',
+        ],
+        'tujuan-prodi' => [
+            'name' => 'Tujuan Program Studi',
+            'description' => 'Kelola tujuan penyelenggaraan program studi.',
+        ],
+        'ppm' => [
+            'name' => 'Profil Profesional Mandiri',
+            'description' => 'Kelola profil profesional yang diharapkan dari lulusan.',
+        ],
+        'cpl' => [
+            'name' => 'Capaian Pembelajaran Lulusan',
+            'description' => 'Kelola kemampuan yang harus dimiliki oleh lulusan.',
+        ],
+    ];
 @endphp
 
-<div class="space-y-8">
 
-    {{-- Header --}}
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+<div class="mx-auto max-w-6xl space-y-6">
 
+    {{-- ========================================================= --}}
+    {{-- JUDUL HALAMAN --}}
+    {{-- ========================================================= --}}
+
+    <header
+        class="flex flex-col gap-4
+               sm:flex-row sm:items-end
+               sm:justify-between"
+    >
         <div>
-            <h1 class="text-3xl md:text-4xl font-black text-slate-800">
+            <div class="flex items-center gap-3">
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.16em]
+                           text-[#075F9B]"
+                >
+                    Pengaturan Halaman
+                </p>
+            </div>
+
+            <h1
+                class="mt-3 text-2xl font-extrabold
+                       tracking-tight text-slate-900
+                       sm:text-3xl"
+            >
                 Konten Profil
             </h1>
 
-            <p class="mt-3 text-slate-500 leading-7 max-w-4xl">
-                Kelola konten profil Program Studi D-IV Teknik Mesin Produksi dan Perawatan, meliputi Visi Misi,
-                Tujuan Prodi, Profil Profesional Mandiri, dan Capaian Pembelajaran Lulusan.
+            <p
+                class="mt-2 max-w-2xl
+                       text-sm leading-7
+                       text-slate-500"
+            >
+                Pilih bagian Profil yang ingin diperbarui.
+                Setiap bagian memiliki formulir yang disesuaikan
+                dengan isi yang dikelola.
             </p>
         </div>
 
-        <a href="{{ url('/profil') }}"
-            target="_blank"
-            class="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
 
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
+        <a
+            href="{{ route('profile') }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex w-full items-center
+                   justify-center gap-2 rounded-xl
+                   border border-slate-200
+                   bg-white px-4 py-2.5
+                   text-sm font-bold text-slate-700
+                   transition hover:border-blue-200
+                   hover:text-[#075F9B]
+                   sm:w-auto"
+        >
+            <span>Lihat Halaman Profil</span>
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor">
-
-                <path stroke-linecap="round"
+                stroke="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    d="M14 3h7v7M10 14L21 3M5 5h5M5 10h5M5 15h14M5 20h14"
+                />
+            </svg>
+        </a>
+    </header>
 
-                <path stroke-linecap="round"
+
+    @if (session('success'))
+        <div
+            class="flex items-start gap-3
+                   rounded-xl border
+                   border-emerald-200
+                   bg-emerald-50 px-4 py-3
+                   text-sm text-emerald-800"
+            role="status"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mt-0.5 h-5 w-5 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    d="M5 13l4 4L19 7"
+                />
             </svg>
 
-            Lihat Halaman Profil
-        </a>
-
-    </div>
-
-
-    {{-- Alert --}}
-    @if (session('success'))
-        <div class="rounded-2xl bg-green-50 border border-green-200 text-green-700 px-6 py-4 font-semibold">
-            {{ session('success') }}
+            <p class="font-semibold">
+                {{ session('success') }}
+            </p>
         </div>
     @endif
 
 
-    {{-- Statistik --}}
-    <div class="grid md:grid-cols-3 gap-6">
+    {{-- ========================================================= --}}
+    {{-- DAFTAR BAGIAN PROFIL --}}
+    {{-- ========================================================= --}}
 
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
+    <section
+        class="overflow-hidden rounded-2xl
+               border border-slate-200
+               bg-white"
+        aria-labelledby="profileSectionTitle"
+    >
+        <div
+            class="border-b border-slate-200
+                   px-5 py-5 sm:px-6"
+        >
+            <h2
+                id="profileSectionTitle"
+                class="text-lg font-extrabold
+                       text-slate-900"
+            >
+                Bagian Profil
+            </h2>
 
-            <div class="flex items-center justify-between gap-4">
-
-                <div>
-                    <p class="text-sm font-bold text-slate-500">
-                        Total Bagian
-                    </p>
-
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $totalSections }}
-                    </h2>
-                </div>
-
-                <div class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h7" />
-                    </svg>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
-
-            <div class="flex items-center justify-between gap-4">
-
-                <div>
-                    <p class="text-sm font-bold text-slate-500">
-                        Konten Aktif
-                    </p>
-
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $activeSections }}
-                    </h2>
-                </div>
-
-                <div class="w-14 h-14 rounded-2xl bg-green-600 text-white flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl p-6">
-
-            <div class="flex items-center justify-between gap-4">
-
-                <div>
-                    <p class="text-sm font-bold text-slate-500">
-                        Total Item
-                    </p>
-
-                    <h2 class="mt-3 text-4xl font-black text-slate-800">
-                        {{ $totalItems }}
-                    </h2>
-                </div>
-
-                <div class="w-14 h-14 rounded-2xl bg-yellow-400 text-slate-900 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-                    </svg>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- Main Card --}}
-    <div class="rounded-[2rem] bg-white/95 backdrop-blur border border-slate-100 shadow-xl overflow-hidden">
-
-        <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
-
-        <div class="p-6 md:p-8 border-b border-slate-100">
-
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-                <div>
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Daftar Konten Profil
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Pilih bagian konten yang ingin diperbarui.
-                    </p>
-                </div>
-
-                <div class="relative w-full lg:w-96">
-
-                    <input
-                        type="text"
-                        id="profileContentSearch"
-                        placeholder="Cari konten profil..."
-                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 pl-12 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
-                    </svg>
-
-                </div>
-
-            </div>
-
+            <p
+                class="mt-1 text-sm text-slate-500"
+            >
+                Tekan tombol Kelola pada bagian yang ingin diubah.
+            </p>
         </div>
 
 
-        {{-- Cards --}}
-        <div class="p-6 md:p-8">
+        <div class="divide-y divide-slate-200">
+            @forelse ($sections as $section)
+                @php
+                    $setting = $sectionSettings[
+                        $section->slug
+                    ] ?? [
+                        'name' => $section->title,
+                        'description' =>
+                            'Kelola isi bagian Profil ini.',
+                    ];
 
-            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    $itemCount = (int) (
+                        $section->items_count ?? 0
+                    );
+                @endphp
 
-                @forelse ($sections as $section)
+                <article
+                    class="grid gap-4 px-5 py-5
+                           transition hover:bg-slate-50/70
+                           sm:px-6
+                           lg:grid-cols-[52px_1fr_auto]
+                           lg:items-center"
+                >
+                    <span
+                        class="flex h-11 w-11
+                               items-center justify-center
+                               rounded-xl bg-blue-50
+                               text-sm font-extrabold
+                               text-[#075F9B]"
+                    >
+                        {{ str_pad(
+                            (string) $loop->iteration,
+                            2,
+                            '0',
+                            STR_PAD_LEFT
+                        ) }}
+                    </span>
 
-                    <div
-                        class="group relative rounded-[2rem] bg-slate-50 border border-slate-100 p-6 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 overflow-hidden"
-                        data-profile-card
-                        data-title="{{ strtolower($section->title) }}"
-                        data-subtitle="{{ strtolower($section->subtitle ?? '') }}">
 
-                        {{-- Ornament --}}
-                        <div class="absolute -right-14 -top-14 w-32 h-32 rounded-full bg-blue-200/40 blur-2xl group-hover:bg-blue-300/60 transition"></div>
-                        <div class="absolute -left-14 -bottom-14 w-32 h-32 rounded-full bg-yellow-200/40 blur-2xl group-hover:bg-yellow-300/60 transition"></div>
-
-                        <div class="relative z-10">
-
-                            <div class="flex items-start justify-between gap-4">
-
-                                <div class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg">
-
-                                    @if ($section->slug === 'visi-misi')
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="w-7 h-7"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor">
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    @elseif ($section->slug === 'tujuan-prodi')
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="w-7 h-7"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor">
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 8v4l3 3M12 3a9 9 0 100 18 9 9 0 000-18z" />
-                                        </svg>
-                                    @elseif ($section->slug === 'ppm')
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="w-7 h-7"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor">
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 14l9-5-9-5-9 5 9 5z" />
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z" />
-                                        </svg>
-                                    @else
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="w-7 h-7"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor">
-
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
-                                        </svg>
-                                    @endif
-
-                                </div>
-
-                                @if ($section->is_active)
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold">
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-                                        Nonaktif
-                                    </span>
-                                @endif
-
-                            </div>
-
-                            <h3 class="mt-6 text-xl font-black text-slate-800">
-                                {{ $section->title }}
+                    <div class="min-w-0">
+                        <div
+                            class="flex flex-wrap
+                                   items-center gap-2"
+                        >
+                            <h3
+                                class="font-extrabold
+                                       text-slate-900"
+                            >
+                                {{ $setting['name'] }}
                             </h3>
 
-                            <p class="mt-3 text-sm text-slate-500 leading-6 min-h-[72px]">
-                                {{ $section->subtitle ?? 'Konten profil program studi' }}
-                            </p>
-
-                            <div class="mt-6 grid grid-cols-2 gap-3">
-
-                                <div class="rounded-2xl bg-white border border-slate-100 p-4">
-                                    <p class="text-2xl font-black text-blue-700">
-                                        {{ $section->items_count }}
-                                    </p>
-
-                                    <p class="mt-1 text-xs font-semibold text-slate-500">
-                                        Item
-                                    </p>
-                                </div>
-
-                                <div class="rounded-2xl bg-white border border-slate-100 p-4">
-                                    <p class="text-2xl font-black text-yellow-500">
-                                        {{ $section->sort_order }}
-                                    </p>
-
-                                    <p class="mt-1 text-xs font-semibold text-slate-500">
-                                        Urutan
-                                    </p>
-                                </div>
-
-                            </div>
-
-                            <a href="{{ route('admin.profile-contents.edit', $section) }}"
-                                class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-blue-700 px-5 py-4 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
-
-                                Edit Konten
-
-                            </a>
-
+                            <span
+                                @class([
+                                    'inline-flex rounded-full',
+                                    'px-2.5 py-1 text-[10px]',
+                                    'font-bold',
+                                    'bg-emerald-50 text-emerald-700' =>
+                                        $section->is_active,
+                                    'bg-slate-100 text-slate-500' =>
+                                        !$section->is_active,
+                                ])
+                            >
+                                {{ $section->is_active
+                                    ? 'Ditampilkan'
+                                    : 'Disembunyikan' }}
+                            </span>
                         </div>
 
-                    </div>
-
-                @empty
-
-                    <div class="md:col-span-2 xl:col-span-4 rounded-3xl bg-slate-50 border border-slate-100 p-10 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada konten profil
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Data konten profil belum tersedia.
+                        <p
+                            class="mt-1 text-sm
+                                   leading-6 text-slate-500"
+                        >
+                            {{ $setting['description'] }}
                         </p>
 
+                        <p
+                            class="mt-2 text-xs
+                                   font-semibold text-slate-400"
+                        >
+                            {{ $itemCount }} isi tersimpan
+                        </p>
                     </div>
 
-                @endforelse
 
-            </div>
+                    <a
+                        href="{{ route(
+                            'admin.profile-contents.edit',
+                            $section
+                        ) }}"
+                        class="inline-flex w-full
+                               items-center justify-center
+                               gap-2 rounded-xl
+                               bg-[#075F9B]
+                               px-4 py-2.5
+                               text-sm font-bold text-white
+                               transition hover:bg-[#064B7B]
+                               sm:w-auto"
+                    >
+                        <span>Kelola</span>
 
-            {{-- Empty Search --}}
-            <div id="profileContentEmptySearch" class="hidden mt-6 rounded-3xl bg-slate-50 border border-slate-100 p-10 text-center">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            />
+                        </svg>
+                    </a>
+                </article>
+            @empty
+                <div class="px-6 py-12 text-center">
+                    <p
+                        class="text-sm font-bold
+                               text-slate-700"
+                    >
+                        Bagian Profil belum tersedia
+                    </p>
 
-                <h3 class="text-xl font-bold text-slate-800">
-                    Konten tidak ditemukan
-                </h3>
-
-                <p class="mt-2 text-slate-500">
-                    Coba gunakan kata kunci pencarian lain.
-                </p>
-
-            </div>
-
+                    <p
+                        class="mt-2 text-sm
+                               text-slate-500"
+                    >
+                        Data bagian Profil akan tampil di sini.
+                    </p>
+                </div>
+            @endforelse
         </div>
-
-    </div>
+    </section>
 
 </div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('profileContentSearch');
-        const cards = document.querySelectorAll('[data-profile-card]');
-        const emptySearch = document.getElementById('profileContentEmptySearch');
-
-        if (!searchInput) {
-            return;
-        }
-
-        searchInput.addEventListener('input', function () {
-            const keyword = this.value.toLowerCase().trim();
-            let visibleCount = 0;
-
-            cards.forEach(function (card) {
-                const title = card.dataset.title || '';
-                const subtitle = card.dataset.subtitle || '';
-
-                const isMatch =
-                    title.includes(keyword) ||
-                    subtitle.includes(keyword);
-
-                card.style.display = isMatch ? '' : 'none';
-
-                if (isMatch) {
-                    visibleCount++;
-                }
-            });
-
-            if (emptySearch) {
-                emptySearch.classList.toggle('hidden', visibleCount > 0);
-            }
-        });
-    });
-</script>
 
 @endsection

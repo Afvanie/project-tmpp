@@ -1,18 +1,6 @@
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | KONTEKS FORM
-    |--------------------------------------------------------------------------
-    */
-
     $isEdit = isset($accreditation)
         && $accreditation !== null;
-
-    /*
-    |--------------------------------------------------------------------------
-    | NILAI FORM
-    |--------------------------------------------------------------------------
-    */
 
     $selectedType = old(
         'type',
@@ -21,44 +9,52 @@
             : \App\Models\Accreditation::TYPE_NATIONAL
     );
 
-    $selectedIsActive = (string) old(
+    $isShown = (string) old(
         'is_active',
         $isEdit
-            ? ((bool) $accreditation->is_active ? '1' : '0')
+            ? (
+                $accreditation->is_active
+                    ? '1'
+                    : '0'
+            )
             : '1'
     ) === '1';
 
-    $validFromValue = old(
+    $validFrom = old(
         'valid_from',
         $isEdit && $accreditation->valid_from
-            ? $accreditation->valid_from->format('Y-m-d')
+            ? $accreditation->valid_from->format(
+                'Y-m-d'
+            )
             : ''
     );
 
-    $validUntilValue = old(
+    $validUntil = old(
         'valid_until',
         $isEdit && $accreditation->valid_until
-            ? $accreditation->valid_until->format('Y-m-d')
+            ? $accreditation->valid_until->format(
+                'Y-m-d'
+            )
             : ''
     );
 
-    /*
-    |--------------------------------------------------------------------------
-    | FILE SAAT INI
-    |--------------------------------------------------------------------------
-    */
-
     $currentFilePath = $isEdit
-        ? trim((string) $accreditation->file_path)
+        ? trim(
+            (string) $accreditation->file_path
+        )
         : '';
 
-    $currentFileExists = $currentFilePath !== ''
+    $currentFileExists =
+        $currentFilePath !== ''
         && \Illuminate\Support\Facades\Storage::disk(
             'public'
         )->exists($currentFilePath);
 
     $currentFileUrl = $currentFileExists
-        ? asset('storage/' . $currentFilePath)
+        ? asset(
+            'storage/'
+            . ltrim($currentFilePath, '/')
+        )
         : null;
 
     $currentExtension = $currentFilePath !== ''
@@ -70,468 +66,203 @@
         )
         : null;
 
-    $currentIsImage = $currentFileExists
+    $currentFileIsImage =
+        $currentFileExists
         && in_array(
             $currentExtension,
-            [
-                'jpg',
-                'jpeg',
-                'png',
-                'webp',
-            ],
+            ['jpg', 'jpeg', 'png', 'webp'],
             true
         );
 
-    $currentIsPdf = $currentFileExists
-        && $currentExtension === 'pdf';
+    $preservedOrder = old(
+        'sort_order',
+        $isEdit
+            ? $accreditation->sort_order
+            : 0
+    );
 @endphp
 
 
-<div class="grid gap-8 xl:grid-cols-12">
+<input
+    type="hidden"
+    name="sort_order"
+    value="{{ $preservedOrder }}"
+>
 
-    {{-- ========================================================= --}}
-    {{-- KOLOM INFORMASI UTAMA --}}
-    {{-- ========================================================= --}}
+<input
+    type="hidden"
+    name="is_active"
+    value="0"
+>
 
-    <div class="space-y-6 xl:col-span-8">
 
-        <section
-            class="overflow-hidden rounded-[2rem]
-                   border border-slate-100
-                   bg-white shadow-sm"
+<div
+    class="overflow-hidden rounded-2xl
+           border border-slate-200
+           bg-white"
+>
+    <div class="px-5 py-7 sm:px-6 lg:px-8">
+
+        <div
+            class="flex flex-col gap-2
+                   border-b border-slate-200
+                   pb-6"
         >
-            <div
-                class="border-b border-slate-100
-                       bg-slate-50/70 px-6 py-5"
+            <h2
+                class="text-lg font-extrabold
+                       text-slate-900"
             >
-                <h2
-                    class="text-xl font-black
-                           text-slate-800"
-                >
-                    Informasi Akreditasi
-                </h2>
+                Informasi Akreditasi
+            </h2>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Isi hanya berdasarkan informasi dan dokumen resmi
-                    Program Studi D-IV Teknik Mesin Produksi dan
-                    Perawatan.
+            <p
+                class="text-sm leading-7
+                       text-slate-500"
+            >
+                Lengkapi data berdasarkan dokumen resmi.
+                Kolom yang belum memiliki sumber resmi boleh
+                dikosongkan.
+            </p>
+        </div>
+
+
+        <div class="mt-6 space-y-6">
+
+            {{-- JUDUL --}}
+            <div>
+                <label
+                    for="title"
+                    class="block text-sm
+                           font-bold text-slate-800"
+                >
+                    Judul akreditasi
+                </label>
+
+                <p
+                    class="mt-1 text-xs
+                           leading-6 text-slate-500"
+                >
+                    Contoh: Akreditasi Program Studi D-IV TMPP
                 </p>
+
+                <input
+                    id="title"
+                    type="text"
+                    name="title"
+                    value="{{ old(
+                        'title',
+                        $isEdit
+                            ? $accreditation->title
+                            : ''
+                    ) }}"
+                    required
+                    autofocus
+                    class="mt-2 w-full
+                           rounded-xl border
+                           border-slate-200
+                           px-4 py-3 text-sm
+                           font-bold text-slate-800
+                           outline-none transition
+                           focus:border-[#075F9B]
+                           focus:ring-4
+                           focus:ring-blue-100"
+                >
+
+                @error('title')
+                    <p
+                        class="mt-2 text-sm
+                               font-semibold text-red-600"
+                    >
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
 
 
-            <div class="space-y-6 p-6">
+            {{-- CAKUPAN + LEMBAGA --}}
+            <div
+                class="grid gap-5
+                       md:grid-cols-2"
+            >
+                <div>
+                    <label
+                        for="type"
+                        class="block text-sm
+                               font-bold text-slate-800"
+                    >
+                        Cakupan akreditasi
+                    </label>
 
-                {{-- ================================================= --}}
-                {{-- JUDUL --}}
-                {{-- ================================================= --}}
+                    <select
+                        id="type"
+                        name="type"
+                        required
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               bg-white px-4 py-3
+                               text-sm text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >
+                        @foreach ($types as $value => $label)
+                            <option
+                                value="{{ $value }}"
+                                @selected(
+                                    (string) $selectedType
+                                    === (string) $value
+                                )
+                            >
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @error('type')
+                        <p
+                            class="mt-2 text-sm
+                                   font-semibold text-red-600"
+                        >
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
 
                 <div>
                     <label
-                        for="accreditationTitle"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
+                        for="institution"
+                        class="block text-sm
+                               font-bold text-slate-800"
                     >
-                        Judul Akreditasi
-                        <span class="text-red-600">*</span>
+                        Lembaga pemberi akreditasi
                     </label>
 
                     <input
+                        id="institution"
                         type="text"
-                        id="accreditationTitle"
-                        name="title"
+                        name="institution"
                         value="{{ old(
-                            'title',
+                            'institution',
                             $isEdit
-                                ? $accreditation->title
+                                ? $accreditation->institution
                                 : ''
                         ) }}"
-                        maxlength="255"
-                        placeholder="Contoh: Akreditasi Program Studi D-IV TMPP"
-                        required
-                        autofocus
-                        @class([
-                            'w-full rounded-2xl border',
-                            'bg-white px-4 py-3',
-                            'text-slate-700 transition',
-                            'focus:border-blue-500',
-                            'focus:outline-none',
-                            'focus:ring-2 focus:ring-blue-500/20',
-                            'border-red-300' =>
-                                $errors->has('title'),
-                            'border-slate-200' =>
-                                !$errors->has('title'),
-                        ])
+                        placeholder="Contoh: LAM Teknik"
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               px-4 py-3 text-sm
+                               text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
                     >
 
-                    @error('title')
-                        <p
-                            class="mt-2 text-sm
-                                   font-semibold text-red-600"
-                        >
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-2">
-
-                    {{-- ============================================= --}}
-                    {{-- JENIS --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationType"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Jenis Akreditasi
-                            <span class="text-red-600">*</span>
-                        </label>
-
-                        <select
-                            id="accreditationType"
-                            name="type"
-                            required
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has('type'),
-                                'border-slate-200' =>
-                                    !$errors->has('type'),
-                            ])
-                        >
-                            @foreach ($types as $key => $label)
-                                <option
-                                    value="{{ $key }}"
-                                    @selected(
-                                        (string) $selectedType
-                                        === (string) $key
-                                    )
-                                >
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @error('type')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-
-                    {{-- ============================================= --}}
-                    {{-- LEMBAGA --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationInstitution"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Lembaga Akreditasi
-                        </label>
-
-                        <input
-                            type="text"
-                            id="accreditationInstitution"
-                            name="institution"
-                            value="{{ old(
-                                'institution',
-                                $isEdit
-                                    ? $accreditation->institution
-                                    : ''
-                            ) }}"
-                            maxlength="255"
-                            placeholder="Masukkan nama lembaga resmi"
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has('institution'),
-                                'border-slate-200' =>
-                                    !$errors->has('institution'),
-                            ])
-                        >
-
-                        <p class="mt-2 text-xs leading-5 text-slate-500">
-                            Kosongkan apabila nama lembaga belum
-                            terverifikasi.
-                        </p>
-
-                        @error('institution')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-2">
-
-                    {{-- ============================================= --}}
-                    {{-- PERINGKAT --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationRank"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Peringkat atau Status
-                        </label>
-
-                        <input
-                            type="text"
-                            id="accreditationRank"
-                            name="rank"
-                            value="{{ old(
-                                'rank',
-                                $isEdit
-                                    ? $accreditation->rank
-                                    : ''
-                            ) }}"
-                            maxlength="255"
-                            placeholder="Masukkan sesuai dokumen resmi"
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has('rank'),
-                                'border-slate-200' =>
-                                    !$errors->has('rank'),
-                            ])
-                        >
-
-                        @error('rank')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-
-                    {{-- ============================================= --}}
-                    {{-- NOMOR SERTIFIKAT --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationCertificateNumber"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Nomor Sertifikat atau SK
-                        </label>
-
-                        <input
-                            type="text"
-                            id="accreditationCertificateNumber"
-                            name="certificate_number"
-                            value="{{ old(
-                                'certificate_number',
-                                $isEdit
-                                    ? $accreditation
-                                        ->certificate_number
-                                    : ''
-                            ) }}"
-                            maxlength="255"
-                            placeholder="Masukkan apabila tersedia"
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has(
-                                        'certificate_number'
-                                    ),
-                                'border-slate-200' =>
-                                    !$errors->has(
-                                        'certificate_number'
-                                    ),
-                            ])
-                        >
-
-                        <p class="mt-2 text-xs leading-5 text-slate-500">
-                            Jangan mengisi nomor keputusan program
-                            studi lain.
-                        </p>
-
-                        @error('certificate_number')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-2">
-
-                    {{-- ============================================= --}}
-                    {{-- BERLAKU MULAI --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationValidFrom"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Berlaku Mulai
-                        </label>
-
-                        <input
-                            type="date"
-                            id="accreditationValidFrom"
-                            name="valid_from"
-                            value="{{ $validFromValue }}"
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has('valid_from'),
-                                'border-slate-200' =>
-                                    !$errors->has('valid_from'),
-                            ])
-                        >
-
-                        @error('valid_from')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-
-                    {{-- ============================================= --}}
-                    {{-- BERLAKU SAMPAI --}}
-                    {{-- ============================================= --}}
-
-                    <div>
-                        <label
-                            for="accreditationValidUntil"
-                            class="mb-2 block text-sm
-                                   font-bold text-slate-700"
-                        >
-                            Berlaku Sampai
-                        </label>
-
-                        <input
-                            type="date"
-                            id="accreditationValidUntil"
-                            name="valid_until"
-                            value="{{ $validUntilValue }}"
-                            @class([
-                                'w-full rounded-2xl border',
-                                'bg-white px-4 py-3',
-                                'text-slate-700 transition',
-                                'focus:border-blue-500',
-                                'focus:outline-none',
-                                'focus:ring-2 focus:ring-blue-500/20',
-                                'border-red-300' =>
-                                    $errors->has('valid_until'),
-                                'border-slate-200' =>
-                                    !$errors->has('valid_until'),
-                            ])
-                        >
-
-                        @error('valid_until')
-                            <p
-                                class="mt-2 text-sm
-                                       font-semibold text-red-600"
-                            >
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                </div>
-
-
-                {{-- ================================================= --}}
-                {{-- DESKRIPSI --}}
-                {{-- ================================================= --}}
-
-                <div>
-                    <label
-                        for="accreditationDescription"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        Deskripsi
-                    </label>
-
-                    <textarea
-                        id="accreditationDescription"
-                        name="description"
-                        rows="6"
-                        placeholder="Masukkan uraian resmi apabila tersedia"
-                        @class([
-                            'w-full rounded-2xl border',
-                            'bg-white px-4 py-3',
-                            'leading-7 text-slate-700',
-                            'transition focus:border-blue-500',
-                            'focus:outline-none',
-                            'focus:ring-2 focus:ring-blue-500/20',
-                            'border-red-300' =>
-                                $errors->has('description'),
-                            'border-slate-200' =>
-                                !$errors->has('description'),
-                        ])
-                    >{{ old(
-                        'description',
-                        $isEdit
-                            ? $accreditation->description
-                            : ''
-                    ) }}</textarea>
-
-                    <p class="mt-2 text-xs leading-5 text-slate-500">
-                        Deskripsi boleh dikosongkan sampai tersedia
-                        materi resmi.
-                    </p>
-
-                    @error('description')
+                    @error('institution')
                         <p
                             class="mt-2 text-sm
                                    font-semibold text-red-600"
@@ -541,81 +272,45 @@
                     @enderror
                 </div>
             </div>
-        </section>
-    </div>
 
 
-    {{-- ========================================================= --}}
-    {{-- KOLOM PENGATURAN --}}
-    {{-- ========================================================= --}}
-
-    <div class="space-y-6 xl:col-span-4">
-
-        {{-- ===================================================== --}}
-        {{-- PENGATURAN --}}
-        {{-- ===================================================== --}}
-
-        <section
-            class="overflow-hidden rounded-[2rem]
-                   border border-slate-100
-                   bg-white shadow-sm"
-        >
+            {{-- PERINGKAT + NOMOR --}}
             <div
-                class="border-b border-slate-100
-                       bg-slate-50/70 px-6 py-5"
+                class="grid gap-5
+                       md:grid-cols-2"
             >
-                <h2
-                    class="text-xl font-black
-                           text-slate-800"
-                >
-                    Pengaturan
-                </h2>
-            </div>
-
-            <div class="space-y-5 p-6">
-
-                {{-- Urutan --}}
                 <div>
                     <label
-                        for="accreditationSortOrder"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
+                        for="rank"
+                        class="block text-sm
+                               font-bold text-slate-800"
                     >
-                        Urutan Tampil
+                        Peringkat akreditasi
                     </label>
 
                     <input
-                        type="number"
-                        id="accreditationSortOrder"
-                        name="sort_order"
+                        id="rank"
+                        type="text"
+                        name="rank"
                         value="{{ old(
-                            'sort_order',
+                            'rank',
                             $isEdit
-                                ? $accreditation->sort_order
-                                : 0
+                                ? $accreditation->rank
+                                : ''
                         ) }}"
-                        min="0"
-                        step="1"
-                        inputmode="numeric"
-                        @class([
-                            'w-full rounded-2xl border',
-                            'bg-white px-4 py-3',
-                            'text-slate-700 transition',
-                            'focus:border-blue-500',
-                            'focus:outline-none',
-                            'focus:ring-2 focus:ring-blue-500/20',
-                            'border-red-300' =>
-                                $errors->has('sort_order'),
-                            'border-slate-200' =>
-                                !$errors->has('sort_order'),
-                        ])
+                        placeholder="Contoh: A"
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               px-4 py-3 text-sm
+                               text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
                     >
 
-                    <p class="mt-2 text-xs leading-5 text-slate-500">
-                        Angka lebih kecil ditampilkan lebih dahulu.
-                    </p>
-
-                    @error('sort_order')
+                    @error('rank')
                         <p
                             class="mt-2 text-sm
                                    font-semibold text-red-600"
@@ -626,54 +321,39 @@
                 </div>
 
 
-                {{-- Status --}}
                 <div>
-                    <input
-                        type="hidden"
-                        name="is_active"
-                        value="0"
-                    >
-
                     <label
-                        class="flex cursor-pointer
-                               items-start gap-4 rounded-2xl
-                               border border-slate-200
-                               bg-slate-50 p-4
-                               transition hover:border-blue-200
-                               hover:bg-blue-50"
+                        for="certificate_number"
+                        class="block text-sm
+                               font-bold text-slate-800"
                     >
-                        <input
-                            type="checkbox"
-                            name="is_active"
-                            value="1"
-                            @checked($selectedIsActive)
-                            class="mt-1 h-5 w-5 rounded
-                                   border-slate-300
-                                   text-blue-700
-                                   focus:ring-blue-500"
-                        >
-
-                        <span>
-                            <span
-                                class="block text-sm
-                                       font-black text-slate-800"
-                            >
-                                Siap Dipublikasikan
-                            </span>
-
-                            <span
-                                class="mt-1 block text-xs
-                                       leading-5 text-slate-500"
-                            >
-                                Status ini menentukan apakah data
-                                boleh digunakan pada halaman publik
-                                yang terhubung dengan modul
-                                akreditasi.
-                            </span>
-                        </span>
+                        Nomor sertifikat atau keputusan
                     </label>
 
-                    @error('is_active')
+                    <input
+                        id="certificate_number"
+                        type="text"
+                        name="certificate_number"
+                        value="{{ old(
+                            'certificate_number',
+                            $isEdit
+                                ? $accreditation
+                                    ->certificate_number
+                                : ''
+                        ) }}"
+                        placeholder="Kosongkan jika belum tersedia"
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               px-4 py-3 text-sm
+                               text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >
+
+                    @error('certificate_number')
                         <p
                             class="mt-2 text-sm
                                    font-semibold text-red-600"
@@ -683,297 +363,383 @@
                     @enderror
                 </div>
             </div>
-        </section>
 
 
-        {{-- ===================================================== --}}
-        {{-- DOKUMEN --}}
-        {{-- ===================================================== --}}
-
-        <section
-            class="overflow-hidden rounded-[2rem]
-                   border border-slate-100
-                   bg-white shadow-sm"
-        >
+            {{-- MASA BERLAKU --}}
             <div
-                class="border-b border-slate-100
-                       bg-slate-50/70 px-6 py-5"
+                class="grid gap-5
+                       md:grid-cols-2"
             >
-                <h2
-                    class="text-xl font-black
-                           text-slate-800"
-                >
-                    Dokumen Akreditasi
-                </h2>
+                <div>
+                    <label
+                        for="valid_from"
+                        class="block text-sm
+                               font-bold text-slate-800"
+                    >
+                        Mulai berlaku
+                    </label>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Unggah sertifikat atau dokumen keputusan resmi.
-                </p>
+                    <input
+                        id="valid_from"
+                        type="date"
+                        name="valid_from"
+                        value="{{ $validFrom }}"
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               px-4 py-3 text-sm
+                               text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >
+
+                    @error('valid_from')
+                        <p
+                            class="mt-2 text-sm
+                                   font-semibold text-red-600"
+                        >
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+
+                <div>
+                    <label
+                        for="valid_until"
+                        class="block text-sm
+                               font-bold text-slate-800"
+                    >
+                        Berlaku sampai
+                    </label>
+
+                    <input
+                        id="valid_until"
+                        type="date"
+                        name="valid_until"
+                        value="{{ $validUntil }}"
+                        class="mt-2 w-full
+                               rounded-xl border
+                               border-slate-200
+                               px-4 py-3 text-sm
+                               text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >
+
+                    @error('valid_until')
+                        <p
+                            class="mt-2 text-sm
+                                   font-semibold text-red-600"
+                        >
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
             </div>
 
 
-            <div class="space-y-5 p-6">
+            {{-- DESKRIPSI --}}
+            <div>
+                <label
+                    for="description"
+                    class="block text-sm
+                           font-bold text-slate-800"
+                >
+                    Penjelasan akreditasi
+                </label>
 
-                {{-- ============================================= --}}
-                {{-- FILE SAAT INI --}}
-                {{-- ============================================= --}}
+                <p
+                    class="mt-1 text-xs
+                           leading-6 text-slate-500"
+                >
+                    Tulis seluruh penjelasan dalam satu kolom.
+                    Pisahkan paragraf dengan menekan Enter.
+                </p>
 
-                @if ($currentFileUrl !== null)
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="9"
+                    placeholder="Tulis penjelasan akreditasi berdasarkan sumber resmi..."
+                    class="mt-2 w-full
+                           rounded-xl border
+                           border-slate-200
+                           px-4 py-3 text-sm
+                           leading-8 text-slate-800
+                           outline-none transition
+                           focus:border-[#075F9B]
+                           focus:ring-4
+                           focus:ring-blue-100"
+                >{{ old(
+                    'description',
+                    $isEdit
+                        ? $accreditation->description
+                        : ''
+                ) }}</textarea>
 
-                    <div
-                        class="overflow-hidden rounded-2xl
-                               border border-slate-100
-                               bg-slate-50"
+                @error('description')
+                    <p
+                        class="mt-2 text-sm
+                               font-semibold text-red-600"
                     >
-                        @if ($currentIsImage)
+                        {{ $message }}
+                    </p>
+                @enderror
+            </div>
+
+
+            {{-- DOKUMEN --}}
+            <div
+                class="border-t border-slate-200
+                       pt-6"
+            >
+                <label
+                    for="file_path"
+                    class="block text-sm
+                           font-bold text-slate-800"
+                >
+                    Dokumen akreditasi
+                </label>
+
+                <p
+                    class="mt-1 text-xs
+                           leading-6 text-slate-500"
+                >
+                    Unggah PDF, JPG, JPEG, PNG, atau WebP
+                    maksimal 20 MB.
+                    @if ($isEdit)
+                        Kosongkan jika dokumen lama tidak
+                        perlu diganti.
+                    @endif
+                </p>
+
+
+                @if ($currentFileUrl)
+                    <div
+                        class="mt-4 flex flex-col gap-4
+                               rounded-xl border
+                               border-slate-200
+                               bg-slate-50 p-4
+                               sm:flex-row sm:items-center"
+                    >
+                        @if ($currentFileIsImage)
+                            <img
+                                src="{{ $currentFileUrl }}"
+                                alt="Dokumen akreditasi saat ini"
+                                class="h-24 w-32 rounded-lg
+                                       object-cover"
+                            >
+                        @else
+                            <div
+                                class="flex h-20 w-20
+                                       shrink-0 items-center
+                                       justify-center rounded-xl
+                                       bg-red-50 text-sm
+                                       font-extrabold text-red-600"
+                            >
+                                PDF
+                            </div>
+                        @endif
+
+                        <div class="min-w-0 flex-1">
+                            <p
+                                class="text-sm font-bold
+                                       text-slate-800"
+                            >
+                                Dokumen yang sedang digunakan
+                            </p>
+
+                            <p
+                                class="mt-1 truncate
+                                       text-xs text-slate-500"
+                            >
+                                {{ basename($currentFilePath) }}
+                            </p>
+
                             <a
                                 href="{{ $currentFileUrl }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="block"
+                                class="mt-2 inline-flex
+                                       text-sm font-bold
+                                       text-[#075F9B]
+                                       hover:underline"
                             >
-                                <img
-                                    src="{{ $currentFileUrl }}"
-                                    alt="Dokumen akreditasi saat ini"
-                                    class="h-56 w-full
-                                           bg-white p-3
-                                           object-contain"
-                                >
+                                Buka Dokumen
                             </a>
-
-                        @elseif ($currentIsPdf)
-                            <div
-                                class="flex h-56 flex-col
-                                       items-center justify-center
-                                       bg-white p-6 text-center"
-                            >
-                                <div
-                                    class="flex h-16 w-16
-                                           items-center justify-center
-                                           rounded-2xl bg-red-100
-                                           text-xl font-black
-                                           text-red-600"
-                                >
-                                    PDF
-                                </div>
-
-                                <p
-                                    class="mt-4 text-sm
-                                           font-black text-slate-800"
-                                >
-                                    Dokumen PDF Saat Ini
-                                </p>
-
-                                <a
-                                    href="{{ $currentFileUrl }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="mt-2 text-xs
-                                           font-black text-blue-700
-                                           hover:underline"
-                                >
-                                    Buka Dokumen
-                                </a>
-                            </div>
-                        @endif
+                        </div>
                     </div>
-
-                @elseif ($currentFilePath !== '')
-
-                    <div
-                        class="rounded-2xl border
-                               border-red-200 bg-red-50
-                               p-5 text-red-700"
-                    >
-                        <p class="font-bold">
-                            File lama tidak ditemukan.
-                        </p>
-
-                        <p
-                            class="mt-2 break-all
-                                   text-xs leading-5"
-                        >
-                            {{ $currentFilePath }}
-                        </p>
-
-                        <p class="mt-2 text-xs leading-5">
-                            Unggah dokumen baru untuk mengganti
-                            referensi file yang hilang.
-                        </p>
-                    </div>
-
                 @endif
 
 
-                {{-- ============================================= --}}
-                {{-- INPUT FILE --}}
-                {{-- ============================================= --}}
+                <input
+                    id="file_path"
+                    type="file"
+                    name="file_path"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    data-accreditation-file-input
+                    class="mt-4 block w-full
+                           rounded-xl border
+                           border-slate-200
+                           bg-white px-3 py-2.5
+                           text-sm text-slate-600
+                           file:mr-3
+                           file:rounded-lg
+                           file:border-0
+                           file:bg-[#075F9B]
+                           file:px-4 file:py-2
+                           file:text-sm file:font-bold
+                           file:text-white
+                           hover:file:bg-[#064B7B]"
+                >
 
-                <div>
-                    <label
-                        for="accreditationFile"
-                        class="mb-2 block text-sm
-                               font-bold text-slate-700"
-                    >
-                        {{ $isEdit
-                            ? 'Ganti Dokumen'
-                            : 'Unggah Dokumen' }}
-                    </label>
-
-                    <input
-                        type="file"
-                        id="accreditationFile"
-                        name="file_path"
-                        accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"
-                        data-accreditation-file-input
-                        @class([
-                            'block w-full rounded-2xl border',
-                            'bg-white p-3 text-sm',
-                            'text-slate-600',
-                            'file:mr-3 file:rounded-xl',
-                            'file:border-0 file:bg-blue-700',
-                            'file:px-4 file:py-2',
-                            'file:font-bold file:text-white',
-                            'hover:file:bg-blue-800',
-                            'border-red-300' =>
-                                $errors->has('file_path'),
-                            'border-slate-200' =>
-                                !$errors->has('file_path'),
-                        ])
-                    >
-
-                    <p class="mt-2 text-xs leading-5 text-slate-500">
-                        Format PDF, JPG, JPEG, PNG, atau WEBP.
-                        Ukuran maksimal 20 MB.
-
-                        @if ($isEdit)
-                            Kosongkan untuk mempertahankan dokumen
-                            lama.
-                        @endif
-                    </p>
-
+                @error('file_path')
                     <p
-                        data-accreditation-file-error
-                        class="mt-2 hidden text-sm
+                        class="mt-2 text-sm
                                font-semibold text-red-600"
-                        aria-live="assertive"
-                    ></p>
+                    >
+                        {{ $message }}
+                    </p>
+                @enderror
 
-                    @error('file_path')
-                        <p
-                            class="mt-2 text-sm
-                                   font-semibold text-red-600"
-                        >
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
+                <p
+                    data-accreditation-file-error
+                    class="mt-2 hidden text-sm
+                           font-semibold text-red-600"
+                ></p>
 
-
-                {{-- ============================================= --}}
-                {{-- PREVIEW FILE BARU --}}
-                {{-- ============================================= --}}
 
                 <div
                     data-accreditation-preview-container
-                    class="hidden overflow-hidden
-                           rounded-2xl border
-                           border-blue-100 bg-blue-50 p-4"
+                    class="mt-4 hidden rounded-xl
+                           border border-blue-200
+                           bg-blue-50 p-4"
                 >
-                    <p
-                        class="text-xs font-bold uppercase
-                               tracking-wider text-blue-700"
+                    <img
+                        data-accreditation-image-preview
+                        alt="Pratinjau dokumen baru"
+                        class="hidden max-h-64
+                               rounded-lg object-contain"
                     >
-                        Dokumen Baru Dipilih
-                    </p>
 
                     <div
-                        class="mt-4 overflow-hidden
-                               rounded-xl bg-white"
+                        data-accreditation-pdf-preview
+                        class="hidden h-24 w-24
+                               items-center justify-center
+                               rounded-xl bg-red-50
+                               text-sm font-extrabold
+                               text-red-600"
                     >
-                        <img
-                            src=""
-                            alt="Pratinjau dokumen baru"
-                            data-accreditation-image-preview
-                            class="hidden h-48 w-full
-                                   object-contain p-3"
-                        >
-
-                        <div
-                            data-accreditation-pdf-preview
-                            class="hidden h-48 flex-col
-                                   items-center justify-center"
-                        >
-                            <div
-                                class="flex h-16 w-16
-                                       items-center justify-center
-                                       rounded-2xl bg-red-100
-                                       font-black text-red-600"
-                            >
-                                PDF
-                            </div>
-
-                            <p
-                                class="mt-3 text-sm
-                                       font-bold text-slate-700"
-                            >
-                                Dokumen PDF
-                            </p>
-                        </div>
+                        PDF
                     </div>
 
                     <p
                         data-accreditation-file-information
-                        class="mt-3 break-all text-sm
-                               font-semibold text-slate-700"
+                        class="mt-3 break-all
+                               text-sm font-semibold
+                               text-blue-800"
                     ></p>
                 </div>
             </div>
-        </section>
 
 
-        {{-- ===================================================== --}}
-        {{-- AKSI --}}
-        {{-- ===================================================== --}}
+            {{-- STATUS --}}
+            <label
+                class="flex cursor-pointer
+                       items-start gap-3
+                       border-t border-slate-200
+                       pt-6"
+            >
+                <input
+                    type="checkbox"
+                    name="is_active"
+                    value="1"
+                    class="mt-1 h-4 w-4
+                           rounded border-slate-300
+                           text-[#075F9B]
+                           focus:ring-blue-200"
+                    {{ $isShown ? 'checked' : '' }}
+                >
 
-        <section
-            class="rounded-[2rem] border
-                   border-slate-100 bg-white
-                   p-5 shadow-sm"
+                <span>
+                    <span
+                        class="block text-sm
+                               font-bold text-slate-800"
+                    >
+                        Tampilkan data akreditasi ini di website
+                    </span>
+
+                    <span
+                        class="mt-1 block text-xs
+                               leading-6 text-slate-500"
+                    >
+                        Hilangkan centang untuk menyimpan data
+                        tanpa menampilkannya kepada pengunjung.
+                    </span>
+                </span>
+            </label>
+        </div>
+    </div>
+
+
+    <footer
+        class="flex flex-col gap-4
+               border-t border-slate-200
+               bg-slate-50 px-5 py-5
+               sm:flex-row sm:items-center
+               sm:justify-between
+               sm:px-6 lg:px-8"
+    >
+        <p
+            class="text-sm leading-6
+                   text-slate-500"
         >
-            <div class="grid grid-cols-2 gap-3">
+            Periksa kembali semua data sebelum menyimpan.
+        </p>
 
-                <a
-                    href="{{ route(
-                        'admin.accreditations.index'
-                    ) }}"
-                    class="inline-flex items-center
-                           justify-center rounded-2xl
-                           bg-slate-100 px-5 py-3
-                           font-black text-slate-700
-                           transition hover:bg-slate-200"
-                >
-                    Batal
-                </a>
+        <div
+            class="flex flex-col gap-3
+                   sm:flex-row"
+        >
+            <a
+                href="{{ route(
+                    'admin.accreditations.index'
+                ) }}"
+                class="inline-flex items-center
+                       justify-center rounded-xl
+                       border border-slate-200
+                       bg-white px-5 py-3
+                       text-sm font-bold
+                       text-slate-700
+                       transition hover:bg-slate-100"
+            >
+                Batal
+            </a>
 
-                <button
-                    type="submit"
-                    class="inline-flex items-center
-                           justify-center rounded-2xl
-                           bg-blue-700 px-5 py-3
-                           font-black text-white
-                           shadow-lg shadow-blue-700/20
-                           transition hover:bg-blue-800
-                           disabled:cursor-not-allowed
-                           disabled:opacity-60"
-                >
+            <button
+                id="saveAccreditationButton"
+                type="submit"
+                class="inline-flex items-center
+                       justify-center rounded-xl
+                       bg-[#075F9B] px-6 py-3
+                       text-sm font-bold text-white
+                       transition hover:bg-[#064B7B]
+                       disabled:cursor-not-allowed
+                       disabled:opacity-70"
+            >
+                <span data-save-label>
                     {{ $isEdit
                         ? 'Simpan Perubahan'
-                        : 'Simpan' }}
-                </button>
-            </div>
-        </section>
-    </div>
+                        : 'Simpan Akreditasi' }}
+                </span>
+            </button>
+        </div>
+    </footer>
 </div>
 
 
@@ -994,9 +760,10 @@
                         'webp',
                     ];
 
-                    const input = document.querySelector(
-                        '[data-accreditation-file-input]'
-                    );
+                    const fileInput =
+                        document.querySelector(
+                            '[data-accreditation-file-input]'
+                        );
 
                     const errorElement =
                         document.querySelector(
@@ -1023,10 +790,23 @@
                             '[data-accreditation-file-information]'
                         );
 
+                    const form =
+                        fileInput?.closest('form');
+
+                    const saveButton =
+                        document.getElementById(
+                            'saveAccreditationButton'
+                        );
+
+                    const saveLabel =
+                        saveButton?.querySelector(
+                            '[data-save-label]'
+                        );
+
                     let previewUrl = null;
 
 
-                    function getExtension(fileName) {
+                    function extensionOf(fileName) {
                         const parts = fileName
                             .toLowerCase()
                             .split('.');
@@ -1050,7 +830,7 @@
                     }
 
 
-                    function revokePreviewUrl() {
+                    function clearPreviewUrl() {
                         if (!previewUrl) {
                             return;
                         }
@@ -1064,31 +844,27 @@
 
 
                     function resetPreview() {
-                        revokePreviewUrl();
+                        clearPreviewUrl();
 
-                        if (previewContainer) {
-                            previewContainer.classList.add(
-                                'hidden'
-                            );
-                        }
+                        previewContainer?.classList.add(
+                            'hidden'
+                        );
+
+                        imagePreview?.classList.add(
+                            'hidden'
+                        );
 
                         if (imagePreview) {
                             imagePreview.src = '';
-
-                            imagePreview.classList.add(
-                                'hidden'
-                            );
                         }
 
-                        if (pdfPreview) {
-                            pdfPreview.classList.add(
-                                'hidden'
-                            );
+                        pdfPreview?.classList.add(
+                            'hidden'
+                        );
 
-                            pdfPreview.classList.remove(
-                                'flex'
-                            );
-                        }
+                        pdfPreview?.classList.remove(
+                            'flex'
+                        );
 
                         if (fileInformation) {
                             fileInformation.textContent = '';
@@ -1096,129 +872,126 @@
                     }
 
 
-                    function clearError() {
-                        if (!errorElement) {
-                            return;
-                        }
-
-                        errorElement.textContent = '';
-
-                        errorElement.classList.add(
-                            'hidden'
-                        );
-                    }
-
-
-                    function showError(message) {
+                    function showFileError(message) {
                         if (!errorElement) {
                             return;
                         }
 
                         errorElement.textContent = message;
-
                         errorElement.classList.remove(
                             'hidden'
                         );
                     }
 
 
-                    if (input) {
-                        input.addEventListener(
-                            'change',
-                            function () {
-                                clearError();
-                                resetPreview();
+                    fileInput?.addEventListener(
+                        'change',
+                        function () {
+                            resetPreview();
 
-                                const file = this.files
-                                    ? this.files[0]
-                                    : null;
-
-                                if (!file) {
-                                    return;
-                                }
-
-                                const extension =
-                                    getExtension(file.name);
-
-                                if (
-                                    !allowedExtensions.includes(
-                                        extension
-                                    )
-                                ) {
-                                    showError(
-                                        'Format dokumen harus PDF, JPG, JPEG, PNG, atau WEBP.'
-                                    );
-
-                                    this.value = '';
-
-                                    return;
-                                }
-
-                                if (
-                                    file.size >
-                                    maximumFileSize
-                                ) {
-                                    showError(
-                                        'Ukuran dokumen '
-                                        + formatFileSize(
-                                            file.size
-                                        )
-                                        + '. Ukuran maksimal adalah 20 MB.'
-                                    );
-
-                                    this.value = '';
-
-                                    return;
-                                }
-
-                                if (previewContainer) {
-                                    previewContainer
-                                        .classList
-                                        .remove('hidden');
-                                }
-
-                                if (fileInformation) {
-                                    fileInformation.textContent =
-                                        file.name
-                                        + ' • '
-                                        + formatFileSize(
-                                            file.size
-                                        );
-                                }
-
-                                if (extension === 'pdf') {
-                                    if (pdfPreview) {
-                                        pdfPreview.classList.remove(
-                                            'hidden'
-                                        );
-
-                                        pdfPreview.classList.add(
-                                            'flex'
-                                        );
-                                    }
-
-                                    return;
-                                }
-
-                                previewUrl =
-                                    URL.createObjectURL(file);
-
-                                if (imagePreview) {
-                                    imagePreview.src =
-                                        previewUrl;
-
-                                    imagePreview.classList.remove(
-                                        'hidden'
-                                    );
-                                }
+                            if (errorElement) {
+                                errorElement.textContent = '';
+                                errorElement.classList.add(
+                                    'hidden'
+                                );
                             }
-                        );
-                    }
+
+                            const file =
+                                fileInput.files?.[0];
+
+                            if (!file) {
+                                return;
+                            }
+
+                            const extension =
+                                extensionOf(file.name);
+
+                            if (
+                                !allowedExtensions.includes(
+                                    extension
+                                )
+                            ) {
+                                showFileError(
+                                    'Format dokumen harus PDF, JPG, JPEG, PNG, atau WebP.'
+                                );
+
+                                fileInput.value = '';
+
+                                return;
+                            }
+
+                            if (
+                                file.size > maximumFileSize
+                            ) {
+                                showFileError(
+                                    'Ukuran dokumen maksimal 20 MB.'
+                                );
+
+                                fileInput.value = '';
+
+                                return;
+                            }
+
+                            previewContainer
+                                ?.classList
+                                .remove('hidden');
+
+                            if (fileInformation) {
+                                fileInformation.textContent =
+                                    file.name
+                                    + ' • '
+                                    + formatFileSize(
+                                        file.size
+                                    );
+                            }
+
+                            if (extension === 'pdf') {
+                                pdfPreview
+                                    ?.classList
+                                    .remove('hidden');
+
+                                pdfPreview
+                                    ?.classList
+                                    .add('flex');
+
+                                return;
+                            }
+
+                            previewUrl =
+                                URL.createObjectURL(file);
+
+                            if (imagePreview) {
+                                imagePreview.src =
+                                    previewUrl;
+
+                                imagePreview.classList.remove(
+                                    'hidden'
+                                );
+                            }
+                        }
+                    );
+
+
+                    form?.addEventListener(
+                        'submit',
+                        function () {
+                            if (!saveButton) {
+                                return;
+                            }
+
+                            saveButton.disabled = true;
+
+                            if (saveLabel) {
+                                saveLabel.textContent =
+                                    'Menyimpan...';
+                            }
+                        }
+                    );
 
 
                     window.addEventListener(
                         'beforeunload',
-                        revokePreviewUrl
+                        clearPreviewUrl
                     );
                 }
             );

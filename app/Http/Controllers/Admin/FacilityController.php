@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\FacilityPhoto;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +37,7 @@ class FacilityController extends Controller
     public function edit(Facility $facility): View
     {
         $facility->load([
-            'photos' => function (Builder $query): void {
+            'photos' => function ($query): void {
                 $query->ordered();
             },
         ]);

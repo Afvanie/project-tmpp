@@ -5,25 +5,9 @@
 @section('content')
 
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | DATA PENGELOLA ADMIN
-    |--------------------------------------------------------------------------
-    */
-
     $adminItems = collect($admins ?? []);
 
     $adminCount = $adminItems->count();
-
-    /*
-    |--------------------------------------------------------------------------
-    | ADMIN YANG SEDANG LOGIN
-    |--------------------------------------------------------------------------
-    |
-    | Autentikasi proyek menggunakan session admin_id, bukan guard
-    | auth('admin').
-    |
-    */
 
     $currentAdminId = (int) session(
         'admin_id',
@@ -32,77 +16,75 @@
 @endphp
 
 
-<div class="space-y-8">
+<div class="mx-auto max-w-7xl space-y-6">
 
-    {{-- ========================================================= --}}
     {{-- HEADER --}}
-    {{-- ========================================================= --}}
-
-    <div
-        class="flex flex-col gap-5
-               md:flex-row md:items-center
-               md:justify-between"
+    <header
+        class="flex flex-col gap-4
+               lg:flex-row lg:items-end
+               lg:justify-between"
     >
         <div>
+            <div class="flex items-center gap-3">
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.16em]
+                           text-[#075F9B]"
+                >
+                    Hak Akses Website
+                </p>
+            </div>
+
             <h1
-                class="text-3xl font-black
-                       text-slate-800 md:text-4xl"
+                class="mt-3 text-2xl font-extrabold
+                       tracking-tight text-slate-900
+                       sm:text-3xl"
             >
                 Pengelola Admin
             </h1>
 
             <p
-                class="mt-3 max-w-3xl
-                       leading-7 text-slate-500"
+                class="mt-2 max-w-3xl
+                       text-sm leading-7
+                       text-slate-500"
             >
-                Kelola akun pengelola yang dapat mengakses panel
-                administrasi website D-IV Teknik Mesin Produksi dan
-                Perawatan.
+                Kelola akun yang dapat masuk dan mengubah
+                isi website Program Studi D-IV TMPP.
             </p>
         </div>
 
+
         <a
-            href="{{ route('admin.admin-users.create') }}"
-            class="inline-flex items-center
-                   justify-center gap-3
-                   rounded-2xl bg-blue-700
-                   px-6 py-4 font-bold
-                   text-white shadow-lg
-                   shadow-blue-700/20
-                   transition hover:bg-blue-800"
+            href="{{ route(
+                'admin.admin-users.create'
+            ) }}"
+            class="inline-flex w-full items-center
+                   justify-center gap-2 rounded-xl
+                   bg-[#075F9B] px-5 py-3
+                   text-sm font-bold text-white
+                   transition hover:bg-[#064B7B]
+                   sm:w-auto"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4"
-                />
-            </svg>
-
-            Tambah Admin
+            <span aria-hidden="true">+</span>
+            Tambah Pengelola
         </a>
-    </div>
+    </header>
 
 
-    {{-- ========================================================= --}}
     {{-- ALERT --}}
-    {{-- ========================================================= --}}
-
     @if (session('success'))
         <div
-            class="rounded-2xl border
-                   border-green-200 bg-green-50
-                   px-6 py-4 font-semibold
-                   text-green-700"
-            role="alert"
+            class="rounded-xl border
+                   border-emerald-200
+                   bg-emerald-50 px-4 py-3
+                   text-sm font-semibold
+                   text-emerald-800"
+            role="status"
         >
             {{ session('success') }}
         </div>
@@ -110,10 +92,10 @@
 
     @if (session('error'))
         <div
-            class="rounded-2xl border
+            class="rounded-xl border
                    border-red-200 bg-red-50
-                   px-6 py-4 font-semibold
-                   text-red-700"
+                   px-4 py-3 text-sm
+                   font-semibold text-red-700"
             role="alert"
         >
             {{ session('error') }}
@@ -121,130 +103,152 @@
     @endif
 
 
-    {{-- ========================================================= --}}
-    {{-- DAFTAR ADMIN --}}
-    {{-- ========================================================= --}}
-
+    {{-- RINGKASAN --}}
     <section
-        class="overflow-hidden rounded-[2rem]
-               border border-slate-100
-               bg-white/95 shadow-xl
-               backdrop-blur"
+        class="flex flex-col gap-4
+               rounded-2xl border
+               border-slate-200 bg-white
+               px-5 py-4
+               sm:flex-row sm:items-center
+               sm:justify-between sm:px-6"
+    >
+        <div>
+            <h2
+                class="text-sm font-extrabold
+                       text-slate-900"
+            >
+                Ringkasan Akses
+            </h2>
+
+            <p
+                class="mt-1 text-xs
+                       leading-5 text-slate-500"
+            >
+                Minimal satu akun pengelola harus tetap tersedia.
+            </p>
+        </div>
+
+        <div class="text-left sm:text-right">
+            <p
+                class="text-2xl font-extrabold
+                       text-[#075F9B]"
+            >
+                {{ $adminCount }}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-500">
+                akun pengelola
+            </p>
+        </div>
+    </section>
+
+
+    {{-- DAFTAR --}}
+    <section
+        class="overflow-hidden rounded-2xl
+               border border-slate-200
+               bg-white"
+        aria-labelledby="adminListTitle"
     >
         <div
-            class="h-2 bg-gradient-to-r
-                   from-blue-700 via-yellow-400
-                   to-blue-700"
-        ></div>
-
-
-        {{-- Ringkasan --}}
-        <div
-            class="border-b border-slate-100
-                   p-6 md:p-8"
+            class="flex flex-col gap-4
+                   border-b border-slate-200
+                   px-5 py-5 sm:px-6
+                   lg:flex-row lg:items-end
+                   lg:justify-between"
         >
-            <div
-                class="flex flex-col gap-5
-                       md:flex-row md:items-center
-                       md:justify-between"
-            >
-                <div>
-                    <h2
-                        class="text-2xl font-black
-                               text-slate-800"
-                    >
-                        Daftar Akun Admin
-                    </h2>
-
-                    <p
-                        class="mt-2 leading-7
-                               text-slate-500"
-                    >
-                        Terdapat {{ $adminCount }} akun pengelola
-                        yang terdaftar.
-                    </p>
-                </div>
-
-                <div
-                    class="inline-flex items-center
-                           gap-3 rounded-2xl
-                           border border-slate-100
-                           bg-slate-50 px-5 py-3"
+            <div>
+                <h2
+                    id="adminListTitle"
+                    class="text-lg font-extrabold
+                           text-slate-900"
                 >
-                    <span
-                        class="text-3xl font-black
-                               text-blue-700"
-                    >
-                        {{ $adminCount }}
-                    </span>
+                    Daftar Pengelola
+                </h2>
 
-                    <span
-                        class="text-sm font-semibold
-                               text-slate-500"
-                    >
-                        Akun Admin
-                    </span>
-                </div>
+                <p
+                    class="mt-1 text-sm
+                           text-slate-500"
+                >
+                    Cari berdasarkan nama atau email.
+                </p>
+            </div>
+
+
+            <div class="w-full lg:w-80">
+                <label
+                    for="adminSearch"
+                    class="sr-only"
+                >
+                    Cari akun pengelola
+                </label>
+
+                <input
+                    id="adminSearch"
+                    type="search"
+                    autocomplete="off"
+                    placeholder="Cari nama atau email..."
+                    class="w-full rounded-xl
+                           border border-slate-200
+                           bg-slate-50
+                           px-4 py-2.5 text-sm
+                           text-slate-700 outline-none
+                           transition
+                           focus:border-[#075F9B]
+                           focus:bg-white"
+                >
             </div>
         </div>
 
 
-        {{-- ===================================================== --}}
-        {{-- DESKTOP TABLE --}}
-        {{-- ===================================================== --}}
-
+        {{-- DESKTOP --}}
         <div class="hidden overflow-x-auto md:block">
-
             <table class="w-full">
-
                 <thead
-                    class="border-b border-slate-100
+                    class="border-b border-slate-200
                            bg-slate-50"
                 >
                     <tr>
                         <th
-                            scope="col"
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
-                            Admin
+                            Pengelola
                         </th>
 
                         <th
-                            scope="col"
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Email
                         </th>
 
                         <th
-                            scope="col"
                             class="px-6 py-4 text-left
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Keterangan
                         </th>
 
                         <th
-                            scope="col"
                             class="px-6 py-4 text-right
-                                   text-xs font-bold uppercase
-                                   tracking-wider text-slate-500"
+                                   text-[11px] font-bold
+                                   uppercase tracking-[0.12em]
+                                   text-slate-500"
                         >
                             Aksi
                         </th>
                     </tr>
                 </thead>
 
-
-                <tbody class="divide-y divide-slate-100">
-
+                <tbody class="divide-y divide-slate-200">
                     @forelse ($adminItems as $admin)
-
                         @php
                             $adminName = trim(
                                 (string) $admin->name
@@ -254,21 +258,20 @@
                                 (string) $admin->email
                             );
 
-                            $adminInitial = $adminName !== ''
-                                ? mb_strtoupper(
-                                    mb_substr(
-                                        $adminName,
-                                        0,
-                                        1,
-                                        'UTF-8'
-                                    ),
-                                    'UTF-8'
-                                )
-                                : 'A';
+                            $adminInitial =
+                                $adminName !== ''
+                                    ? mb_strtoupper(
+                                        mb_substr(
+                                            $adminName,
+                                            0,
+                                            1
+                                        )
+                                    )
+                                    : 'A';
 
                             $isCurrentAdmin =
-                                $currentAdminId ===
-                                (int) $admin->id;
+                                $currentAdminId
+                                === (int) $admin->id;
 
                             $isLastAdmin =
                                 $adminCount <= 1;
@@ -276,34 +279,34 @@
                             $cannotDelete =
                                 $isCurrentAdmin
                                 || $isLastAdmin;
+
+                            $searchText =
+                                \Illuminate\Support\Str::lower(
+                                    $adminName
+                                    . ' '
+                                    . $adminEmail
+                                );
                         @endphp
 
 
                         <tr
-                            @class([
-                                'transition',
-                                'bg-yellow-50/40' =>
-                                    $isCurrentAdmin,
-                                'hover:bg-slate-50/70' =>
-                                    !$isCurrentAdmin,
-                            ])
+                            class="hover:bg-slate-50/70"
+                            data-admin-card
+                            data-search="{{ $searchText }}"
                         >
-                            {{-- Admin --}}
-                            <td class="px-6 py-5">
-
+                            <td class="px-6 py-4">
                                 <div
                                     class="flex items-center
-                                           gap-4"
+                                           gap-3"
                                 >
                                     <div
                                         @class([
-                                            'flex h-12 w-12 shrink-0',
+                                            'flex h-11 w-11 shrink-0',
                                             'items-center justify-center',
-                                            'rounded-2xl font-black',
-                                            'shadow-lg',
-                                            'bg-yellow-400 text-slate-900' =>
+                                            'rounded-xl font-extrabold',
+                                            'bg-amber-50 text-amber-700' =>
                                                 $isCurrentAdmin,
-                                            'bg-blue-700 text-white' =>
+                                            'bg-blue-50 text-[#075F9B]' =>
                                                 !$isCurrentAdmin,
                                         ])
                                     >
@@ -311,85 +314,70 @@
                                     </div>
 
                                     <div class="min-w-0">
-
-                                        <h3
+                                        <p
                                             class="font-bold
                                                    text-slate-800"
                                         >
                                             {{ $adminName !== ''
                                                 ? $adminName
                                                 : 'Administrator' }}
-                                        </h3>
+                                        </p>
 
                                         <p
-                                            class="mt-1 text-sm
+                                            class="mt-1 text-xs
                                                    text-slate-500"
                                         >
-                                            Pengelola Website
+                                            Pengelola website
                                         </p>
                                     </div>
                                 </div>
                             </td>
 
-
-                            {{-- Email --}}
                             <td
-                                class="px-6 py-5
-                                       text-slate-600"
+                                class="px-6 py-4
+                                       text-sm text-slate-600"
                             >
                                 <span class="break-all">
                                     {{ $adminEmail }}
                                 </span>
                             </td>
 
-
-                            {{-- Keterangan --}}
-                            <td class="px-6 py-5">
-
-                                @if ($isCurrentAdmin)
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-yellow-50 px-3 py-1
-                                               text-xs font-bold
-                                               text-yellow-700"
-                                    >
-                                        Sedang Digunakan
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-blue-50 px-3 py-1
-                                               text-xs font-bold
-                                               text-blue-700"
-                                    >
-                                        Akun Pengelola
-                                    </span>
-                                @endif
+                            <td class="px-6 py-4">
+                                <span
+                                    @class([
+                                        'inline-flex rounded-full',
+                                        'px-2.5 py-1 text-xs',
+                                        'font-bold',
+                                        'bg-amber-50 text-amber-700' =>
+                                            $isCurrentAdmin,
+                                        'bg-slate-100 text-slate-600' =>
+                                            !$isCurrentAdmin,
+                                    ])
+                                >
+                                    {{ $isCurrentAdmin
+                                        ? 'Sedang digunakan'
+                                        : 'Akun pengelola' }}
+                                </span>
                             </td>
 
-
-                            {{-- Aksi --}}
-                            <td class="px-6 py-5">
-
+                            <td class="px-6 py-4">
                                 <div
-                                    class="flex items-center
-                                           justify-end gap-3"
+                                    class="flex justify-end gap-2"
                                 >
                                     <a
                                         href="{{ route(
                                             'admin.admin-users.edit',
                                             $admin
                                         ) }}"
-                                        class="rounded-xl bg-blue-50
-                                               px-4 py-2 text-sm
-                                               font-bold text-blue-700
-                                               transition
-                                               hover:bg-blue-700
-                                               hover:text-white"
+                                        class="inline-flex items-center
+                                               justify-center rounded-lg
+                                               bg-blue-50 px-3 py-2
+                                               text-xs font-bold
+                                               text-[#075F9B]
+                                               hover:bg-blue-100"
                                     >
-                                        Edit
+                                        Ubah
                                     </a>
-
 
                                     <form
                                         action="{{ route(
@@ -398,7 +386,7 @@
                                         ) }}"
                                         method="POST"
                                         onsubmit="return confirm(
-                                            'Yakin ingin menghapus akun admin ini? Tindakan ini tidak dapat dibatalkan.'
+                                            'Hapus akun pengelola ini? Tindakan ini tidak dapat dibatalkan.'
                                         )"
                                     >
                                         @csrf
@@ -410,18 +398,16 @@
                                             title="{{ $isCurrentAdmin
                                                 ? 'Akun yang sedang digunakan tidak dapat dihapus.'
                                                 : ($isLastAdmin
-                                                    ? 'Akun admin terakhir tidak dapat dihapus.'
-                                                    : 'Hapus akun admin') }}"
-                                            class="rounded-xl bg-red-50
-                                                   px-4 py-2 text-sm
-                                                   font-bold text-red-700
-                                                   transition
-                                                   hover:bg-red-600
-                                                   hover:text-white
+                                                    ? 'Akun terakhir tidak dapat dihapus.'
+                                                    : 'Hapus akun') }}"
+                                            class="inline-flex items-center
+                                                   justify-center rounded-lg
+                                                   bg-red-50 px-3 py-2
+                                                   text-xs font-bold
+                                                   text-red-600
+                                                   hover:bg-red-100
                                                    disabled:cursor-not-allowed
-                                                   disabled:opacity-40
-                                                   disabled:hover:bg-red-50
-                                                   disabled:hover:text-red-700"
+                                                   disabled:opacity-40"
                                         >
                                             Hapus
                                         </button>
@@ -429,68 +415,41 @@
                                 </div>
                             </td>
                         </tr>
-
                     @empty
-
                         <tr>
                             <td
                                 colspan="4"
                                 class="px-6 py-14
                                        text-center"
                             >
-                                <div
-                                    class="mx-auto flex h-20 w-20
-                                           items-center justify-center
-                                           rounded-3xl bg-blue-100
-                                           text-blue-700"
+                                <p
+                                    class="text-sm font-bold
+                                           text-slate-700"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-10 w-10"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zM5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <h3
-                                    class="mt-5 text-xl
-                                           font-bold text-slate-800"
-                                >
-                                    Belum Ada Akun Admin
-                                </h3>
+                                    Belum ada akun pengelola
+                                </p>
 
                                 <p
-                                    class="mt-2 text-slate-500"
+                                    class="mt-2 text-sm
+                                           text-slate-500"
                                 >
-                                    Tambahkan akun pengelola website
-                                    melalui tombol Tambah Admin.
+                                    Tambahkan akun pengelola
+                                    terlebih dahulu.
                                 </p>
                             </td>
                         </tr>
-
                     @endforelse
                 </tbody>
             </table>
         </div>
 
 
-        {{-- ===================================================== --}}
-        {{-- MOBILE CARDS --}}
-        {{-- ===================================================== --}}
-
-        <div class="space-y-4 p-5 md:hidden">
-
+        {{-- MOBILE --}}
+        <div
+            class="divide-y divide-slate-200
+                   md:hidden"
+        >
             @forelse ($adminItems as $admin)
-
                 @php
                     $adminName = trim(
                         (string) $admin->name
@@ -500,21 +459,20 @@
                         (string) $admin->email
                     );
 
-                    $adminInitial = $adminName !== ''
-                        ? mb_strtoupper(
-                            mb_substr(
-                                $adminName,
-                                0,
-                                1,
-                                'UTF-8'
-                            ),
-                            'UTF-8'
-                        )
-                        : 'A';
+                    $adminInitial =
+                        $adminName !== ''
+                            ? mb_strtoupper(
+                                mb_substr(
+                                    $adminName,
+                                    0,
+                                    1
+                                )
+                            )
+                            : 'A';
 
                     $isCurrentAdmin =
-                        $currentAdminId ===
-                        (int) $admin->id;
+                        $currentAdminId
+                        === (int) $admin->id;
 
                     $isLastAdmin =
                         $adminCount <= 1;
@@ -522,73 +480,69 @@
                     $cannotDelete =
                         $isCurrentAdmin
                         || $isLastAdmin;
+
+                    $searchText =
+                        \Illuminate\Support\Str::lower(
+                            $adminName
+                            . ' '
+                            . $adminEmail
+                        );
                 @endphp
 
 
                 <article
-                    @class([
-                        'rounded-3xl border p-5',
-                        'border-yellow-200 bg-yellow-50/50' =>
-                            $isCurrentAdmin,
-                        'border-slate-100 bg-slate-50' =>
-                            !$isCurrentAdmin,
-                    ])
+                    class="px-5 py-5 sm:px-6"
+                    data-admin-card
+                    data-search="{{ $searchText }}"
                 >
-                    <div class="flex items-start gap-4">
-
+                    <div class="flex items-start gap-3">
                         <div
                             @class([
                                 'flex h-12 w-12 shrink-0',
                                 'items-center justify-center',
-                                'rounded-2xl font-black',
-                                'shadow-lg',
-                                'bg-yellow-400 text-slate-900' =>
+                                'rounded-xl font-extrabold',
+                                'bg-amber-50 text-amber-700' =>
                                     $isCurrentAdmin,
-                                'bg-blue-700 text-white' =>
+                                'bg-blue-50 text-[#075F9B]' =>
                                     !$isCurrentAdmin,
                             ])
                         >
                             {{ $adminInitial }}
                         </div>
 
-
                         <div class="min-w-0 flex-1">
-
-                            <h3
-                                class="font-bold
-                                       text-slate-800"
+                            <div
+                                class="flex items-start
+                                       justify-between gap-3"
                             >
-                                {{ $adminName !== ''
-                                    ? $adminName
-                                    : 'Administrator' }}
-                            </h3>
+                                <div class="min-w-0">
+                                    <h3
+                                        class="font-bold
+                                               text-slate-800"
+                                    >
+                                        {{ $adminName !== ''
+                                            ? $adminName
+                                            : 'Administrator' }}
+                                    </h3>
 
-                            <p
-                                class="mt-1 break-all
-                                       text-sm text-slate-500"
-                            >
-                                {{ $adminEmail }}
-                            </p>
-
-                            <div class="mt-3">
+                                    <p
+                                        class="mt-1 break-all
+                                               text-sm text-slate-500"
+                                    >
+                                        {{ $adminEmail }}
+                                    </p>
+                                </div>
 
                                 @if ($isCurrentAdmin)
                                     <span
-                                        class="inline-flex rounded-full
-                                               bg-yellow-100 px-3 py-1
-                                               text-xs font-bold
-                                               text-yellow-700"
+                                        class="inline-flex shrink-0
+                                               rounded-full
+                                               bg-amber-50
+                                               px-2.5 py-1
+                                               text-[10px] font-bold
+                                               text-amber-700"
                                     >
-                                        Sedang Digunakan
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex rounded-full
-                                               bg-blue-50 px-3 py-1
-                                               text-xs font-bold
-                                               text-blue-700"
-                                    >
-                                        Akun Pengelola
+                                        Digunakan
                                     </span>
                                 @endif
                             </div>
@@ -596,21 +550,24 @@
                     </div>
 
 
-                    <div class="mt-5 grid grid-cols-2 gap-3">
-
+                    <div
+                        class="mt-4 grid
+                               grid-cols-2 gap-2"
+                    >
                         <a
                             href="{{ route(
                                 'admin.admin-users.edit',
                                 $admin
                             ) }}"
-                            class="rounded-xl bg-blue-700
-                                   px-4 py-3 text-center
+                            class="inline-flex items-center
+                                   justify-center rounded-xl
+                                   bg-[#075F9B]
+                                   px-4 py-2.5
                                    text-sm font-bold text-white
-                                   transition hover:bg-blue-800"
+                                   hover:bg-[#064B7B]"
                         >
-                            Edit
+                            Ubah
                         </a>
-
 
                         <form
                             action="{{ route(
@@ -619,7 +576,7 @@
                             ) }}"
                             method="POST"
                             onsubmit="return confirm(
-                                'Yakin ingin menghapus akun admin ini? Tindakan ini tidak dapat dibatalkan.'
+                                'Hapus akun pengelola ini? Tindakan ini tidak dapat dibatalkan.'
                             )"
                         >
                             @csrf
@@ -628,10 +585,13 @@
                             <button
                                 type="submit"
                                 @disabled($cannotDelete)
-                                class="w-full rounded-xl
-                                       bg-red-600 px-4 py-3
-                                       text-sm font-bold text-white
-                                       transition hover:bg-red-700
+                                class="inline-flex w-full
+                                       items-center justify-center
+                                       rounded-xl bg-red-50
+                                       px-4 py-2.5
+                                       text-sm font-bold
+                                       text-red-600
+                                       hover:bg-red-100
                                        disabled:cursor-not-allowed
                                        disabled:opacity-40"
                             >
@@ -640,65 +600,125 @@
                         </form>
                     </div>
 
-
                     @if ($cannotDelete)
                         <p
-                            class="mt-3 text-center text-xs
-                                   font-semibold text-slate-500"
+                            class="mt-3 text-center
+                                   text-xs text-slate-500"
                         >
                             {{ $isCurrentAdmin
                                 ? 'Akun yang sedang digunakan tidak dapat dihapus.'
-                                : 'Minimal satu akun admin harus tetap tersedia.' }}
+                                : 'Minimal satu akun pengelola harus tersedia.' }}
                         </p>
                     @endif
                 </article>
-
             @empty
-
-                <div
-                    class="rounded-3xl border
-                           border-slate-100 bg-slate-50
-                           p-8 text-center"
-                >
-                    <div
-                        class="mx-auto flex h-16 w-16
-                               items-center justify-center
-                               rounded-2xl bg-blue-100
-                               text-blue-700"
+                <div class="px-6 py-12 text-center">
+                    <p
+                        class="text-sm font-bold
+                               text-slate-700"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-8 w-8"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zM5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2"
-                            />
-                        </svg>
-                    </div>
-
-                    <h3
-                        class="mt-5 text-xl font-bold
-                               text-slate-800"
-                    >
-                        Belum Ada Akun Admin
-                    </h3>
-
-                    <p class="mt-2 text-slate-500">
-                        Tambahkan akun pengelola website terlebih
-                        dahulu.
+                        Belum ada akun pengelola
                     </p>
                 </div>
-
             @endforelse
+        </div>
+
+
+        <div
+            id="adminEmptySearch"
+            class="hidden px-6 py-12 text-center"
+        >
+            <p
+                class="text-sm font-bold
+                       text-slate-700"
+            >
+                Akun tidak ditemukan
+            </p>
+
+            <p
+                class="mt-2 text-sm
+                       text-slate-500"
+            >
+                Coba gunakan kata pencarian lain.
+            </p>
         </div>
     </section>
 </div>
+
+
+<script>
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+            const searchInput =
+                document.getElementById(
+                    'adminSearch'
+                );
+
+            const cards =
+                Array.from(
+                    document.querySelectorAll(
+                        '[data-admin-card]'
+                    )
+                );
+
+            const emptySearch =
+                document.getElementById(
+                    'adminEmptySearch'
+                );
+
+            if (!searchInput) {
+                return;
+            }
+
+            function filterAdmins() {
+                const keyword =
+                    searchInput.value
+                        .toLocaleLowerCase('id-ID')
+                        .trim();
+
+                let matches = 0;
+
+                cards.forEach(
+                    function (card) {
+                        const searchText =
+                            (
+                                card.dataset.search
+                                || ''
+                            ).toLocaleLowerCase(
+                                'id-ID'
+                            );
+
+                        const isMatch =
+                            keyword === ''
+                            || searchText.includes(
+                                keyword
+                            );
+
+                        card.classList.toggle(
+                            'hidden',
+                            !isMatch
+                        );
+
+                        if (isMatch) {
+                            matches++;
+                        }
+                    }
+                );
+
+                emptySearch?.classList.toggle(
+                    'hidden',
+                    cards.length === 0
+                    || matches > 0
+                );
+            }
+
+            searchInput.addEventListener(
+                'input',
+                filterAdmins
+            );
+        }
+    );
+</script>
 
 @endsection

@@ -39,399 +39,609 @@
 
     $recentDocuments = collect(
         $latestDocuments ?? []
-    );
+    )->take(5);
 
     $recentPhotos = collect(
         $latestPhotos ?? []
-    );
+    )->take(5);
+
 
     /*
     |--------------------------------------------------------------------------
-    | LOGO
+    | RINGKASAN DATA
     |--------------------------------------------------------------------------
     */
 
-    $logoRelativePath = 'assets/images/logo.png';
-
-    $logoAvailable = file_exists(
-        public_path($logoRelativePath)
-    );
-
-    /*
-    |--------------------------------------------------------------------------
-    | KARTU STATISTIK
-    |--------------------------------------------------------------------------
-    */
-
-    $statCards = [
+    $summaryCards = [
         [
-            'title' => 'Total Dosen',
+            'label' => 'Konten Profil',
+            'value' => $dashboardStats['profile_sections'],
+            'description' => 'Bagian profil yang tersedia',
+            'route' => route(
+                'admin.profile-contents.index'
+            ),
+            'icon' => 'profile',
+        ],
+        [
+            'label' => 'Dosen',
             'value' => $dashboardStats['lecturers'],
+            'description' => 'Data dosen tersimpan',
             'route' => route(
                 'admin.lecturer-staff.index',
                 ['type' => 'dosen']
             ),
-            'link' => 'Kelola Dosen',
-            'theme' => 'blue',
             'icon' => 'lecturer',
         ],
-
         [
-            'title' => 'Total Staf',
+            'label' => 'Staf',
             'value' => $dashboardStats['staff'],
+            'description' => 'Data staf tersimpan',
             'route' => route(
                 'admin.lecturer-staff.index',
                 ['type' => 'staff']
             ),
-            'link' => 'Kelola Staf',
-            'theme' => 'yellow',
             'icon' => 'staff',
         ],
-
         [
-            'title' => 'Dokumen Akademik',
+            'label' => 'Dokumen Akademik',
             'value' => $dashboardStats['academic_documents'],
+            'description' => 'Dokumen yang sudah ditambahkan',
             'route' => route(
                 'admin.academic-documents.index'
             ),
-            'link' => 'Kelola Akademik',
-            'theme' => 'blue',
             'icon' => 'document',
         ],
-
         [
-            'title' => 'Foto Fasilitas',
+            'label' => 'Foto Fasilitas',
             'value' => $dashboardStats['facility_photos'],
+            'description' => 'Foto yang sudah diunggah',
             'route' => route(
                 'admin.facilities.index'
             ),
-            'link' => 'Kelola Foto',
-            'theme' => 'yellow',
             'icon' => 'image',
         ],
-
         [
-            'title' => 'Akun Admin',
+            'label' => 'Pengelola Admin',
             'value' => $dashboardStats['admins'],
+            'description' => 'Akun yang dapat masuk',
             'route' => route(
                 'admin.admin-users.index'
             ),
-            'link' => 'Kelola Admin',
-            'theme' => 'blue',
             'icon' => 'admin',
+        ],
+    ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AKSES CEPAT
+    |--------------------------------------------------------------------------
+    */
+
+    $quickActions = [
+        [
+            'title' => 'Atur Beranda',
+            'description' => 'Ubah isi utama yang tampil di halaman beranda.',
+            'route' => route(
+                'admin.home-content.index'
+            ),
+            'button' => 'Buka Beranda',
+        ],
+        [
+            'title' => 'Atur Profil',
+            'description' => 'Kelola gambaran umum, visi, misi, PPM, dan CPL.',
+            'route' => route(
+                'admin.profile-contents.index'
+            ),
+            'button' => 'Buka Profil',
+        ],
+        [
+            'title' => 'Atur Dosen dan Staf',
+            'description' => 'Tambah, ubah, atau hapus data dosen dan staf.',
+            'route' => route(
+                'admin.lecturer-staff.index'
+            ),
+            'button' => 'Buka Data',
+        ],
+        [
+            'title' => 'Atur Akademik',
+            'description' => 'Kelola pedoman, kalender, kurikulum, dan jadwal.',
+            'route' => route(
+                'admin.academic-documents.index'
+            ),
+            'button' => 'Buka Akademik',
+        ],
+        [
+            'title' => 'Atur Fasilitas',
+            'description' => 'Unggah dan kelola dokumentasi fasilitas.',
+            'route' => route(
+                'admin.facilities.index'
+            ),
+            'button' => 'Buka Fasilitas',
+        ],
+        [
+            'title' => 'Atur Akreditasi',
+            'description' => 'Kelola informasi dan dokumen akreditasi.',
+            'route' => route(
+                'admin.accreditations.index'
+            ),
+            'button' => 'Buka Akreditasi',
         ],
     ];
 @endphp
 
 
-<div class="space-y-8">
+<div class="space-y-6">
 
     {{-- ========================================================= --}}
-    {{-- WELCOME HERO --}}
+    {{-- SAPAAN --}}
     {{-- ========================================================= --}}
 
     <section
-        class="relative overflow-hidden
-               rounded-[2rem] bg-[#06172E]
-               text-white shadow-2xl
-               md:rounded-[2.5rem]"
+        class="overflow-hidden rounded-2xl
+               border border-slate-200 bg-white"
     >
-        {{-- Background Decoration --}}
         <div
-            class="pointer-events-none absolute inset-0"
-            aria-hidden="true"
+            class="grid items-center gap-5
+                   px-5 py-6 sm:px-6
+                   lg:grid-cols-[1fr_auto]
+                   lg:px-7"
         >
-            <div
-                class="absolute -right-32 -top-32
-                       h-[420px] w-[420px]
-                       rounded-full bg-blue-500/30
-                       blur-3xl"
-            ></div>
-
-            <div
-                class="absolute -bottom-32 -left-32
-                       h-[420px] w-[420px]
-                       rounded-full bg-yellow-400/20
-                       blur-3xl"
-            ></div>
-
-            <div
-                class="absolute inset-0 opacity-[0.08]"
-                style="
-                    background-image:
-                        linear-gradient(
-                            #ffffff 1px,
-                            transparent 1px
-                        ),
-                        linear-gradient(
-                            to right,
-                            #ffffff 1px,
-                            transparent 1px
-                        );
-                    background-size: 70px 70px;
-                "
-            ></div>
-        </div>
-
-
-        <div
-            class="relative z-10 grid
-                   items-center gap-8
-                   p-6 sm:p-7 md:p-10
-                   lg:grid-cols-12"
-        >
-            {{-- Text --}}
-            <div class="lg:col-span-8">
-
-                <span
-                    class="inline-flex rounded-full
-                           border border-yellow-400/40
-                           bg-yellow-400/20
-                           px-5 py-2 text-sm
-                           font-bold text-yellow-300"
-                >
-                    ADMIN WEBSITE
-                </span>
-
-                <h1
-                    class="mt-6 text-3xl font-black
-                           leading-tight md:text-5xl"
-                >
-                    Dashboard Pengelolaan Website
-                </h1>
-
+            <div>
                 <p
-                    class="mt-5 max-w-3xl
-                           leading-8 text-white/80"
+                    class="text-xs font-bold uppercase
+                           tracking-[0.14em]
+                           text-[#075F9B]"
                 >
-                    Kelola konten website Program Studi D-IV Teknik
-                    Mesin Produksi dan Perawatan Politeknik Negeri
-                    Malang, mulai dari profil, dosen dan staf,
-                    dokumen akademik, dokumentasi fasilitas, hingga
-                    akun pengelola admin.
+                    Panel Pengelola Website
                 </p>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-
-                    <a
-                        href="{{ route('home') }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center
-                               justify-center rounded-2xl
-                               bg-yellow-400 px-6 py-3
-                               font-bold text-slate-900
-                               transition hover:bg-yellow-300"
-                    >
-                        Lihat Website
-                    </a>
-
-                    <a
-                        href="{{ route(
-                            'admin.profile-contents.index'
-                        ) }}"
-                        class="inline-flex items-center
-                               justify-center rounded-2xl
-                               border border-white/15
-                               bg-white/10 px-6 py-3
-                               font-bold text-white
-                               transition hover:bg-white/20"
-                    >
-                        Kelola Konten
-                    </a>
-                </div>
-            </div>
-
-
-            {{-- Program Summary --}}
-            <div class="lg:col-span-4">
-
-                <div
-                    class="rounded-[2rem] border
-                           border-white/15 bg-white/10
-                           p-6 backdrop-blur"
+                <h2
+                    class="mt-2 text-2xl font-extrabold
+                           tracking-tight text-slate-900
+                           sm:text-3xl"
                 >
-                    <div class="flex items-center gap-4">
+                    Selamat Datang
+                </h2>
 
-                        <div
-                            class="flex h-16 w-16 shrink-0
-                                   items-center justify-center
-                                   rounded-3xl bg-white
-                                   shadow-xl"
-                        >
-                            @if ($logoAvailable)
-                                <img
-                                    src="{{ asset(
-                                        $logoRelativePath
-                                    ) }}"
-                                    alt="Logo Politeknik Negeri Malang"
-                                    class="h-12 w-12 object-contain"
-                                >
-                            @else
-                                <span
-                                    class="font-black text-blue-800"
-                                >
-                                    TM
-                                </span>
-                            @endif
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-white/60">
-                                Program Studi
-                            </p>
-
-                            <h2 class="text-xl font-black">
-                                D-IV TMPP
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 h-px bg-white/15"></div>
-
-                    <div class="mt-6 grid grid-cols-2 gap-4">
-
-                        <div>
-                            <p
-                                class="text-3xl font-black
-                                       text-yellow-300"
-                            >
-                                {{ $dashboardStats[
-                                    'profile_sections'
-                                ] }}
-                            </p>
-
-                            <p
-                                class="mt-1 text-xs
-                                       text-white/60"
-                            >
-                                Konten Profil
-                            </p>
-                        </div>
-
-                        <div>
-                            <p
-                                class="text-3xl font-black
-                                       text-yellow-300"
-                            >
-                                {{ $dashboardStats['admins'] }}
-                            </p>
-
-                            <p
-                                class="mt-1 text-xs
-                                       text-white/60"
-                            >
-                                Akun Admin
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <p
+                    class="mt-2 max-w-3xl text-sm
+                           leading-7 text-slate-500"
+                >
+                    Pilih bagian yang ingin diperbarui. Semua perubahan
+                    yang disimpan akan digunakan untuk mengatur website
+                    Program Studi D-IV TMPP.
+                </p>
             </div>
+
+
+            <a
+                href="{{ route('home') }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex w-full items-center
+                       justify-center gap-2 rounded-xl
+                       bg-[#075F9B] px-5 py-3
+                       text-sm font-bold text-white
+                       transition hover:bg-[#064B7B]
+                       sm:w-auto"
+            >
+                <span>Lihat Website</span>
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M14 3h7v7M10 14L21 3M5 5h5M5 10h5M5 15h14M5 20h14"
+                    />
+                </svg>
+            </a>
         </div>
     </section>
 
 
     {{-- ========================================================= --}}
-    {{-- STATISTIC CARDS --}}
+    {{-- RINGKASAN DATA --}}
+    {{-- ========================================================= --}}
+
+    <section aria-labelledby="summaryTitle">
+        <div
+            class="mb-4 flex items-end
+                   justify-between gap-4"
+        >
+            <div>
+                <h2
+                    id="summaryTitle"
+                    class="text-lg font-extrabold
+                           text-slate-900"
+                >
+                    Ringkasan Website
+                </h2>
+
+                <p
+                    class="mt-1 text-sm text-slate-500"
+                >
+                    Jumlah data yang saat ini tersimpan.
+                </p>
+            </div>
+        </div>
+
+
+        <div
+            class="grid gap-3
+                   sm:grid-cols-2
+                   xl:grid-cols-3
+                   2xl:grid-cols-6"
+        >
+            @foreach ($summaryCards as $card)
+                <a
+                    href="{{ $card['route'] }}"
+                    class="group rounded-2xl
+                           border border-slate-200
+                           bg-white p-4
+                           transition
+                           hover:border-blue-200
+                           hover:shadow-md"
+                >
+                    <div
+                        class="flex items-start
+                               justify-between gap-4"
+                    >
+                        <div class="min-w-0">
+                            <p
+                                class="text-xs font-bold
+                                       text-slate-500"
+                            >
+                                {{ $card['label'] }}
+                            </p>
+
+                            <p
+                                class="mt-2 text-3xl
+                                       font-extrabold
+                                       tracking-tight
+                                       text-slate-900"
+                            >
+                                {{ $card['value'] }}
+                            </p>
+                        </div>
+
+
+                        <span
+                            class="flex h-10 w-10
+                                   shrink-0 items-center
+                                   justify-center rounded-xl
+                                   bg-blue-50 text-[#075F9B]
+                                   transition
+                                   group-hover:bg-[#075F9B]
+                                   group-hover:text-white"
+                        >
+                            @switch($card['icon'])
+                                @case('profile')
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
+                                        />
+                                    </svg>
+                                    @break
+
+                                @case('lecturer')
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 14l9-5-9-5-9 5 9 5zM6 12v5c3 2 9 2 12 0v-5"
+                                        />
+                                    </svg>
+                                    @break
+
+                                @case('staff')
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"
+                                        />
+                                    </svg>
+                                    @break
+
+                                @case('document')
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
+                                        />
+                                    </svg>
+                                    @break
+
+                                @case('image')
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                    @break
+
+                                @default
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zM5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2"
+                                        />
+                                    </svg>
+                            @endswitch
+                        </span>
+                    </div>
+
+                    <p
+                        class="mt-3 text-xs
+                               leading-5 text-slate-400"
+                    >
+                        {{ $card['description'] }}
+                    </p>
+                </a>
+            @endforeach
+        </div>
+    </section>
+
+
+    {{-- ========================================================= --}}
+    {{-- AKSES CEPAT --}}
     {{-- ========================================================= --}}
 
     <section
-        class="grid gap-6
-               sm:grid-cols-2
-               xl:grid-cols-5"
-        aria-label="Statistik website"
+        class="rounded-2xl border
+               border-slate-200 bg-white"
+        aria-labelledby="quickActionTitle"
     >
-        @foreach ($statCards as $card)
-
-            @php
-                $isBlue = $card['theme'] === 'blue';
-            @endphp
-
-            <article
-                class="group rounded-[2rem]
-                       border border-slate-100
-                       bg-white/95 p-6 shadow-xl
-                       backdrop-blur transition-all
-                       duration-300 hover:-translate-y-1
-                       hover:shadow-2xl"
+        <div
+            class="border-b border-slate-200
+                   px-5 py-5 sm:px-6"
+        >
+            <h2
+                id="quickActionTitle"
+                class="text-lg font-extrabold
+                       text-slate-900"
             >
-                <div
-                    class="flex items-start
-                           justify-between gap-4"
-                >
-                    <div>
-                        <p
-                            class="text-sm font-bold
-                                   text-slate-500"
-                        >
-                            {{ $card['title'] }}
-                        </p>
+                Apa yang Ingin Dikelola?
+            </h2>
 
-                        <h2
-                            class="mt-3 text-4xl font-black
-                                   text-slate-800"
+            <p
+                class="mt-1 text-sm text-slate-500"
+            >
+                Pilih menu sesuai bagian website yang ingin diperbarui.
+            </p>
+        </div>
+
+
+        <div
+            class="grid gap-px overflow-hidden
+                   bg-slate-200
+                   sm:grid-cols-2
+                   xl:grid-cols-3"
+        >
+            @foreach ($quickActions as $action)
+                <a
+                    href="{{ $action['route'] }}"
+                    class="group bg-white p-5
+                           transition hover:bg-blue-50/60
+                           sm:p-6"
+                >
+                    <div
+                        class="flex items-start
+                               justify-between gap-5"
+                    >
+                        <div>
+                            <h3
+                                class="text-sm font-extrabold
+                                       text-slate-900"
+                            >
+                                {{ $action['title'] }}
+                            </h3>
+
+                            <p
+                                class="mt-2 text-sm
+                                       leading-6 text-slate-500"
+                            >
+                                {{ $action['description'] }}
+                            </p>
+                        </div>
+
+                        <span
+                            class="flex h-9 w-9
+                                   shrink-0 items-center
+                                   justify-center rounded-xl
+                                   border border-slate-200
+                                   bg-white text-slate-400
+                                   transition
+                                   group-hover:border-[#075F9B]
+                                   group-hover:bg-[#075F9B]
+                                   group-hover:text-white"
                         >
-                            {{ $card['value'] }}
-                        </h2>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 5l7 7-7 7"
+                                />
+                            </svg>
+                        </span>
                     </div>
 
-                    <div
-                        @class([
-                            'flex h-14 w-14 shrink-0',
-                            'items-center justify-center',
-                            'rounded-2xl shadow-lg',
-                            'bg-blue-700 text-white' => $isBlue,
-                            'bg-yellow-400 text-slate-900' => !$isBlue,
-                        ])
+                    <p
+                        class="mt-4 text-xs font-bold
+                               text-[#075F9B]"
                     >
-                        @if ($card['icon'] === 'lecturer')
+                        {{ $action['button'] }}
+                    </p>
+                </a>
+            @endforeach
+        </div>
+    </section>
 
+
+    {{-- ========================================================= --}}
+    {{-- DATA TERBARU --}}
+    {{-- ========================================================= --}}
+
+    <div
+        class="grid gap-6
+               xl:grid-cols-2"
+    >
+        {{-- DOKUMEN TERBARU --}}
+        <section
+            class="overflow-hidden rounded-2xl
+                   border border-slate-200
+                   bg-white"
+        >
+            <div
+                class="flex items-center
+                       justify-between gap-4
+                       border-b border-slate-200
+                       px-5 py-5 sm:px-6"
+            >
+                <div>
+                    <h2
+                        class="text-lg font-extrabold
+                               text-slate-900"
+                    >
+                        Dokumen Terbaru
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm
+                               text-slate-500"
+                    >
+                        Dokumen akademik yang terakhir ditambahkan.
+                    </p>
+                </div>
+
+                <a
+                    href="{{ route(
+                        'admin.academic-documents.index'
+                    ) }}"
+                    class="shrink-0 text-xs
+                           font-bold text-[#075F9B]
+                           hover:underline"
+                >
+                    Lihat Semua
+                </a>
+            </div>
+
+
+            <div class="divide-y divide-slate-100">
+                @forelse ($recentDocuments as $document)
+                    @php
+                        $documentTitle = trim(
+                            (string) (
+                                $document->title
+                                ?? ''
+                            )
+                        );
+
+                        $documentCategory =
+                            $document->category_label
+                            ?? $document->category
+                            ?? 'Dokumen Akademik';
+
+                        $academicYear = trim(
+                            (string) (
+                                $document->academic_year
+                                ?? ''
+                            )
+                        );
+
+                        $documentIsActive = (bool) (
+                            $document->is_active
+                            ?? false
+                        );
+                    @endphp
+
+                    <article
+                        class="flex items-start gap-4
+                               px-5 py-4
+                               transition
+                               hover:bg-slate-50
+                               sm:px-6"
+                    >
+                        <span
+                            class="flex h-10 w-10
+                                   shrink-0 items-center
+                                   justify-center rounded-xl
+                                   bg-blue-50 text-[#075F9B]"
+                        >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 14l9-5-9-5-9 5 9 5z"
-                                />
-
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z"
-                                />
-                            </svg>
-
-                        @elseif ($card['icon'] === 'staff')
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"
-                                />
-                            </svg>
-
-                        @elseif ($card['icon'] === 'document')
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
+                                class="h-5 w-5"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -444,682 +654,268 @@
                                     d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
                                 />
                             </svg>
-
-                        @elseif ($card['icon'] === 'image')
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
-
-                        @else
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-7 w-7"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zM5.5 21a6.5 6.5 0 0113 0M19 8h2m-1-1v2"
-                                />
-                            </svg>
-
-                        @endif
-                    </div>
-                </div>
-
-                <a
-                    href="{{ $card['route'] }}"
-                    class="mt-6 inline-flex
-                           text-sm font-bold
-                           text-blue-700
-                           transition hover:underline"
-                >
-                    {{ $card['link'] }} →
-                </a>
-            </article>
-
-        @endforeach
-    </section>
+                        </span>
 
 
-    {{-- ========================================================= --}}
-    {{-- AKSES CEPAT DAN DOKUMEN TERBARU --}}
-    {{-- ========================================================= --}}
-
-    <div class="grid gap-8 xl:grid-cols-12">
-
-        {{-- ===================================================== --}}
-        {{-- AKSES CEPAT --}}
-        {{-- ===================================================== --}}
-
-        <section class="xl:col-span-5">
-
-            <div
-                class="overflow-hidden rounded-[2rem]
-                       border border-slate-100
-                       bg-white/95 shadow-xl
-                       backdrop-blur"
-            >
-                <div
-                    class="h-2 bg-gradient-to-r
-                           from-blue-700 via-yellow-400
-                           to-blue-700"
-                ></div>
-
-                <div class="p-6 sm:p-7 md:p-8">
-
-                    <h2
-                        class="text-2xl font-black
-                               text-slate-800"
-                    >
-                        Akses Cepat
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Pilih bagian website yang akan dikelola.
-                    </p>
-
-                    <div
-                        class="mt-7 grid gap-4
-                               sm:grid-cols-2"
-                    >
-                        {{-- Profil --}}
-                        <a
-                            href="{{ route(
-                                'admin.profile-contents.index'
-                            ) }}"
-                            class="group rounded-3xl
-                                   border border-slate-100
-                                   bg-slate-50 p-5
-                                   transition hover:bg-blue-700
-                                   hover:text-white"
-                        >
-                            <div
-                                class="flex h-12 w-12
-                                       items-center justify-center
-                                       rounded-2xl bg-blue-700
-                                       text-white
-                                       group-hover:bg-white/20"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 font-bold">
-                                Konten Profil
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm
-                                       leading-6 text-slate-500
-                                       group-hover:text-white/75"
-                            >
-                                Visi, misi, tujuan, PPM, dan CPL.
-                            </p>
-                        </a>
-
-
-                        {{-- Dosen dan Staf --}}
-                        <a
-                            href="{{ route(
-                                'admin.lecturer-staff.index'
-                            ) }}"
-                            class="group rounded-3xl
-                                   border border-slate-100
-                                   bg-slate-50 p-5
-                                   transition hover:bg-blue-700
-                                   hover:text-white"
-                        >
-                            <div
-                                class="flex h-12 w-12
-                                       items-center justify-center
-                                       rounded-2xl bg-yellow-400
-                                       text-slate-900
-                                       group-hover:bg-white/20
-                                       group-hover:text-white"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M17 20h5v-2a4 4 0 00-5-3.87M9 20H4v-2a4 4 0 015-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 font-bold">
-                                Dosen dan Staf
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm
-                                       leading-6 text-slate-500
-                                       group-hover:text-white/75"
-                            >
-                                Data tenaga pendidik dan tenaga
-                                kependidikan.
-                            </p>
-                        </a>
-
-
-                        {{-- Akademik --}}
-                        <a
-                            href="{{ route(
-                                'admin.academic-documents.index'
-                            ) }}"
-                            class="group rounded-3xl
-                                   border border-slate-100
-                                   bg-slate-50 p-5
-                                   transition hover:bg-blue-700
-                                   hover:text-white"
-                        >
-                            <div
-                                class="flex h-12 w-12
-                                       items-center justify-center
-                                       rounded-2xl bg-blue-700
-                                       text-white
-                                       group-hover:bg-white/20"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 font-bold">
-                                Akademik
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm
-                                       leading-6 text-slate-500
-                                       group-hover:text-white/75"
-                            >
-                                Pedoman, kalender, kurikulum,
-                                jadwal, dan dokumen lainnya.
-                            </p>
-                        </a>
-
-
-                        {{-- Fasilitas --}}
-                        <a
-                            href="{{ route(
-                                'admin.facilities.index'
-                            ) }}"
-                            class="group rounded-3xl
-                                   border border-slate-100
-                                   bg-slate-50 p-5
-                                   transition hover:bg-blue-700
-                                   hover:text-white"
-                        >
-                            <div
-                                class="flex h-12 w-12
-                                       items-center justify-center
-                                       rounded-2xl bg-yellow-400
-                                       text-slate-900
-                                       group-hover:bg-white/20
-                                       group-hover:text-white"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <h3 class="mt-4 font-bold">
-                                Dokumentasi Fasilitas
-                            </h3>
-
-                            <p
-                                class="mt-2 text-sm
-                                       leading-6 text-slate-500
-                                       group-hover:text-white/75"
-                            >
-                                Foto fasilitas dan aktivitas
-                                mahasiswa.
-                            </p>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        {{-- ===================================================== --}}
-        {{-- DOKUMEN TERBARU --}}
-        {{-- ===================================================== --}}
-
-        <section class="xl:col-span-7">
-
-            <div
-                class="overflow-hidden rounded-[2rem]
-                       border border-slate-100
-                       bg-white/95 shadow-xl
-                       backdrop-blur"
-            >
-                <div
-                    class="border-b border-slate-100
-                           p-6 sm:p-7 md:p-8"
-                >
-                    <div
-                        class="flex flex-col gap-4
-                               sm:flex-row sm:items-center
-                               sm:justify-between"
-                    >
-                        <div>
-                            <h2
-                                class="text-2xl font-black
-                                       text-slate-800"
-                            >
-                                Dokumen Akademik Terbaru
-                            </h2>
-
-                            <p class="mt-2 text-slate-500">
-                                Dokumen yang terakhir ditambahkan
-                                melalui halaman admin.
-                            </p>
-                        </div>
-
-                        <a
-                            href="{{ route(
-                                'admin.academic-documents.index'
-                            ) }}"
-                            class="shrink-0 text-sm
-                                   font-bold text-blue-700
-                                   transition hover:underline"
-                        >
-                            Lihat Semua
-                        </a>
-                    </div>
-                </div>
-
-
-                <div class="divide-y divide-slate-100">
-
-                    @forelse ($recentDocuments as $document)
-
-                        @php
-                            $documentTitle = trim(
-                                (string) $document->title
-                            );
-
-                            $documentCategory =
-                                $document->category_label
-                                ?? $document->category
-                                ?? '-';
-
-                            $academicYear = trim(
-                                (string) $document->academic_year
-                            );
-                        @endphp
-
-                        <article
-                            class="flex items-start gap-4
-                                   p-6 transition
-                                   hover:bg-slate-50/70"
-                        >
-                            <div
-                                class="flex h-12 w-12 shrink-0
-                                       items-center justify-center
-                                       rounded-2xl bg-blue-700
-                                       text-white shadow-lg"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"
-                                    />
-                                </svg>
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-
-                                <h3
-                                    class="truncate font-bold
-                                           text-slate-800"
-                                >
-                                    {{ $documentTitle !== ''
-                                        ? $documentTitle
-                                        : 'Dokumen Akademik' }}
-                                </h3>
-
-                                <p
-                                    class="mt-1 text-sm
-                                           text-slate-500"
-                                >
-                                    {{ $documentCategory }}
-
-                                    @if ($academicYear !== '')
-                                        <span aria-hidden="true">
-                                            •
-                                        </span>
-
-                                        {{ $academicYear }}
-                                    @endif
-                                </p>
-                            </div>
-
-                            <span
-                                @class([
-                                    'hidden shrink-0 rounded-full',
-                                    'px-3 py-1 text-xs font-bold',
-                                    'sm:inline-flex',
-                                    'bg-green-50 text-green-700' =>
-                                        $document->is_active,
-                                    'bg-red-50 text-red-700' =>
-                                        !$document->is_active,
-                                ])
-                            >
-                                {{ $document->is_active
-                                    ? 'Aktif'
-                                    : 'Nonaktif' }}
-                            </span>
-                        </article>
-
-                    @empty
-
-                        <div class="p-10 text-center">
-
+                        <div class="min-w-0 flex-1">
                             <h3
-                                class="text-xl font-bold
-                                       text-slate-800"
+                                class="truncate text-sm
+                                       font-bold text-slate-800"
                             >
-                                Belum Ada Dokumen
+                                {{ $documentTitle !== ''
+                                    ? $documentTitle
+                                    : 'Dokumen Akademik' }}
                             </h3>
 
-                            <p class="mt-2 text-slate-500">
-                                Dokumen akademik yang ditambahkan
-                                akan tampil di bagian ini.
+                            <p
+                                class="mt-1 truncate
+                                       text-xs text-slate-500"
+                            >
+                                {{ $documentCategory }}
+
+                                @if ($academicYear !== '')
+                                    <span aria-hidden="true">
+                                        •
+                                    </span>
+
+                                    {{ $academicYear }}
+                                @endif
                             </p>
                         </div>
 
-                    @endforelse
-                </div>
+
+                        <span
+                            @class([
+                                'hidden shrink-0 rounded-full',
+                                'px-2.5 py-1 text-[10px]',
+                                'font-bold sm:inline-flex',
+                                'bg-emerald-50 text-emerald-700' =>
+                                    $documentIsActive,
+                                'bg-slate-100 text-slate-500' =>
+                                    !$documentIsActive,
+                            ])
+                        >
+                            {{ $documentIsActive
+                                ? 'Ditampilkan'
+                                : 'Disembunyikan' }}
+                        </span>
+                    </article>
+                @empty
+                    <div
+                        class="px-6 py-10
+                               text-center"
+                    >
+                        <p
+                            class="text-sm font-bold
+                                   text-slate-700"
+                        >
+                            Belum ada dokumen
+                        </p>
+
+                        <p
+                            class="mt-2 text-sm
+                                   leading-6 text-slate-500"
+                        >
+                            Dokumen yang ditambahkan akan tampil di sini.
+                        </p>
+                    </div>
+                @endforelse
             </div>
         </section>
-    </div>
 
 
-    {{-- ========================================================= --}}
-    {{-- FOTO DOKUMENTASI TERBARU --}}
-    {{-- ========================================================= --}}
-
-    <section
-        class="overflow-hidden rounded-[2rem]
-               border border-slate-100
-               bg-white/95 shadow-xl backdrop-blur"
-    >
-        <div
-            class="border-b border-slate-100
-                   p-6 sm:p-7 md:p-8"
+        {{-- FOTO TERBARU --}}
+        <section
+            class="overflow-hidden rounded-2xl
+                   border border-slate-200
+                   bg-white"
         >
             <div
-                class="flex flex-col gap-4
-                       sm:flex-row sm:items-center
-                       sm:justify-between"
+                class="flex items-center
+                       justify-between gap-4
+                       border-b border-slate-200
+                       px-5 py-5 sm:px-6"
             >
                 <div>
                     <h2
-                        class="text-2xl font-black
-                               text-slate-800"
+                        class="text-lg font-extrabold
+                               text-slate-900"
                     >
-                        Foto Dokumentasi Terbaru
+                        Foto Terbaru
                     </h2>
 
-                    <p class="mt-2 text-slate-500">
-                        Foto fasilitas dan aktivitas mahasiswa
-                        yang terakhir diunggah.
+                    <p
+                        class="mt-1 text-sm
+                               text-slate-500"
+                    >
+                        Dokumentasi fasilitas yang terakhir diunggah.
                     </p>
                 </div>
 
                 <a
-                    href="{{ route('admin.facilities.index') }}"
-                    class="shrink-0 text-sm
-                           font-bold text-blue-700
-                           transition hover:underline"
+                    href="{{ route(
+                        'admin.facilities.index'
+                    ) }}"
+                    class="shrink-0 text-xs
+                           font-bold text-[#075F9B]
+                           hover:underline"
                 >
-                    Kelola Foto
+                    Lihat Semua
                 </a>
             </div>
-        </div>
 
 
-        <div class="p-6 md:p-8">
+            <div class="divide-y divide-slate-100">
+                @forelse ($recentPhotos as $photo)
+                    @php
+                        $photoPath = trim(
+                            (string) (
+                                $photo->photo
+                                ?? ''
+                            )
+                        );
 
-            @if ($recentPhotos->isNotEmpty())
+                        $photoExists = $photoPath !== ''
+                            && \Illuminate\Support\Facades\Storage::disk(
+                                'public'
+                            )->exists($photoPath);
 
-                <div
-                    class="grid gap-5
-                           sm:grid-cols-2
-                           lg:grid-cols-5"
-                >
-                    @foreach ($recentPhotos as $photo)
-
-                        @php
-                            $photoPath = trim(
-                                (string) $photo->photo
-                            );
-
-                            $photoExists = $photoPath !== ''
-                                && \Illuminate\Support\Facades\Storage::disk(
-                                    'public'
-                                )->exists($photoPath);
-
-                            $photoUrl = $photoExists
-                                ? asset(
-                                    'storage/' . $photoPath
+                        $photoUrl = $photoExists
+                            ? asset(
+                                'storage/' . ltrim(
+                                    $photoPath,
+                                    '/'
                                 )
-                                : null;
+                            )
+                            : null;
 
-                            $photoTitle = trim(
-                                (string) $photo->title
-                            );
+                        $photoTitle = trim(
+                            (string) (
+                                $photo->title
+                                ?? ''
+                            )
+                        );
 
-                            $facilityTitle = trim(
-                                (string) optional(
-                                    $photo->facility
-                                )->title
-                            );
-                        @endphp
+                        $facilityTitle = trim(
+                            (string) optional(
+                                $photo->facility
+                            )->title
+                        );
 
-                        <article
-                            class="group overflow-hidden
-                                   rounded-3xl border
-                                   border-slate-100
-                                   bg-slate-50 transition-all
-                                   duration-300
-                                   hover:-translate-y-1
-                                   hover:shadow-xl"
-                        >
-                            <div
-                                class="h-40 overflow-hidden
-                                       bg-slate-100"
-                            >
-                                @if ($photoUrl)
+                        $photoIsActive = (bool) (
+                            $photo->is_active
+                            ?? false
+                        );
+                    @endphp
 
-                                    <img
-                                        src="{{ $photoUrl }}"
-                                        alt="Dokumentasi {{ $photoTitle !== ''
-                                            ? $photoTitle
-                                            : $facilityTitle }}"
-                                        class="h-full w-full
-                                               object-cover
-                                               transition duration-700
-                                               group-hover:scale-110"
-                                        loading="lazy"
-                                    >
-
-                                @else
-
-                                    <div
-                                        class="flex h-full w-full
-                                               flex-col items-center
-                                               justify-center px-4
-                                               text-center"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-9 w-9
-                                                   text-red-500"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16a2 2 0 001.73 3z"
-                                            />
-                                        </svg>
-
-                                        <p
-                                            class="mt-2 text-xs
-                                                   font-bold text-red-600"
-                                        >
-                                            File tidak ditemukan
-                                        </p>
-                                    </div>
-
-                                @endif
-                            </div>
-
-
-                            <div class="p-4">
-
-                                <h3
-                                    class="truncate font-bold
-                                           text-slate-800"
-                                >
-                                    {{ $photoTitle !== ''
-                                        ? $photoTitle
-                                        : 'Foto Dokumentasi' }}
-                                </h3>
-
-                                <p
-                                    class="mt-1 truncate
-                                           text-sm text-slate-500"
-                                >
-                                    {{ $facilityTitle !== ''
-                                        ? $facilityTitle
-                                        : 'Dokumentasi Fasilitas' }}
-                                </p>
-
-                                <span
-                                    @class([
-                                        'mt-3 inline-flex',
-                                        'rounded-full px-3 py-1',
-                                        'text-xs font-bold',
-                                        'bg-green-50 text-green-700' =>
-                                            $photo->is_active,
-                                        'bg-red-50 text-red-700' =>
-                                            !$photo->is_active,
-                                    ])
-                                >
-                                    {{ $photo->is_active
-                                        ? 'Aktif'
-                                        : 'Nonaktif' }}
-                                </span>
-                            </div>
-                        </article>
-
-                    @endforeach
-                </div>
-
-            @else
-
-                <div
-                    class="rounded-3xl border
-                           border-slate-100 bg-slate-50
-                           p-10 text-center"
-                >
-                    <h3
-                        class="text-xl font-bold
-                               text-slate-800"
+                    <article
+                        class="flex items-center gap-4
+                               px-5 py-4
+                               transition
+                               hover:bg-slate-50
+                               sm:px-6"
                     >
-                        Belum Ada Foto Dokumentasi
-                    </h3>
+                        <div
+                            class="h-12 w-16 shrink-0
+                                   overflow-hidden rounded-xl
+                                   bg-slate-100"
+                        >
+                            @if ($photoUrl)
+                                <img
+                                    src="{{ $photoUrl }}"
+                                    alt="{{ $photoTitle !== ''
+                                        ? $photoTitle
+                                        : 'Foto dokumentasi fasilitas' }}"
+                                    class="h-full w-full
+                                           object-cover"
+                                    loading="lazy"
+                                >
+                            @else
+                                <div
+                                    class="flex h-full w-full
+                                           items-center justify-center
+                                           text-slate-400"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16M4 20h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
 
-                    <p class="mt-2 text-slate-500">
-                        Foto yang diunggah melalui menu dokumentasi
-                        fasilitas akan tampil di bagian ini.
-                    </p>
-                </div>
 
-            @endif
-        </div>
-    </section>
+                        <div class="min-w-0 flex-1">
+                            <h3
+                                class="truncate text-sm
+                                       font-bold text-slate-800"
+                            >
+                                {{ $photoTitle !== ''
+                                    ? $photoTitle
+                                    : 'Foto Dokumentasi' }}
+                            </h3>
+
+                            <p
+                                class="mt-1 truncate
+                                       text-xs text-slate-500"
+                            >
+                                {{ $facilityTitle !== ''
+                                    ? $facilityTitle
+                                    : 'Dokumentasi Fasilitas' }}
+                            </p>
+                        </div>
+
+
+                        <span
+                            @class([
+                                'hidden shrink-0 rounded-full',
+                                'px-2.5 py-1 text-[10px]',
+                                'font-bold sm:inline-flex',
+                                'bg-emerald-50 text-emerald-700' =>
+                                    $photoIsActive,
+                                'bg-slate-100 text-slate-500' =>
+                                    !$photoIsActive,
+                            ])
+                        >
+                            {{ $photoIsActive
+                                ? 'Ditampilkan'
+                                : 'Disembunyikan' }}
+                        </span>
+                    </article>
+                @empty
+                    <div
+                        class="px-6 py-10
+                               text-center"
+                    >
+                        <p
+                            class="text-sm font-bold
+                                   text-slate-700"
+                        >
+                            Belum ada foto
+                        </p>
+
+                        <p
+                            class="mt-2 text-sm
+                                   leading-6 text-slate-500"
+                        >
+                            Foto yang diunggah akan tampil di sini.
+                        </p>
+                    </div>
+                @endforelse
+            </div>
+        </section>
+    </div>
 
 </div>
 

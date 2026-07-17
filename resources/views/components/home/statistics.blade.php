@@ -3,22 +3,52 @@
     |--------------------------------------------------------------------------
     | STATISTIK PROGRAM STUDI
     |--------------------------------------------------------------------------
+    |
+    | Statistik mahasiswa dan dosen tidak ditampilkan pada frontend.
+    | Data aslinya tetap aman di database dan halaman admin.
+    |
     */
 
     $stats = collect($homeStats ?? [])
         ->filter(function ($stat) {
-            return $stat
-                && $stat->value !== null
-                && trim((string) $stat->value) !== '';
+            if (
+                !$stat
+                || $stat->value === null
+                || trim((string) $stat->value) === ''
+            ) {
+                return false;
+            }
+
+            $label = mb_strtolower(
+                trim((string) $stat->label)
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | SEMBUNYIKAN JUMLAH MAHASISWA DAN DOSEN
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                str_contains($label, 'mahasiswa')
+                || str_contains($label, 'dosen')
+            ) {
+                return false;
+            }
+
+            return true;
         })
         ->sortBy('sort_order')
         ->values();
+
+    $statCount = $stats->count();
 @endphp
 
 
 <section
     id="statistics"
-    class="relative overflow-hidden bg-white py-14 md:py-16"
+    class="relative overflow-hidden
+           bg-white py-14 md:py-16"
 >
     {{-- Dekorasi ringan --}}
     <div
@@ -40,13 +70,18 @@
 
 
     <div class="relative mx-auto max-w-6xl px-6">
-        {{-- Heading --}}
+
+        {{-- ===================================================== --}}
+        {{-- HEADING --}}
+        {{-- ===================================================== --}}
+
         <div
             class="mx-auto max-w-2xl text-center"
             data-aos="fade-up"
         >
             <div
-                class="flex items-center justify-center gap-3"
+                class="flex items-center
+                       justify-center gap-3"
             >
                 <span
                     class="h-px w-8 bg-[#D7B33E]"
@@ -67,6 +102,7 @@
                 ></span>
             </div>
 
+
             <h2
                 class="mt-4 text-2xl font-extrabold
                        tracking-tight text-slate-900
@@ -75,9 +111,11 @@
                 Statistik Program Studi
             </h2>
 
+
             <p
                 class="mx-auto mt-3 max-w-xl
-                       text-sm leading-6 text-slate-500"
+                       text-sm leading-6
+                       text-slate-500"
             >
                 Informasi singkat Program Studi D-IV Teknik Mesin
                 Produksi dan Perawatan.
@@ -85,11 +123,27 @@
         </div>
 
 
+        {{-- ===================================================== --}}
+        {{-- DAFTAR STATISTIK --}}
+        {{-- ===================================================== --}}
+
         @if ($stats->isNotEmpty())
             <div
-                class="mt-9 grid grid-cols-2
-                       gap-3 sm:gap-4
-                       lg:grid-cols-4"
+                @class([
+                    'mx-auto mt-9 grid gap-3 sm:gap-4',
+
+                    'max-w-sm grid-cols-1' =>
+                        $statCount === 1,
+
+                    'max-w-2xl grid-cols-1 sm:grid-cols-2' =>
+                        $statCount === 2,
+
+                    'max-w-4xl grid-cols-1 sm:grid-cols-3' =>
+                        $statCount === 3,
+
+                    'max-w-6xl grid-cols-2 lg:grid-cols-4' =>
+                        $statCount >= 4,
+                ])
             >
                 @foreach ($stats as $stat)
                     <article
@@ -124,13 +178,16 @@
                             ></i>
                         </div>
 
+
                         <h3
-                            class="mt-4 text-2xl font-extrabold
-                                   leading-none text-[#075F9B]
+                            class="mt-4 text-2xl
+                                   font-extrabold leading-none
+                                   text-[#075F9B]
                                    sm:text-3xl"
                         >
                             {{ $stat->value }}
                         </h3>
+
 
                         <p
                             class="mt-2 text-xs font-semibold
@@ -140,11 +197,13 @@
                             {{ $stat->label }}
                         </p>
 
+
                         <div
                             class="absolute inset-x-0 bottom-0
-                                   h-0.5 origin-left scale-x-0
-                                   bg-[#D7B33E]
-                                   transition-transform duration-300
+                                   h-0.5 origin-left
+                                   scale-x-0 bg-[#D7B33E]
+                                   transition-transform
+                                   duration-300
                                    group-hover:scale-x-100"
                             aria-hidden="true"
                         ></div>
@@ -172,11 +231,13 @@
                     ></i>
                 </div>
 
+
                 <h3
                     class="mt-3 font-bold text-slate-800"
                 >
                     Data Statistik Belum Tersedia
                 </h3>
+
 
                 <p
                     class="mt-2 text-sm leading-6

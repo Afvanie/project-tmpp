@@ -1,1797 +1,1962 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Konten Profil')
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | IDENTITAS BAGIAN
+    |--------------------------------------------------------------------------
+    */
+
+    $sectionConfig = [
+        'overview' => [
+            'title' => 'Gambaran Umum Program Studi',
+            'description' =>
+                'Ubah seluruh isi Gambaran Umum, lalu simpan sekaligus.',
+            'item_title' => 'Informasi Singkat',
+            'item_singular' => 'Informasi',
+            'group' => 'info_card',
+            'show_title' => true,
+            'mode' => 'info_card',
+        ],
+
+        'history' => [
+            'title' => 'Sejarah Program Studi',
+            'description' =>
+                'Ubah narasi dan linimasa Sejarah, lalu simpan sekaligus.',
+            'item_title' => 'Linimasa Sejarah',
+            'item_singular' => 'Peristiwa',
+            'group' => 'timeline',
+            'show_title' => true,
+            'mode' => 'standard',
+        ],
+
+        'visi-misi' => [
+            'title' => 'Visi dan Misi',
+            'description' =>
+                'Ubah Visi dan seluruh poin Misi, lalu simpan sekaligus.',
+            'item_title' => 'Daftar Misi',
+            'item_singular' => 'Misi',
+            'group' => 'misi',
+            'show_title' => true,
+            'mode' => 'standard',
+        ],
+
+        'tujuan-prodi' => [
+            'title' => 'Tujuan Program Studi',
+            'description' =>
+                'Ubah, tambah, atau hapus seluruh poin Tujuan dalam satu halaman.',
+            'item_title' => 'Daftar Tujuan Program Studi',
+            'item_singular' => 'Tujuan',
+            'group' => 'tujuan',
+            'show_title' => true,
+            'mode' => 'standard',
+        ],
+
+        'ppm' => [
+            'title' => 'Profil Profesional Mandiri',
+            'description' =>
+                'Ubah, tambah, atau hapus seluruh poin PPM dalam satu halaman.',
+            'item_title' => 'Daftar Profil Profesional Mandiri',
+            'item_singular' => 'PPM',
+            'group' => 'ppm',
+            'show_title' => true,
+            'mode' => 'standard',
+        ],
+
+        'cpl' => [
+            'title' => 'Capaian Pembelajaran Lulusan',
+            'description' =>
+                'Ubah, tambah, atau hapus seluruh poin CPL dalam satu halaman.',
+            'item_title' => 'Daftar Capaian Pembelajaran Lulusan',
+            'item_singular' => 'CPL',
+            'group' => 'cpl',
+            'show_title' => true,
+            'mode' => 'standard',
+        ],
+    ];
+
+    $config = $sectionConfig[
+        $profileSection->slug
+    ] ?? [
+        'title' => $profileSection->title,
+        'description' =>
+            'Ubah seluruh isi bagian ini, lalu simpan sekaligus.',
+        'item_title' => 'Daftar Isi',
+        'item_singular' => 'Isi',
+        'group' => 'content',
+        'show_title' => true,
+        'mode' => 'standard',
+    ];
+
+    $items = collect($profileSection->items ?? [])
+        ->sortBy('sort_order')
+        ->values();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATA KHUSUS GAMBARAN UMUM DAN SEJARAH
+    |--------------------------------------------------------------------------
+    */
+
+    $paragraphItems = $items
+        ->where('item_group', 'paragraph')
+        ->values();
+
+    $mainContent = old(
+        'main_content',
+        $paragraphItems
+            ->pluck('content')
+            ->filter(
+                fn ($content) =>
+                    trim((string) $content) !== ''
+            )
+            ->implode("\n\n")
+    );
+
+    $overviewLabelItem = $items
+        ->firstWhere('item_group', 'label');
+
+    $overviewLabel = old(
+        'overview_label',
+        $overviewLabelItem?->content ?? ''
+    );
+
+    $overviewImageItem = $items
+        ->firstWhere('item_group', 'image');
+
+    $overviewImagePath = trim(
+        (string) (
+            $overviewImageItem?->content
+            ?? ''
+        )
+    );
+
+    $overviewImageExists =
+        $overviewImagePath !== ''
+        && \Illuminate\Support\Facades\Storage::disk(
+            'public'
+        )->exists($overviewImagePath);
+
+    $overviewImageUrl = $overviewImageExists
+        ? asset(
+            'storage/'
+            . ltrim(
+                $overviewImagePath,
+                '/'
+            )
+        )
+        : asset('assets/images/about.png');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VISI
+    |--------------------------------------------------------------------------
+    */
+
+    $visionItem = $items
+        ->filter(function ($item) {
+            return in_array(
+                strtolower(
+                    trim((string) $item->item_group)
+                ),
+                ['visi', 'vision'],
+                true
+            );
+        })
+        ->first();
+
+    $visionContent = old(
+        'vision_content',
+        $visionItem?->content ?? ''
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DAFTAR ITEM SESUAI BAGIAN
+    |--------------------------------------------------------------------------
+    */
+
+    $managedItems = match ($profileSection->slug) {
+        'overview' => $items
+            ->where('item_group', 'info_card')
+            ->values(),
+
+        'history' => $items
+            ->where('item_group', 'timeline')
+            ->values(),
+
+        'visi-misi' => $items
+            ->filter(function ($item) {
+                return in_array(
+                    strtolower(
+                        trim((string) $item->item_group)
+                    ),
+                    ['misi', 'mission'],
+                    true
+                );
+            })
+            ->values(),
+
+        'tujuan-prodi' => $items
+            ->filter(function ($item) {
+                return in_array(
+                    strtolower(
+                        trim((string) $item->item_group)
+                    ),
+                    ['tujuan', 'goal', 'goals'],
+                    true
+                );
+            })
+            ->values(),
+
+        'ppm' => $items
+            ->where('item_group', 'ppm')
+            ->values(),
+
+        'cpl' => $items
+            ->where('item_group', 'cpl')
+            ->values(),
+
+        default => $items,
+    };
+
+    $nextOrder = max(
+        1,
+        (int) $managedItems->max('sort_order') + 1
+    );
+@endphp
+
+@section('title', $config['title'])
 
 @section('content')
 
-@php
-    $isOverviewSection = $profileSection->slug === 'overview';
-    $isHistorySection = $profileSection->slug === 'history';
+<div class="mx-auto max-w-7xl space-y-5">
 
-    /*
-    |--------------------------------------------------------------------------
-    | Overview / Profil Singkat
-    |--------------------------------------------------------------------------
-    */
+    {{-- ========================================================= --}}
+    {{-- HEADER --}}
+    {{-- ========================================================= --}}
 
-    $overviewLabelItem = $profileSection->items
-        ->where('item_group', 'label')
-        ->sortBy('sort_order')
-        ->first();
-
-    $overviewParagraphItems = $profileSection->items
-        ->where('item_group', 'paragraph')
-        ->sortBy('sort_order');
-
-    $overviewInfoCards = $profileSection->items
-        ->where('item_group', 'info_card')
-        ->sortBy('sort_order');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | History / Perjalanan Program Studi
-    |--------------------------------------------------------------------------
-    */
-
-    $paragraphItems = $profileSection->items
-        ->where('item_group', 'paragraph')
-        ->sortBy('sort_order');
-
-    $timelineItems = $profileSection->items
-        ->where('item_group', 'timeline')
-        ->sortBy('sort_order');
-@endphp
-
-<div class="space-y-8">
-
-    {{-- Header --}}
-    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-[#071B3A] via-[#0B3B75] to-[#071B3A] p-7 md:p-8 text-white shadow-xl">
-
-        <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-yellow-300/20 blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-blue-300/20 blur-3xl"></div>
-
-        <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
-            <div>
-
-                <a href="{{ route('admin.profile-contents.index') }}"
-                   class="inline-flex items-center text-sm font-bold text-yellow-300 hover:text-yellow-200 mb-4">
-                    ← Kembali ke Konten Profil
-                </a>
-
-                <span class="inline-flex px-4 py-1 rounded-full bg-yellow-400 text-slate-900 text-sm font-bold">
-                    Konten Profil
-                </span>
-
-                <h1 class="mt-5 text-3xl md:text-4xl font-black leading-tight">
-                    Edit {{ $profileSection->title }}
-                </h1>
-
-                <p class="mt-3 text-blue-100 leading-7 max-w-4xl">
-                    Kelola konten halaman profil Program Studi D-IV Teknik Mesin Produksi dan Perawatan Polinema.
-
-                    @if ($isOverviewSection)
-                        Section ini mengatur bagian Profil Singkat yang tampil di awal halaman profil.
-                    @elseif ($isHistorySection)
-                        Section ini mengatur bagian Perjalanan Program Studi, yaitu paragraf kiri dan kartu timeline kanan.
-                    @else
-                        Kelola judul section, deskripsi, status tampil, serta item konten yang muncul pada halaman profil.
-                    @endif
-                </p>
-
-            </div>
-
-            <a href="{{ route('profile') }}"
-               target="_blank"
-               class="inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white text-blue-800 font-bold hover:bg-yellow-300 hover:text-slate-900 transition shadow-lg">
-
-                Lihat Halaman Profil
-                <span>→</span>
-
+    <header
+        class="flex flex-col gap-4
+               lg:flex-row lg:items-end
+               lg:justify-between"
+    >
+        <div>
+            <a
+                href="{{ route(
+                    'admin.profile-contents.index'
+                ) }}"
+                class="inline-flex items-center
+                       gap-2 text-sm font-bold
+                       text-[#075F9B]
+                       hover:underline"
+            >
+                <span aria-hidden="true">←</span>
+                <span>Kembali ke Konten Profil</span>
             </a>
 
+            <div class="mt-5 flex items-center gap-3">
+                <span
+                    class="h-px w-8 bg-[#D7B33E]"
+                    aria-hidden="true"
+                ></span>
+
+                <p
+                    class="text-[11px] font-bold
+                           uppercase tracking-[0.16em]
+                           text-[#075F9B]"
+                >
+                    Pengaturan Profil
+                </p>
+            </div>
+
+            <h1
+                class="mt-3 text-2xl font-extrabold
+                       tracking-tight text-slate-900
+                       sm:text-3xl"
+            >
+                {{ $config['title'] }}
+            </h1>
+
+            <p
+                class="mt-2 max-w-3xl
+                       text-sm leading-7
+                       text-slate-500"
+            >
+                {{ $config['description'] }}
+            </p>
         </div>
 
-    </div>
+        <a
+            href="{{ route('profile') }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex w-full items-center
+                   justify-center gap-2 rounded-xl
+                   border border-slate-200
+                   bg-white px-4 py-2.5
+                   text-sm font-bold text-slate-700
+                   transition hover:border-blue-200
+                   hover:text-[#075F9B]
+                   sm:w-auto"
+        >
+            Lihat Halaman Profil
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 3h7v7M10 14L21 3"
+                />
+            </svg>
+        </a>
+    </header>
 
 
-    {{-- Alert Success --}}
+    {{-- ========================================================= --}}
+    {{-- ALERT --}}
+    {{-- ========================================================= --}}
+
     @if (session('success'))
-        <div class="rounded-2xl bg-green-50 border border-green-200 text-green-700 px-6 py-4 font-semibold">
-            {{ session('success') }}
+        <div
+            class="flex items-start gap-3
+                   rounded-xl border
+                   border-emerald-200
+                   bg-emerald-50 px-4 py-3
+                   text-sm text-emerald-800"
+            role="status"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mt-0.5 h-5 w-5 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                />
+            </svg>
+
+            <p class="font-semibold">
+                {{ session('success') }}
+            </p>
         </div>
     @endif
 
-
-    {{-- Error --}}
     @if ($errors->any())
-        <div class="rounded-2xl bg-red-50 border border-red-200 text-red-700 px-6 py-4">
+        <div
+            class="rounded-xl border
+                   border-red-200 bg-red-50
+                   px-4 py-4 text-red-800"
+            role="alert"
+        >
+            <p class="text-sm font-bold">
+                Beberapa bagian belum dapat disimpan:
+            </p>
 
-            <strong class="font-black">
-                Terjadi kesalahan:
-            </strong>
-
-            <ul class="mt-2 list-disc list-inside space-y-1">
+            <ul
+                class="mt-2 list-inside list-disc
+                       space-y-1 text-sm"
+            >
                 @foreach ($errors->all() as $error)
-                    <li>
-                        {{ $error }}
-                    </li>
+                    <li>{{ $error }}</li>
                 @endforeach
             </ul>
-
         </div>
     @endif
 
 
-    {{-- ===================================================== --}}
-    {{-- INFORMASI SECTION --}}
-    {{-- ===================================================== --}}
-
-    <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-        <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
-
-        <form action="{{ route('admin.profile-contents.update', $profileSection) }}"
-              method="POST"
-              class="p-7 md:p-8 space-y-7">
-
-            @csrf
-            @method('PUT')
-
-            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-
-                <div>
-
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Informasi Utama Section
-                    </h2>
-
-                    <p class="mt-2 text-slate-500 leading-7">
-
-                        @if ($isOverviewSection)
-                            Bagian ini mengatur label kecil, judul utama, dan judul konten kanan
-                            pada section Profil Singkat.
-                        @elseif ($isHistorySection)
-                            Bagian ini mengatur label kecil, judul utama, dan deskripsi pendek
-                            yang tampil di atas section Perjalanan Program Studi.
-                        @else
-                            Bagian ini digunakan untuk mengatur judul, subjudul, deskripsi,
-                            urutan, dan status tampil section profil.
-                        @endif
-
-                    </p>
-
-                </div>
-
-                <div>
-
-                    @if ($profileSection->is_active)
-                        <span class="inline-flex px-4 py-2 rounded-full bg-green-50 text-green-700 text-sm font-bold">
-                            Aktif
-                        </span>
-                    @else
-                        <span class="inline-flex px-4 py-2 rounded-full bg-red-50 text-red-700 text-sm font-bold">
-                            Nonaktif
-                        </span>
-                    @endif
-
-                </div>
-
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        @if ($isOverviewSection)
-                            Judul Utama Section
-                        @elseif ($isHistorySection)
-                            Judul Utama Section
-                        @else
-                            Judul Section
-                        @endif
-                    </label>
-
-                    <input type="text"
-                           name="title"
-                           value="{{ old('title', $profileSection->title) }}"
-                           class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           required>
-
-                    @if ($isOverviewSection)
-                        <p class="mt-2 text-xs text-slate-500">
-                            Contoh: Mengenal Program Studi D-IV Teknik Mesin Produksi dan Perawatan
-                        </p>
-                    @endif
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        @if ($isOverviewSection)
-                            Label Kecil Atas
-                        @elseif ($isHistorySection)
-                            Label Kecil Atas
-                        @else
-                            Subjudul
-                        @endif
-                    </label>
-
-                    <input type="text"
-                           name="subtitle"
-                           value="{{ old('subtitle', $profileSection->subtitle) }}"
-                           class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    @if ($isOverviewSection)
-                        <p class="mt-2 text-xs text-slate-500">
-                            Contoh: TENTANG KAMI
-                        </p>
-                    @endif
-
-                </div>
-
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Urutan Section
-                    </label>
-
-                    <input type="number"
-                           name="sort_order"
-                           value="{{ old('sort_order', $profileSection->sort_order) }}"
-                           class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                </div>
-
-                <div class="rounded-3xl bg-blue-50 border border-blue-100 p-5">
-
-                    <label class="flex items-start gap-4 cursor-pointer">
-
-                        <input type="checkbox"
-                               name="is_active"
-                               value="1"
-                               class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                               {{ old('is_active', $profileSection->is_active) ? 'checked' : '' }}>
-
-                        <div>
-
-                            <h3 class="font-black text-slate-800">
-                                Tampilkan section ini
-                            </h3>
-
-                            <p class="mt-1 text-sm text-slate-500 leading-6">
-                                Jika aktif, section ini akan tampil pada halaman profil website.
-                            </p>
-
-                        </div>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-            <div>
-
-                <label class="block text-sm font-bold text-slate-700 mb-2">
-                    @if ($isOverviewSection)
-                        Judul Konten Kanan
-                    @elseif ($isHistorySection)
-                        Deskripsi Pendek di Bawah Judul
-                    @else
-                        Deskripsi Section
-                    @endif
-                </label>
-
-                <textarea name="description"
-                          rows="5"
-                          class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 leading-8 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('description', $profileSection->description) }}</textarea>
-
-                @if ($isOverviewSection)
-                    <p class="mt-2 text-xs text-slate-500">
-                        Contoh: Pendidikan Vokasi Teknik Mesin yang Berorientasi pada Kebutuhan Industri
-                    </p>
-                @endif
-
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-6 border-t border-slate-100">
-
-                <p class="text-sm text-slate-500">
-                    Simpan bagian ini jika mengubah judul, label, deskripsi, urutan, atau status tampil.
-                </p>
-
-                <button type="submit"
-                        class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow-lg shadow-blue-700/20">
-                    Simpan Informasi Section
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-
-    {{-- ===================================================== --}}
-    {{-- OVERVIEW / PROFIL SINGKAT --}}
-    {{-- ===================================================== --}}
-
-    @if ($isOverviewSection)
-
-        {{-- Panduan Overview --}}
-        <div class="rounded-[2rem] bg-yellow-50 border border-yellow-100 p-6">
-
-            <h2 class="text-xl font-black text-slate-800">
-                Panduan Pengisian Profil Singkat
-            </h2>
-
-            <p class="mt-3 text-slate-600 leading-7">
-                Section ini mengatur bagian pertama pada halaman profil. Admin cukup mengisi
-                label konten, paragraf profil, dan kartu informasi. Tidak perlu mengisi kode teknis.
-            </p>
-
-        </div>
-
-
-        {{-- Label Konten Kanan --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-blue-700 to-yellow-400"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <h2 class="text-2xl font-black text-slate-800">
-                    Label Konten Profil
-                </h2>
-
-                <p class="mt-2 text-slate-500 leading-7">
-                    Label kecil yang tampil di atas judul konten kanan, misalnya “PROFIL SINGKAT”.
-                </p>
-
-            </div>
-
-            <div class="p-6 md:p-8">
-
-                @if ($overviewLabelItem)
-
-                    <form action="{{ route('admin.profile-contents.items.update', $overviewLabelItem) }}"
-                          method="POST"
-                          class="space-y-5">
-
-                        @csrf
-                        @method('PUT')
-
-                        <input type="hidden" name="item_group" value="label">
-                        <input type="hidden" name="title" value="Label Konten">
-                        <input type="hidden" name="sort_order" value="{{ $overviewLabelItem->sort_order }}">
-                        <input type="hidden" name="is_active" value="1">
-
-                        <div>
-
-                            <label class="block text-sm font-bold text-slate-700 mb-2">
-                                Label Konten
-                            </label>
-
-                            <input type="text"
-                                   name="content"
-                                   value="{{ old('content', $overviewLabelItem->content) }}"
-                                   placeholder="Contoh: PROFIL SINGKAT"
-                                   class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   required>
-
-                        </div>
-
-                        <button type="submit"
-                                class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                            Simpan Label
-                        </button>
-
-                    </form>
-
-                @else
-
-                    <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                          method="POST"
-                          class="space-y-5">
-
-                        @csrf
-
-                        <input type="hidden" name="item_group" value="label">
-                        <input type="hidden" name="title" value="Label Konten">
-                        <input type="hidden" name="sort_order" value="1">
-                        <input type="hidden" name="is_active" value="1">
-
-                        <div>
-
-                            <label class="block text-sm font-bold text-slate-700 mb-2">
-                                Label Konten
-                            </label>
-
-                            <input type="text"
-                                   name="content"
-                                   value="PROFIL SINGKAT"
-                                   class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   required>
-
-                        </div>
-
-                        <button type="submit"
-                                class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition">
-                            Buat Label
-                        </button>
-
-                    </form>
-
-                @endif
-
-            </div>
-
-        </div>
-
-
-        {{-- Paragraf Profil Singkat --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-blue-700 to-blue-500"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <h2 class="text-2xl font-black text-slate-800">
-                    Paragraf Profil Singkat
-                </h2>
-
-                <p class="mt-2 text-slate-500 leading-7">
-                    Isi teks penjelasan yang tampil di sebelah kanan gambar pada halaman profil.
-                </p>
-
-            </div>
-
-            <div class="p-6 md:p-8 space-y-6">
-
-                @forelse ($overviewParagraphItems as $item)
-
-                    <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-6">
-
-                        <form action="{{ route('admin.profile-contents.items.update', $item) }}"
-                              method="POST"
-                              class="space-y-5">
-
-                            @csrf
-                            @method('PUT')
-
-                            <input type="hidden" name="item_group" value="paragraph">
-                            <input type="hidden" name="title" value="{{ $item->title }}">
-                            <input type="hidden" name="is_active" value="0">
-
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                                <div class="flex items-center gap-4">
-
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-700 text-white flex items-center justify-center font-black shadow-lg">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <div>
-
-                                        <h3 class="text-lg font-black text-slate-800">
-                                            Paragraf {{ $loop->iteration }}
-                                        </h3>
-
-                                        <p class="text-sm text-slate-500">
-                                            Tampil sebagai teks profil singkat.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="flex items-center gap-3">
-
-                                    <label class="flex items-center gap-2 text-sm font-bold text-slate-600 cursor-pointer">
-
-                                        <input type="checkbox"
-                                               name="is_active"
-                                               value="1"
-                                               class="w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                                               {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
-
-                                        Tampilkan
-
-                                    </label>
-
-                                    <input type="number"
-                                           name="sort_order"
-                                           value="{{ old('sort_order', $item->sort_order) }}"
-                                           class="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           title="Urutan">
-
-                                </div>
-
-                            </div>
-
-                            <div>
-
-                                <label class="block text-sm font-bold text-slate-700 mb-2">
-                                    Isi Paragraf
-                                </label>
-
-                                <textarea name="content"
-                                          rows="6"
-                                          class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          required>{{ old('content', $item->content) }}</textarea>
-
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-200">
-
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                                    Simpan Paragraf
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                        <form action="{{ route('admin.profile-contents.items.destroy', $item) }}"
-                              method="POST"
-                              class="mt-4"
-                              onsubmit="return confirm('Yakin ingin menghapus paragraf ini?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-600 hover:text-white transition">
-                                Hapus Paragraf
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                @empty
-
-                    <div class="rounded-3xl bg-slate-50 border border-slate-100 p-8 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada paragraf
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan paragraf melalui form di bawah.
-                        </p>
-
-                    </div>
-
-                @endforelse
-
-            </div>
-
-        </div>
-
-
-        {{-- Tambah Paragraf Overview --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-green-600 to-blue-700"></div>
-
-            <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                  method="POST"
-                  class="p-7 md:p-8 space-y-5">
-
-                @csrf
-
-                <input type="hidden" name="item_group" value="paragraph">
-                <input type="hidden" name="title" value="">
-                <input type="hidden" name="is_active" value="1">
-
-                <div>
-
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Tambah Paragraf Profil
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Paragraf baru akan tampil di bagian teks profil singkat.
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Urutan
-                    </label>
-
-                    <input type="number"
-                           name="sort_order"
-                           value="{{ $overviewParagraphItems->count() + 1 }}"
-                           class="w-full md:w-48 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Isi Paragraf
-                    </label>
-
-                    <textarea name="content"
-                              rows="6"
-                              class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 leading-8 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required></textarea>
-
-                </div>
-
-                <button type="submit"
-                        class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                    Tambah Paragraf
-                </button>
-
-            </form>
-
-        </div>
-
-
-        {{-- Kartu Informasi --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-yellow-400 to-blue-700"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <h2 class="text-2xl font-black text-slate-800">
-                    Kartu Informasi
-                </h2>
-
-                <p class="mt-2 text-slate-500 leading-7">
-                    Kartu informasi yang tampil di bawah gambar, seperti Jenjang Pendidikan, Akreditasi, Gelar Lulusan, dan Masa Studi.
-                </p>
-
-            </div>
-
-            <div class="p-6 md:p-8 space-y-6">
-
-                @forelse ($overviewInfoCards as $item)
-
-                    @php
-                        $parts = explode('|', $item->content);
-                        $cardValue = trim($parts[0] ?? '');
-                        $cardDescription = trim($parts[1] ?? '');
-                    @endphp
-
-                    <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-6">
-
-                        <form action="{{ route('admin.profile-contents.items.update', $item) }}"
-                              method="POST"
-                              class="space-y-5 js-info-card-form">
-
-                            @csrf
-                            @method('PUT')
-
-                            <input type="hidden" name="item_group" value="info_card">
-                            <input type="hidden" name="is_active" value="0">
-                            <input type="hidden" name="content" class="js-info-card-content" value="{{ $item->content }}">
-
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                                <div class="flex items-center gap-4">
-
-                                    <div class="w-12 h-12 rounded-2xl
-                                        {{ $loop->iteration % 2 === 0 ? 'bg-yellow-400' : 'bg-blue-700' }}
-                                        text-white flex items-center justify-center font-black shadow-lg">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <div>
-
-                                        <h3 class="text-lg font-black text-slate-800">
-                                            Kartu Informasi {{ $loop->iteration }}
-                                        </h3>
-
-                                        <p class="text-sm text-slate-500">
-                                            Tampil di bawah gambar profil.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="flex items-center gap-3">
-
-                                    <label class="flex items-center gap-2 text-sm font-bold text-slate-600 cursor-pointer">
-
-                                        <input type="checkbox"
-                                               name="is_active"
-                                               value="1"
-                                               class="w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                                               {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
-
-                                        Tampilkan
-
-                                    </label>
-
-                                    <input type="number"
-                                           name="sort_order"
-                                           value="{{ old('sort_order', $item->sort_order) }}"
-                                           class="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           title="Urutan">
-
-                                </div>
-
-                            </div>
-
-                            <div class="grid md:grid-cols-3 gap-5">
-
-                                <div>
-
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                                        Angka / Nilai Besar
-                                    </label>
-
-                                    <input type="text"
-                                           data-card-value
-                                           value="{{ $cardValue }}"
-                                           placeholder="Contoh: D-III"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                </div>
-
-                                <div>
-
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                                        Label Kartu
-                                    </label>
-
-                                    <input type="text"
-                                           name="title"
-                                           value="{{ old('title', $item->title) }}"
-                                           placeholder="Contoh: Jenjang Pendidikan"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                </div>
-
-                                <div>
-
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                                        Deskripsi Kecil
-                                    </label>
-
-                                    <input type="text"
-                                           data-card-description
-                                           value="{{ $cardDescription }}"
-                                           placeholder="Contoh: Diploma Empat"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                                </div>
-
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-200">
-
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                                    Simpan Kartu
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                        <form action="{{ route('admin.profile-contents.items.destroy', $item) }}"
-                              method="POST"
-                              class="mt-4"
-                              onsubmit="return confirm('Yakin ingin menghapus kartu informasi ini?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-600 hover:text-white transition">
-                                Hapus Kartu
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                @empty
-
-                    <div class="rounded-3xl bg-slate-50 border border-slate-100 p-8 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada kartu informasi
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan kartu informasi melalui form di bawah.
-                        </p>
-
-                    </div>
-
-                @endforelse
-
-            </div>
-
-        </div>
-
-
-        {{-- Tambah Kartu Informasi --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-green-600 to-yellow-400"></div>
-
-            <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                  method="POST"
-                  class="p-7 md:p-8 space-y-5 js-info-card-form">
-
-                @csrf
-
-                <input type="hidden" name="item_group" value="info_card">
-                <input type="hidden" name="is_active" value="1">
-                <input type="hidden" name="content" class="js-info-card-content">
-
-                <div>
-
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Tambah Kartu Informasi Baru
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Kartu baru akan tampil di bawah gambar profil.
-                    </p>
-
-                </div>
-
-                <div class="grid md:grid-cols-4 gap-5">
-
+    {{-- ========================================================= --}}
+    {{-- SATU FORM UNTUK SEMUA PERUBAHAN --}}
+    {{-- ========================================================= --}}
+
+    <form
+        id="profileBatchForm"
+        action="{{ route(
+            'admin.profile-contents.update',
+            $profileSection
+        ) }}"
+        method="POST"
+        enctype="multipart/form-data"
+        class="space-y-5"
+    >
+        @csrf
+        @method('PUT')
+
+        <input
+            type="hidden"
+            name="is_active"
+            value="0"
+        >
+
+
+        {{-- ===================================================== --}}
+        {{-- PENGATURAN JUDUL BAGIAN --}}
+        {{-- ===================================================== --}}
+
+        <section
+            class="overflow-hidden rounded-2xl
+                   border border-slate-200
+                   bg-white"
+        >
+            <details class="group">
+                <summary
+                    class="flex cursor-pointer
+                           list-none items-center
+                           justify-between gap-4
+                           px-5 py-4 sm:px-6"
+                >
                     <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Angka / Nilai Besar
-                        </label>
-
-                        <input type="text"
-                               data-card-value
-                               placeholder="Contoh: D-III"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Label Kartu
-                        </label>
-
-                        <input type="text"
-                               name="title"
-                               placeholder="Contoh: Jenjang Pendidikan"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Deskripsi Kecil
-                        </label>
-
-                        <input type="text"
-                               data-card-description
-                               placeholder="Contoh: Diploma Empat"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Urutan
-                        </label>
-
-                        <input type="number"
-                               name="sort_order"
-                               value="{{ $overviewInfoCards->count() + 1 }}"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                </div>
-
-                <button type="submit"
-                        class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                    Tambah Kartu Informasi
-                </button>
-
-            </form>
-
-        </div>
-
-
-    {{-- ===================================================== --}}
-    {{-- HISTORY / PERJALANAN PROGRAM STUDI --}}
-    {{-- ===================================================== --}}
-
-    @elseif ($isHistorySection)
-
-        {{-- Panduan History --}}
-        <div class="rounded-[2rem] bg-yellow-50 border border-yellow-100 p-6">
-
-            <h2 class="text-xl font-black text-slate-800">
-                Panduan Pengisian Perjalanan Program Studi
-            </h2>
-
-            <p class="mt-3 text-slate-600 leading-7">
-                Section ini terbagi menjadi dua bagian. <strong>Paragraf Kiri</strong> tampil sebagai teks narasi
-                di sebelah kiri. <strong>Kartu Timeline Kanan</strong> tampil sebagai kartu bernomor di sebelah kanan.
-                Admin tidak perlu mengisi kode teknis seperti group atau slug.
-            </p>
-
-        </div>
-
-
-        {{-- Paragraf Kiri --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-blue-700 to-blue-500"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <h2 class="text-2xl font-black text-slate-800">
-                    Paragraf Kiri
-                </h2>
-
-                <p class="mt-2 text-slate-500 leading-7">
-                    Isi bagian narasi panjang yang tampil di sisi kiri section Perjalanan Program Studi.
-                </p>
-
-            </div>
-
-            <div class="p-6 md:p-8 space-y-6">
-
-                @forelse ($paragraphItems as $item)
-
-                    <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-6">
-
-                        <form action="{{ route('admin.profile-contents.items.update', $item) }}"
-                              method="POST"
-                              class="space-y-5">
-
-                            @csrf
-                            @method('PUT')
-
-                            <input type="hidden" name="item_group" value="paragraph">
-                            <input type="hidden" name="title" value="{{ $item->title }}">
-                            <input type="hidden" name="is_active" value="0">
-
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                                <div class="flex items-center gap-4">
-
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-700 text-white flex items-center justify-center font-black shadow-lg">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <div>
-
-                                        <h3 class="text-lg font-black text-slate-800">
-                                            Paragraf {{ $loop->iteration }}
-                                        </h3>
-
-                                        <p class="text-sm text-slate-500">
-                                            Tampil di sisi kiri halaman profil.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="flex items-center gap-3">
-
-                                    <label class="flex items-center gap-2 text-sm font-bold text-slate-600 cursor-pointer">
-
-                                        <input type="checkbox"
-                                               name="is_active"
-                                               value="1"
-                                               class="w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                                               {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
-
-                                        Tampilkan
-
-                                    </label>
-
-                                    <input type="number"
-                                           name="sort_order"
-                                           value="{{ old('sort_order', $item->sort_order) }}"
-                                           class="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           title="Urutan">
-
-                                </div>
-
-                            </div>
-
-                            <div>
-
-                                <label class="block text-sm font-bold text-slate-700 mb-2">
-                                    Isi Paragraf
-                                </label>
-
-                                <textarea name="content"
-                                          rows="6"
-                                          class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          required>{{ old('content', $item->content) }}</textarea>
-
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-200">
-
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                                    Simpan Paragraf
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                        <form action="{{ route('admin.profile-contents.items.destroy', $item) }}"
-                              method="POST"
-                              class="mt-4"
-                              onsubmit="return confirm('Yakin ingin menghapus paragraf ini?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-600 hover:text-white transition">
-                                Hapus Paragraf
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                @empty
-
-                    <div class="rounded-3xl bg-slate-50 border border-slate-100 p-8 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada paragraf
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan paragraf melalui form di bawah.
-                        </p>
-
-                    </div>
-
-                @endforelse
-
-            </div>
-
-        </div>
-
-
-        {{-- Tambah Paragraf --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-green-600 to-blue-700"></div>
-
-            <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                  method="POST"
-                  class="p-7 md:p-8 space-y-5">
-
-                @csrf
-
-                <input type="hidden" name="item_group" value="paragraph">
-                <input type="hidden" name="title" value="">
-                <input type="hidden" name="is_active" value="1">
-
-                <div>
-
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Tambah Paragraf Baru
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Paragraf baru akan tampil di bagian kiri section Perjalanan Program Studi.
-                    </p>
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Urutan
-                    </label>
-
-                    <input type="number"
-                           name="sort_order"
-                           value="{{ $paragraphItems->count() + 1 }}"
-                           class="w-full md:w-48 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Isi Paragraf
-                    </label>
-
-                    <textarea name="content"
-                              rows="6"
-                              class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 leading-8 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required></textarea>
-
-                </div>
-
-                <button type="submit"
-                        class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                    Tambah Paragraf
-                </button>
-
-            </form>
-
-        </div>
-
-
-        {{-- Timeline Kanan --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-yellow-400 to-blue-700"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <h2 class="text-2xl font-black text-slate-800">
-                    Kartu Timeline Kanan
-                </h2>
-
-                <p class="mt-2 text-slate-500 leading-7">
-                    Isi kartu bernomor yang tampil di sisi kanan section Perjalanan Program Studi.
-                </p>
-
-            </div>
-
-            <div class="p-6 md:p-8 space-y-6">
-
-                @forelse ($timelineItems as $item)
-
-                    <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-6">
-
-                        <form action="{{ route('admin.profile-contents.items.update', $item) }}"
-                              method="POST"
-                              class="space-y-5">
-
-                            @csrf
-                            @method('PUT')
-
-                            <input type="hidden" name="item_group" value="timeline">
-                            <input type="hidden" name="is_active" value="0">
-
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-                                <div class="flex items-center gap-4">
-
-                                    <div class="w-12 h-12 rounded-2xl
-                                        {{ $loop->iteration % 2 === 0 ? 'bg-yellow-400' : 'bg-blue-700' }}
-                                        text-white flex items-center justify-center font-black shadow-lg">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <div>
-
-                                        <h3 class="text-lg font-black text-slate-800">
-                                            Kartu Timeline {{ $loop->iteration }}
-                                        </h3>
-
-                                        <p class="text-sm text-slate-500">
-                                            Tampil di sisi kanan halaman profil.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="flex items-center gap-3">
-
-                                    <label class="flex items-center gap-2 text-sm font-bold text-slate-600 cursor-pointer">
-
-                                        <input type="checkbox"
-                                               name="is_active"
-                                               value="1"
-                                               class="w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                                               {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
-
-                                        Tampilkan
-
-                                    </label>
-
-                                    <input type="number"
-                                           name="sort_order"
-                                           value="{{ old('sort_order', $item->sort_order) }}"
-                                           class="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           title="Urutan">
-
-                                </div>
-
-                            </div>
-
-                            <div>
-
-                                <label class="block text-sm font-bold text-slate-700 mb-2">
-                                    Judul Kartu
-                                </label>
-
-                                <input type="text"
-                                       name="title"
-                                       value="{{ old('title', $item->title) }}"
-                                       class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                            </div>
-
-                            <div>
-
-                                <label class="block text-sm font-bold text-slate-700 mb-2">
-                                    Deskripsi Kartu
-                                </label>
-
-                                <textarea name="content"
-                                          rows="5"
-                                          class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 leading-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          required>{{ old('content', $item->content) }}</textarea>
-
-                            </div>
-
-                            <div class="pt-4 border-t border-slate-200">
-
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                                    Simpan Kartu
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                        <form action="{{ route('admin.profile-contents.items.destroy', $item) }}"
-                              method="POST"
-                              class="mt-4"
-                              onsubmit="return confirm('Yakin ingin menghapus kartu timeline ini?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-600 hover:text-white transition">
-                                Hapus Kartu
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                @empty
-
-                    <div class="rounded-3xl bg-slate-50 border border-slate-100 p-8 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada kartu timeline
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan kartu melalui form di bawah.
-                        </p>
-
-                    </div>
-
-                @endforelse
-
-            </div>
-
-        </div>
-
-
-        {{-- Tambah Timeline --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-green-600 to-yellow-400"></div>
-
-            <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                  method="POST"
-                  class="p-7 md:p-8 space-y-5">
-
-                @csrf
-
-                <input type="hidden" name="item_group" value="timeline">
-                <input type="hidden" name="is_active" value="1">
-
-                <div>
-
-                    <h2 class="text-2xl font-black text-slate-800">
-                        Tambah Kartu Timeline Baru
-                    </h2>
-
-                    <p class="mt-2 text-slate-500">
-                        Kartu baru akan tampil di bagian kanan section Perjalanan Program Studi.
-                    </p>
-
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-5">
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Judul Kartu
-                        </label>
-
-                        <input type="text"
-                               name="title"
-                               placeholder="Contoh: Penguatan Kompetensi Vokasi"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Urutan
-                        </label>
-
-                        <input type="number"
-                               name="sort_order"
-                               value="{{ $timelineItems->count() + 1 }}"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Deskripsi Kartu
-                    </label>
-
-                    <textarea name="content"
-                              rows="5"
-                              class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 leading-8 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required></textarea>
-
-                </div>
-
-                <button type="submit"
-                        class="inline-flex items-center justify-center px-7 py-4 rounded-2xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                    Tambah Kartu Timeline
-                </button>
-
-            </form>
-
-        </div>
-
-
-    {{-- ===================================================== --}}
-    {{-- DEFAULT SECTION --}}
-    {{-- ===================================================== --}}
-
-    @else
-
-        {{-- Item Content --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
-
-            <div class="h-2 bg-gradient-to-r from-blue-700 via-yellow-400 to-blue-700"></div>
-
-            <div class="p-6 md:p-8 border-b border-slate-100">
-
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-                    <div>
-
-                        <h2 class="text-2xl font-black text-slate-800">
-                            Daftar Item Konten
+                        <h2
+                            class="text-base font-extrabold
+                                   text-slate-900"
+                        >
+                            Judul dan Pengantar Bagian
                         </h2>
 
-                        <p class="mt-2 text-slate-500">
-                            Kelola item yang berada di dalam section {{ $profileSection->title }}.
+                        <p
+                            class="mt-1 text-xs
+                                   leading-5 text-slate-500"
+                        >
+                            Buka hanya saat judul atau pengantar
+                            perlu diubah.
                         </p>
-
                     </div>
 
-                    <div class="relative w-full lg:w-96">
-
-                        <input type="text"
-                               id="profileItemSearch"
-                               placeholder="Cari item konten..."
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 pl-12 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke="currentColor">
-
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                    <span
+                        class="flex h-9 w-9 shrink-0
+                               items-center justify-center
+                               rounded-xl bg-slate-100
+                               text-slate-500 transition
+                               group-open:rotate-180"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 9l-7 7-7-7"
+                            />
                         </svg>
+                    </span>
+                </summary>
 
+                <div
+                    class="grid gap-5
+                           border-t border-slate-200
+                           px-5 py-6 sm:px-6
+                           lg:grid-cols-2"
+                >
+                    <div>
+                        <label
+                            for="title"
+                            class="block text-sm
+                                   font-bold text-slate-800"
+                        >
+                            Judul bagian
+                        </label>
+
+                        <input
+                            id="title"
+                            type="text"
+                            name="title"
+                            value="{{ old(
+                                'title',
+                                $profileSection->title
+                            ) }}"
+                            required
+                            class="mt-2 w-full
+                                   rounded-xl border
+                                   border-slate-200
+                                   px-4 py-3 text-sm
+                                   font-bold text-slate-800
+                                   outline-none transition
+                                   focus:border-[#075F9B]
+                                   focus:ring-4
+                                   focus:ring-blue-100"
+                        >
                     </div>
 
+                    <div>
+                        <label
+                            for="subtitle"
+                            class="block text-sm
+                                   font-bold text-slate-800"
+                        >
+                            Teks kecil di atas judul
+                        </label>
+
+                        <input
+                            id="subtitle"
+                            type="text"
+                            name="subtitle"
+                            value="{{ old(
+                                'subtitle',
+                                $profileSection->subtitle
+                            ) }}"
+                            class="mt-2 w-full
+                                   rounded-xl border
+                                   border-slate-200
+                                   px-4 py-3 text-sm
+                                   text-slate-800
+                                   outline-none transition
+                                   focus:border-[#075F9B]
+                                   focus:ring-4
+                                   focus:ring-blue-100"
+                        >
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <label
+                            for="description"
+                            class="block text-sm
+                                   font-bold text-slate-800"
+                        >
+                            Penjelasan singkat
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="4"
+                            class="mt-2 w-full
+                                   rounded-xl border
+                                   border-slate-200
+                                   px-4 py-3 text-sm
+                                   leading-7 text-slate-800
+                                   outline-none transition
+                                   focus:border-[#075F9B]
+                                   focus:ring-4
+                                   focus:ring-blue-100"
+                        >{{ old(
+                            'description',
+                            $profileSection->description
+                        ) }}</textarea>
+                    </div>
+
+                    @if ($profileSection->slug === 'overview')
+                        <div class="lg:col-span-2">
+                            <label
+                                for="overview_label"
+                                class="block text-sm
+                                       font-bold text-slate-800"
+                            >
+                                Teks kecil di atas isi profil
+                            </label>
+
+                            <input
+                                id="overview_label"
+                                type="text"
+                                name="overview_label"
+                                value="{{ $overviewLabel }}"
+                                placeholder="Profil Singkat"
+                                class="mt-2 w-full
+                                       rounded-xl border
+                                       border-slate-200
+                                       px-4 py-3 text-sm
+                                       text-slate-800
+                                       outline-none transition
+                                       focus:border-[#075F9B]
+                                       focus:ring-4
+                                       focus:ring-blue-100"
+                            >
+                        </div>
+                    @endif
+
+                    <label
+                        class="flex cursor-pointer
+                               items-start gap-3
+                               border-t border-slate-200
+                               pt-5 lg:col-span-2"
+                    >
+                        <input
+                            type="checkbox"
+                            name="is_active"
+                            value="1"
+                            class="mt-1 h-4 w-4
+                                   rounded border-slate-300
+                                   text-[#075F9B]"
+                            {{ old(
+                                'is_active',
+                                $profileSection->is_active
+                            ) ? 'checked' : '' }}
+                        >
+
+                        <span>
+                            <span
+                                class="block text-sm
+                                       font-bold text-slate-800"
+                            >
+                                Tampilkan bagian ini di website
+                            </span>
+
+                            <span
+                                class="mt-1 block text-xs
+                                       leading-6 text-slate-500"
+                            >
+                                Hilangkan centang untuk
+                                menyembunyikan bagian ini.
+                            </span>
+                        </span>
+                    </label>
+                </div>
+            </details>
+        </section>
+
+
+        {{-- ===================================================== --}}
+        {{-- NARASI UTAMA --}}
+        {{-- ===================================================== --}}
+
+        @if (
+            in_array(
+                $profileSection->slug,
+                ['overview', 'history'],
+                true
+            )
+        )
+            <section
+                class="overflow-hidden rounded-2xl
+                       border border-slate-200
+                       bg-white"
+            >
+                <div
+                    class="border-b border-slate-200
+                           px-5 py-5 sm:px-6"
+                >
+                    <h2
+                        class="text-lg font-extrabold
+                               text-slate-900"
+                    >
+                        {{ $profileSection->slug === 'overview'
+                            ? 'Isi Gambaran Umum'
+                            : 'Isi Sejarah Program Studi' }}
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm
+                               leading-6 text-slate-500"
+                    >
+                        Tulis seluruh paragraf dalam satu kolom.
+                        Tekan Enter dua kali untuk memberi jarak.
+                    </p>
                 </div>
 
+                <div class="px-5 py-6 sm:px-6">
+                    <textarea
+                        name="main_content"
+                        rows="15"
+                        class="w-full rounded-xl
+                               border border-slate-200
+                               px-4 py-3 text-sm
+                               leading-8 text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >{{ $mainContent }}</textarea>
+                </div>
+            </section>
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- FOTO GAMBARAN UMUM --}}
+        {{-- ===================================================== --}}
+
+        @if ($profileSection->slug === 'overview')
+            <section
+                class="overflow-hidden rounded-2xl
+                       border border-slate-200
+                       bg-white"
+            >
+                <div
+                    class="border-b border-slate-200
+                           px-5 py-5 sm:px-6"
+                >
+                    <h2
+                        class="text-lg font-extrabold
+                               text-slate-900"
+                    >
+                        Foto Gambaran Umum
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm
+                               leading-6 text-slate-500"
+                    >
+                        Foto ini tampil di sisi kiri bagian
+                        Gambaran Umum Program Studi.
+                    </p>
+                </div>
+
+                <div
+                    class="grid gap-6 px-5 py-6
+                           sm:px-6
+                           lg:grid-cols-[320px_1fr]
+                           lg:items-start"
+                >
+                    <div
+                        class="overflow-hidden rounded-xl
+                               border border-slate-200
+                               bg-slate-100"
+                    >
+                        <img
+                            id="overviewImagePreview"
+                            src="{{ $overviewImageUrl }}"
+                            alt="Foto Gambaran Umum Program Studi"
+                            class="aspect-[4/3] w-full
+                                   object-cover"
+                        >
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label
+                                for="overview_image"
+                                class="block text-sm
+                                       font-bold text-slate-800"
+                            >
+                                Pilih foto baru
+                            </label>
+
+                            <p
+                                class="mt-1 text-xs
+                                       leading-6 text-slate-500"
+                            >
+                                Kosongkan apabila foto tidak perlu
+                                diganti. Gunakan JPG, PNG, atau WebP
+                                maksimal 4 MB.
+                            </p>
+
+                            <input
+                                id="overview_image"
+                                type="file"
+                                name="overview_image"
+                                accept="image/jpeg,image/png,image/webp"
+                                class="mt-3 block w-full
+                                       rounded-xl border
+                                       border-slate-200
+                                       bg-white px-3 py-2.5
+                                       text-sm text-slate-600
+                                       file:mr-3
+                                       file:rounded-lg
+                                       file:border-0
+                                       file:bg-[#075F9B]
+                                       file:px-4 file:py-2
+                                       file:text-sm
+                                       file:font-bold
+                                       file:text-white
+                                       hover:file:bg-[#064B7B]"
+                            >
+
+                            <p
+                                id="selectedOverviewImage"
+                                class="mt-3 hidden
+                                       text-xs font-semibold
+                                       text-[#075F9B]"
+                            ></p>
+                        </div>
+
+                        @if ($overviewImageExists)
+                            <label
+                                class="flex cursor-pointer
+                                       items-start gap-3
+                                       border-t border-slate-200
+                                       pt-4"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="remove_overview_image"
+                                    value="1"
+                                    class="mt-1 h-4 w-4
+                                           rounded border-slate-300
+                                           text-red-600"
+                                >
+
+                                <span>
+                                    <span
+                                        class="block text-sm
+                                               font-bold text-red-700"
+                                    >
+                                        Hapus foto unggahan
+                                    </span>
+
+                                    <span
+                                        class="mt-1 block
+                                               text-xs leading-6
+                                               text-slate-500"
+                                    >
+                                        Website akan kembali memakai
+                                        foto bawaan setelah semua
+                                        perubahan disimpan.
+                                    </span>
+                                </span>
+                            </label>
+                        @endif
+
+                        <p
+                            class="rounded-xl bg-blue-50
+                                   px-4 py-3 text-xs
+                                   leading-6 text-blue-800"
+                        >
+                            Foto baru ikut disimpan saat tombol
+                            <strong>Simpan Semua Perubahan</strong>
+                            ditekan.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- VISI --}}
+        {{-- ===================================================== --}}
+
+        @if ($profileSection->slug === 'visi-misi')
+            <section
+                class="overflow-hidden rounded-2xl
+                       border border-slate-200
+                       bg-white"
+            >
+                <div
+                    class="border-b border-slate-200
+                           px-5 py-5 sm:px-6"
+                >
+                    <h2
+                        class="text-lg font-extrabold
+                               text-slate-900"
+                    >
+                        Visi Program Studi
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm text-slate-500"
+                    >
+                        Visi disimpan bersama seluruh perubahan Misi.
+                    </p>
+                </div>
+
+                <div class="px-5 py-6 sm:px-6">
+                    <textarea
+                        name="vision_content"
+                        rows="7"
+                        class="w-full rounded-xl
+                               border border-slate-200
+                               px-4 py-3 text-sm
+                               leading-8 text-slate-800
+                               outline-none transition
+                               focus:border-[#075F9B]
+                               focus:ring-4
+                               focus:ring-blue-100"
+                    >{{ $visionContent }}</textarea>
+                </div>
+            </section>
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- DAFTAR ITEM BATCH --}}
+        {{-- ===================================================== --}}
+
+        <section
+            class="overflow-hidden rounded-2xl
+                   border border-slate-200
+                   bg-white"
+        >
+            <div
+                class="flex flex-col gap-4
+                       border-b border-slate-200
+                       px-5 py-5 sm:px-6
+                       lg:flex-row lg:items-center
+                       lg:justify-between"
+            >
+                <div>
+                    <h2
+                        class="text-lg font-extrabold
+                               text-slate-900"
+                    >
+                        {{ $config['item_title'] }}
+                    </h2>
+
+                    <p
+                        class="mt-1 text-sm
+                               leading-6 text-slate-500"
+                    >
+                        Edit beberapa poin sekaligus,
+                        kemudian klik Simpan Semua Perubahan.
+                    </p>
+                </div>
+
+                <div
+                    class="flex flex-col gap-3
+                           sm:flex-row"
+                >
+                    <div class="relative">
+                        <input
+                            id="profileItemSearch"
+                            type="search"
+                            placeholder="Cari isi..."
+                            class="w-full rounded-xl
+                                   border border-slate-200
+                                   bg-slate-50
+                                   py-2.5 pl-10 pr-4
+                                   text-sm text-slate-700
+                                   outline-none transition
+                                   focus:border-[#075F9B]
+                                   focus:bg-white
+                                   sm:w-64"
+                        >
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="absolute left-3
+                                   top-1/2 h-4 w-4
+                                   -translate-y-1/2
+                                   text-slate-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"
+                            />
+                        </svg>
+                    </div>
+
+                    <button
+                        id="addProfileItem"
+                        type="button"
+                        class="inline-flex items-center
+                               justify-center gap-2
+                               rounded-xl
+                               bg-blue-50 px-4 py-2.5
+                               text-sm font-bold
+                               text-[#075F9B]
+                               transition hover:bg-blue-100"
+                    >
+                        <span aria-hidden="true">+</span>
+                        Tambah {{ $config['item_singular'] }}
+                    </button>
+                </div>
             </div>
 
 
-            <div class="p-6 md:p-8 space-y-6">
+            <div
+                id="profileItemsContainer"
+                class="space-y-3 bg-slate-50/70
+                       p-4 sm:p-5"
+            >
+                @forelse ($managedItems as $item)
+                    @php
+                        $itemKey = 'existing_' . $item->id;
 
-                @forelse ($profileSection->items as $item)
+                        $infoParts = explode(
+                            '|',
+                            (string) $item->content,
+                            2
+                        );
 
-                    <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-6"
-                         data-profile-item-card
-                         data-title="{{ strtolower($item->title ?? '') }}"
-                         data-group="{{ strtolower($item->item_group ?? '') }}"
-                         data-content="{{ strtolower($item->content ?? '') }}">
+                        $infoValue = trim(
+                            $infoParts[0] ?? ''
+                        );
 
-                        <form action="{{ route('admin.profile-contents.items.update', $item) }}"
-                              method="POST"
-                              class="space-y-6">
+                        $infoNote = trim(
+                            $infoParts[1] ?? ''
+                        );
+                    @endphp
 
-                            @csrf
-                            @method('PUT')
+                    <article
+                        class="profile-item-row
+                               rounded-xl border
+                               border-slate-200
+                               bg-white p-4
+                               transition"
+                        data-profile-item-row
+                        data-search-text="{{ strtolower(
+                            trim(
+                                ($item->title ?? '')
+                                . ' '
+                                . ($item->content ?? '')
+                            )
+                        ) }}"
+                    >
+                        <input
+                            type="hidden"
+                            name="items[{{ $itemKey }}][id]"
+                            value="{{ $item->id }}"
+                        >
 
-                            <input type="hidden" name="is_active" value="0">
+                        <input
+                            type="hidden"
+                            name="items[{{ $itemKey }}][item_group]"
+                            value="{{ $config['group'] }}"
+                        >
 
-                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+                        <input
+                            type="hidden"
+                            name="items[{{ $itemKey }}][delete]"
+                            value="0"
+                            data-delete-input
+                        >
 
-                                <div class="flex items-start gap-4">
+                        <input
+                            type="hidden"
+                            name="items[{{ $itemKey }}][is_active]"
+                            value="0"
+                        >
 
-                                    <div class="w-14 h-14 rounded-2xl bg-blue-700 text-white flex items-center justify-center font-black shadow-lg shrink-0">
-                                        {{ $loop->iteration }}
-                                    </div>
-
-                                    <div>
-
-                                        <h3 class="text-xl font-black text-slate-800">
-                                            {{ $item->title ?: 'Item Konten' }}
-                                        </h3>
-
-                                        <p class="mt-1 text-sm text-slate-500">
-                                            Group: {{ $item->item_group ?: '-' }} • Urutan {{ $item->sort_order }}
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                                @if ($item->is_active)
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold">
-                                        Aktif
-                                    </span>
-                                @else
-                                    <span class="inline-flex px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold">
-                                        Nonaktif
-                                    </span>
-                                @endif
-
-                            </div>
-
-                            <div class="grid md:grid-cols-3 gap-5">
-
+                        @if ($config['mode'] === 'info_card')
+                            <div
+                                class="grid gap-4
+                                       lg:grid-cols-[1fr_160px_1fr_90px_100px_110px]"
+                            >
                                 <div>
-
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                                        Group
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Nama Informasi
                                     </label>
 
-                                    <input type="text"
-                                           name="item_group"
-                                           value="{{ old('item_group', $item->item_group) }}"
-                                           placeholder="visi / misi / tujuan / ppm / cpl"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                                    <input
+                                        type="text"
+                                        name="items[{{ $itemKey }}][title]"
+                                        value="{{ old(
+                                            "items.$itemKey.title",
+                                            $item->title
+                                        ) }}"
+                                        placeholder="Jenjang Pendidikan"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5 text-sm
+                                               text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >
                                 </div>
 
                                 <div>
-
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                                        Judul Item
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Nilai
                                     </label>
 
-                                    <input type="text"
-                                           name="title"
-                                           value="{{ old('title', $item->title) }}"
-                                           placeholder="Contoh: Misi 1"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                                    <input
+                                        type="text"
+                                        name="items[{{ $itemKey }}][value]"
+                                        value="{{ old(
+                                            "items.$itemKey.value",
+                                            $infoValue
+                                        ) }}"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5 text-sm
+                                               font-bold text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >
                                 </div>
 
                                 <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Keterangan
+                                    </label>
 
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">
+                                    <input
+                                        type="text"
+                                        name="items[{{ $itemKey }}][note]"
+                                        value="{{ old(
+                                            "items.$itemKey.note",
+                                            $infoNote
+                                        ) }}"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5 text-sm
+                                               text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >
+                                </div>
+                        @else
+                            <div
+                                class="grid gap-4
+                                       lg:grid-cols-[180px_1fr_76px_90px_110px]"
+                            >
+                                <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Judul / Nomor
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="items[{{ $itemKey }}][title]"
+                                        value="{{ old(
+                                            "items.$itemKey.title",
+                                            $item->title
+                                        ) }}"
+                                        placeholder="{{ $config['item_singular'] }} {{ $loop->iteration }}"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5 text-sm
+                                               text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Isi Konten
+                                    </label>
+
+                                    <textarea
+                                        name="items[{{ $itemKey }}][content]"
+                                        rows="3"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5 text-sm
+                                               leading-6 text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >{{ old(
+                                        "items.$itemKey.content",
+                                        $item->content
+                                    ) }}</textarea>
+                                </div>
+                        @endif
+
+                                <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
                                         Urutan
                                     </label>
 
-                                    <input type="number"
-                                           name="sort_order"
-                                           value="{{ old('sort_order', $item->sort_order) }}"
-                                           class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
-
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        name="items[{{ $itemKey }}][sort_order]"
+                                        value="{{ old(
+                                            "items.$itemKey.sort_order",
+                                            $item->sort_order
+                                        ) }}"
+                                        class="mt-1.5 w-full
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 py-2.5
+                                               text-center text-sm
+                                               text-slate-800
+                                               outline-none
+                                               focus:border-[#075F9B]"
+                                    >
                                 </div>
 
+                                <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Status
+                                    </label>
+
+                                    <label
+                                        class="mt-1.5 flex h-[42px]
+                                               cursor-pointer
+                                               items-center gap-2
+                                               rounded-lg border
+                                               border-slate-200
+                                               px-3 text-sm
+                                               font-semibold
+                                               text-slate-700"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="items[{{ $itemKey }}][is_active]"
+                                            value="1"
+                                            class="h-4 w-4 rounded
+                                                   border-slate-300
+                                                   text-[#075F9B]"
+                                            {{ old(
+                                                "items.$itemKey.is_active",
+                                                $item->is_active
+                                            ) ? 'checked' : '' }}
+                                        >
+
+                                        Tampil
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block text-[11px]
+                                               font-bold text-slate-500"
+                                    >
+                                        Aksi
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        class="mt-1.5 flex h-[42px]
+                                               w-full items-center
+                                               justify-center
+                                               rounded-lg bg-red-50
+                                               px-3 text-sm
+                                               font-bold text-red-600
+                                               transition
+                                               hover:bg-red-100"
+                                        data-delete-button
+                                    >
+                                        Hapus
+                                    </button>
+                                </div>
                             </div>
 
-                            <div>
-
-                                <label class="block text-sm font-bold text-slate-700 mb-2">
-                                    Isi Konten
-                                </label>
-
-                                <textarea name="content"
-                                          rows="6"
-                                          class="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          required>{{ old('content', $item->content) }}</textarea>
-
-                            </div>
-
-                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pt-4 border-t border-slate-200">
-
-                                <label class="flex items-center gap-3 cursor-pointer">
-
-                                    <input type="checkbox"
-                                           name="is_active"
-                                           value="1"
-                                           class="w-5 h-5 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                                           {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
-
-                                    <span class="text-sm font-bold text-slate-700">
-                                        Tampilkan item ini
-                                    </span>
-
-                                </label>
-
-                                <button type="submit"
-                                        class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-700 text-white font-bold hover:bg-blue-800 transition">
-                                    Simpan Item
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                        <form action="{{ route('admin.profile-contents.items.destroy', $item) }}"
-                              method="POST"
-                              class="mt-4"
-                              onsubmit="return confirm('Yakin ingin menghapus item ini?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-red-50 text-red-700 font-bold hover:bg-red-600 hover:text-white transition">
-                                Hapus Item
-                            </button>
-
-                        </form>
-
-                    </div>
-
+                        <p
+                            class="mt-3 hidden text-xs
+                                   font-bold text-red-600"
+                            data-delete-message
+                        >
+                            Item ini akan dihapus saat semua
+                            perubahan disimpan.
+                        </p>
+                    </article>
                 @empty
-
-                    <div class="rounded-3xl bg-slate-50 border border-slate-100 p-10 text-center">
-
-                        <h3 class="text-xl font-bold text-slate-800">
-                            Belum ada item konten
-                        </h3>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan item baru melalui form di bawah.
+                    <div
+                        id="emptyProfileItems"
+                        class="rounded-xl border
+                               border-dashed border-slate-300
+                               bg-white px-6 py-10
+                               text-center"
+                    >
+                        <p
+                            class="text-sm font-bold
+                                   text-slate-700"
+                        >
+                            Belum ada {{ strtolower(
+                                $config['item_singular']
+                            ) }}
                         </p>
 
+                        <p
+                            class="mt-2 text-sm
+                                   text-slate-500"
+                        >
+                            Tekan tombol Tambah
+                            {{ $config['item_singular'] }}
+                            untuk membuat data baru.
+                        </p>
                     </div>
-
                 @endforelse
-
-
-                <div id="profileItemEmptySearch" class="hidden rounded-3xl bg-slate-50 border border-slate-100 p-10 text-center">
-
-                    <h3 class="text-xl font-bold text-slate-800">
-                        Item tidak ditemukan
-                    </h3>
-
-                    <p class="mt-2 text-slate-500">
-                        Coba gunakan kata kunci pencarian lain.
-                    </p>
-
-                </div>
-
             </div>
 
-        </div>
+
+            <div
+                id="profileSearchEmpty"
+                class="hidden border-t
+                       border-slate-200
+                       px-6 py-8 text-center"
+            >
+                <p
+                    class="text-sm font-bold
+                           text-slate-700"
+                >
+                    Isi tidak ditemukan
+                </p>
+            </div>
+        </section>
 
 
-        {{-- Add New Item Default --}}
-        <div class="rounded-[2rem] bg-white border border-slate-100 shadow-xl overflow-hidden">
+        {{-- ===================================================== --}}
+        {{-- SIMPAN SEMUA --}}
+        {{-- ===================================================== --}}
 
-            <div class="h-2 bg-gradient-to-r from-green-600 via-yellow-400 to-blue-700"></div>
+        <section
+            class="flex flex-col gap-4
+                   rounded-2xl border
+                   border-slate-200 bg-white
+                   px-5 py-5 shadow-sm
+                   sm:flex-row sm:items-center
+                   sm:justify-between sm:px-6"
+        >
+            <div>
+                <h2
+                    class="text-sm font-extrabold
+                           text-slate-900"
+                >
+                    Simpan semua perubahan?
+                </h2>
 
-            <form action="{{ route('admin.profile-contents.items.store', $profileSection) }}"
-                  method="POST"
-                  class="p-7 md:p-8 space-y-6">
+                <p
+                    class="mt-1 text-xs
+                           leading-5 text-slate-500"
+                >
+                    Semua perubahan pada halaman ini akan
+                    disimpan sekaligus.
+                </p>
+            </div>
 
-                @csrf
+            <button
+                id="saveAllProfileContent"
+                type="submit"
+                class="inline-flex w-full
+                       items-center justify-center
+                       gap-2 rounded-xl
+                       bg-[#075F9B] px-6 py-3
+                       text-sm font-bold text-white
+                       transition hover:bg-[#064B7B]
+                       disabled:cursor-not-allowed
+                       disabled:opacity-70
+                       sm:w-auto"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                    />
+                </svg>
 
-                <input type="hidden" name="is_active" value="1">
-
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-
-                    <div>
-
-                        <h2 class="text-2xl font-black text-slate-800">
-                            Tambah Item Baru
-                        </h2>
-
-                        <p class="mt-2 text-slate-500">
-                            Tambahkan item baru untuk section {{ $profileSection->title }}.
-                        </p>
-
-                    </div>
-
-                    <button type="submit"
-                            class="inline-flex items-center justify-center gap-3 px-7 py-4 rounded-2xl bg-green-600 text-white font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                        Tambah Item
-                    </button>
-
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-5">
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Group
-                        </label>
-
-                        <input type="text"
-                               name="item_group"
-                               placeholder="visi / misi / tujuan / ppm / cpl"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Judul Item
-                        </label>
-
-                        <input type="text"
-                               name="title"
-                               placeholder="Contoh: Misi 1"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                    <div>
-
-                        <label class="block text-sm font-bold text-slate-700 mb-2">
-                            Urutan
-                        </label>
-
-                        <input type="number"
-                               name="sort_order"
-                               value="0"
-                               class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <label class="block text-sm font-bold text-slate-700 mb-2">
-                        Isi Konten
-                    </label>
-
-                    <textarea name="content"
-                              rows="6"
-                              class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              required></textarea>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    @endif
-
+                <span data-save-label>
+                    Simpan Semua Perubahan
+                </span>
+            </button>
+        </section>
+    </form>
 </div>
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+{{-- ============================================================= --}}
+{{-- TEMPLATE ITEM BARU --}}
+{{-- ============================================================= --}}
 
-        /*
-        |--------------------------------------------------------------------------
-        | Search Item Default
-        |--------------------------------------------------------------------------
-        */
+<template id="profileItemTemplate">
+    <article
+        class="profile-item-row
+               rounded-xl border
+               border-blue-200
+               bg-white p-4 transition"
+        data-profile-item-row
+        data-new-row
+        data-search-text=""
+    >
+        <input
+            type="hidden"
+            name="items[__KEY__][item_group]"
+            value="{{ $config['group'] }}"
+        >
 
-        const searchInput = document.getElementById('profileItemSearch');
-        const cards = document.querySelectorAll('[data-profile-item-card]');
-        const emptySearch = document.getElementById('profileItemEmptySearch');
+        <input
+            type="hidden"
+            name="items[__KEY__][delete]"
+            value="0"
+            data-delete-input
+        >
 
-        if (searchInput) {
-            searchInput.addEventListener('input', function () {
-                const keyword = this.value.toLowerCase().trim();
-                let visibleCount = 0;
+        <input
+            type="hidden"
+            name="items[__KEY__][is_active]"
+            value="0"
+        >
 
-                cards.forEach(function (card) {
-                    const title = card.dataset.title || '';
-                    const group = card.dataset.group || '';
-                    const content = card.dataset.content || '';
+        @if ($config['mode'] === 'info_card')
+            <div
+                class="grid gap-4
+                       lg:grid-cols-[1fr_160px_1fr_90px_100px_110px]"
+            >
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Nama Informasi
+                    </label>
 
-                    const isMatch =
-                        title.includes(keyword) ||
-                        group.includes(keyword) ||
-                        content.includes(keyword);
+                    <input
+                        type="text"
+                        name="items[__KEY__][title]"
+                        placeholder="Jenjang Pendidikan"
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5 text-sm
+                               text-slate-800 outline-none
+                               focus:border-[#075F9B]"
+                    >
+                </div>
 
-                    card.style.display = isMatch ? '' : 'none';
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Nilai
+                    </label>
 
-                    if (isMatch) {
-                        visibleCount++;
+                    <input
+                        type="text"
+                        name="items[__KEY__][value]"
+                        placeholder="D-IV"
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5 text-sm
+                               font-bold text-slate-800
+                               outline-none
+                               focus:border-[#075F9B]"
+                    >
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Keterangan
+                    </label>
+
+                    <input
+                        type="text"
+                        name="items[__KEY__][note]"
+                        placeholder="Sarjana Terapan"
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5 text-sm
+                               text-slate-800 outline-none
+                               focus:border-[#075F9B]"
+                    >
+                </div>
+        @else
+            <div
+                class="grid gap-4
+                       lg:grid-cols-[180px_1fr_76px_90px_110px]"
+            >
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Judul / Nomor
+                    </label>
+
+                    <input
+                        type="text"
+                        name="items[__KEY__][title]"
+                        placeholder="{{ $config['item_singular'] }} baru"
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5 text-sm
+                               text-slate-800 outline-none
+                               focus:border-[#075F9B]"
+                    >
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Isi Konten
+                    </label>
+
+                    <textarea
+                        name="items[__KEY__][content]"
+                        rows="3"
+                        placeholder="Tulis isi {{ strtolower(
+                            $config['item_singular']
+                        ) }}..."
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5 text-sm
+                               leading-6 text-slate-800
+                               outline-none
+                               focus:border-[#075F9B]"
+                    ></textarea>
+                </div>
+        @endif
+
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Urutan
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        name="items[__KEY__][sort_order]"
+                        value="__ORDER__"
+                        class="mt-1.5 w-full
+                               rounded-lg border
+                               border-slate-200
+                               px-3 py-2.5
+                               text-center text-sm
+                               text-slate-800 outline-none
+                               focus:border-[#075F9B]"
+                    >
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Status
+                    </label>
+
+                    <label
+                        class="mt-1.5 flex h-[42px]
+                               cursor-pointer items-center
+                               gap-2 rounded-lg border
+                               border-slate-200 px-3
+                               text-sm font-semibold
+                               text-slate-700"
+                    >
+                        <input
+                            type="checkbox"
+                            name="items[__KEY__][is_active]"
+                            value="1"
+                            checked
+                            class="h-4 w-4 rounded
+                                   border-slate-300
+                                   text-[#075F9B]"
+                        >
+
+                        Tampil
+                    </label>
+                </div>
+
+                <div>
+                    <label
+                        class="block text-[11px]
+                               font-bold text-slate-500"
+                    >
+                        Aksi
+                    </label>
+
+                    <button
+                        type="button"
+                        class="mt-1.5 flex h-[42px]
+                               w-full items-center
+                               justify-center rounded-lg
+                               bg-red-50 px-3
+                               text-sm font-bold
+                               text-red-600 transition
+                               hover:bg-red-100"
+                        data-delete-button
+                    >
+                        Hapus
+                    </button>
+                </div>
+            </div>
+
+        <p
+            class="mt-3 hidden text-xs
+                   font-bold text-red-600"
+            data-delete-message
+        >
+            Item ini tidak akan disimpan.
+        </p>
+    </article>
+</template>
+
+
+@once
+    <script>
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
+                const form =
+                    document.getElementById(
+                        'profileBatchForm'
+                    );
+
+                const container =
+                    document.getElementById(
+                        'profileItemsContainer'
+                    );
+
+                const template =
+                    document.getElementById(
+                        'profileItemTemplate'
+                    );
+
+                const addButton =
+                    document.getElementById(
+                        'addProfileItem'
+                    );
+
+                const searchInput =
+                    document.getElementById(
+                        'profileItemSearch'
+                    );
+
+                const searchEmpty =
+                    document.getElementById(
+                        'profileSearchEmpty'
+                    );
+
+                const saveButton =
+                    document.getElementById(
+                        'saveAllProfileContent'
+                    );
+
+                const saveLabel =
+                    saveButton?.querySelector(
+                        '[data-save-label]'
+                    );
+
+                const overviewImageInput =
+                    document.getElementById(
+                        'overview_image'
+                    );
+
+                const overviewImagePreview =
+                    document.getElementById(
+                        'overviewImagePreview'
+                    );
+
+                const selectedOverviewImage =
+                    document.getElementById(
+                        'selectedOverviewImage'
+                    );
+
+                let overviewImageObjectUrl = null;
+                let newIndex = 0;
+                let nextOrder = {{ $nextOrder }};
+
+
+                function bindDeleteButton(row) {
+                    const button =
+                        row.querySelector(
+                            '[data-delete-button]'
+                        );
+
+                    const deleteInput =
+                        row.querySelector(
+                            '[data-delete-input]'
+                        );
+
+                    const message =
+                        row.querySelector(
+                            '[data-delete-message]'
+                        );
+
+                    if (
+                        !button
+                        || !deleteInput
+                    ) {
+                        return;
                     }
-                });
 
-                if (emptySearch) {
-                    emptySearch.classList.toggle('hidden', visibleCount > 0);
+                    button.addEventListener(
+                        'click',
+                        function () {
+                            if (
+                                row.hasAttribute(
+                                    'data-new-row'
+                                )
+                            ) {
+                                row.remove();
+                                updateEmptyState();
+
+                                return;
+                            }
+
+                            const willDelete =
+                                deleteInput.value !== '1';
+
+                            deleteInput.value =
+                                willDelete ? '1' : '0';
+
+                            row.classList.toggle(
+                                'border-red-300',
+                                willDelete
+                            );
+
+                            row.classList.toggle(
+                                'bg-red-50/60',
+                                willDelete
+                            );
+
+                            row.classList.toggle(
+                                'opacity-70',
+                                willDelete
+                            );
+
+                            message?.classList.toggle(
+                                'hidden',
+                                !willDelete
+                            );
+
+                            button.textContent =
+                                willDelete
+                                    ? 'Batalkan'
+                                    : 'Hapus';
+                        }
+                    );
                 }
-            });
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Info Card Content Builder
-        |--------------------------------------------------------------------------
-        | Admin melihat field yang mudah:
-        | - Angka / Nilai Besar
-        | - Deskripsi Kecil
-        |
-        | Tetapi database tetap menyimpan format:
-        | D-III|Diploma Empat
-        |--------------------------------------------------------------------------
-        */
+                function updateEmptyState() {
+                    const rows =
+                        container?.querySelectorAll(
+                            '[data-profile-item-row]'
+                        ) ?? [];
 
-        document.querySelectorAll('.js-info-card-form').forEach(function (form) {
-            form.addEventListener('submit', function () {
-                const valueInput = form.querySelector('[data-card-value]');
-                const descriptionInput = form.querySelector('[data-card-description]');
-                const hiddenContent = form.querySelector('.js-info-card-content');
+                    const emptyState =
+                        document.getElementById(
+                            'emptyProfileItems'
+                        );
 
-                if (!hiddenContent) {
-                    return;
+                    if (
+                        emptyState
+                        && rows.length > 0
+                    ) {
+                        emptyState.remove();
+                    }
                 }
 
-                const value = valueInput ? valueInput.value.trim() : '';
-                const description = descriptionInput ? descriptionInput.value.trim() : '';
 
-                hiddenContent.value = value + '|' + description;
-            });
-        });
+                container
+                    ?.querySelectorAll(
+                        '[data-profile-item-row]'
+                    )
+                    .forEach(bindDeleteButton);
 
-    });
-</script>
+
+                addButton?.addEventListener(
+                    'click',
+                    function () {
+                        if (
+                            !container
+                            || !template
+                        ) {
+                            return;
+                        }
+
+                        const key =
+                            'new_' + Date.now()
+                            + '_' + newIndex++;
+
+                        const html =
+                            template.innerHTML
+                                .replaceAll(
+                                    '__KEY__',
+                                    key
+                                )
+                                .replaceAll(
+                                    '__ORDER__',
+                                    String(nextOrder++)
+                                );
+
+                        const holder =
+                            document.createElement(
+                                'div'
+                            );
+
+                        holder.innerHTML =
+                            html.trim();
+
+                        const row =
+                            holder.firstElementChild;
+
+                        if (!row) {
+                            return;
+                        }
+
+                        container.appendChild(row);
+                        bindDeleteButton(row);
+                        updateEmptyState();
+
+                        row.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
+
+                        row.querySelector(
+                            'input[type="text"], textarea'
+                        )?.focus();
+                    }
+                );
+
+
+                searchInput?.addEventListener(
+                    'input',
+                    function () {
+                        const keyword =
+                            searchInput.value
+                                .toLowerCase()
+                                .trim();
+
+                        let visibleCount = 0;
+
+                        container
+                            ?.querySelectorAll(
+                                '[data-profile-item-row]'
+                            )
+                            .forEach(function (row) {
+                                const liveText =
+                                    Array.from(
+                                        row.querySelectorAll(
+                                            'input[type="text"], textarea'
+                                        )
+                                    )
+                                    .map(function (field) {
+                                        return field.value;
+                                    })
+                                    .join(' ')
+                                    .toLowerCase();
+
+                                const isMatch =
+                                    keyword === ''
+                                    || liveText.includes(
+                                        keyword
+                                    );
+
+                                row.classList.toggle(
+                                    'hidden',
+                                    !isMatch
+                                );
+
+                                if (isMatch) {
+                                    visibleCount++;
+                                }
+                            });
+
+                        searchEmpty?.classList.toggle(
+                            'hidden',
+                            visibleCount > 0
+                        );
+                    }
+                );
+
+
+                overviewImageInput?.addEventListener(
+                    'change',
+                    function () {
+                        const file =
+                            overviewImageInput.files?.[0];
+
+                        if (!file) {
+                            return;
+                        }
+
+                        if (overviewImageObjectUrl) {
+                            URL.revokeObjectURL(
+                                overviewImageObjectUrl
+                            );
+                        }
+
+                        overviewImageObjectUrl =
+                            URL.createObjectURL(file);
+
+                        if (overviewImagePreview) {
+                            overviewImagePreview.src =
+                                overviewImageObjectUrl;
+                        }
+
+                        if (selectedOverviewImage) {
+                            selectedOverviewImage
+                                .classList
+                                .remove('hidden');
+
+                            selectedOverviewImage.textContent =
+                                'Foto baru dipilih: '
+                                + file.name;
+                        }
+                    }
+                );
+
+
+                form?.addEventListener(
+                    'submit',
+                    function () {
+                        if (!saveButton) {
+                            return;
+                        }
+
+                        saveButton.disabled = true;
+
+                        if (saveLabel) {
+                            saveLabel.textContent =
+                                'Menyimpan...';
+                        }
+                    }
+                );
+
+
+                window.addEventListener(
+                    'beforeunload',
+                    function () {
+                        if (overviewImageObjectUrl) {
+                            URL.revokeObjectURL(
+                                overviewImageObjectUrl
+                            );
+                        }
+                    }
+                );
+            }
+        );
+    </script>
+@endonce
 
 @endsection

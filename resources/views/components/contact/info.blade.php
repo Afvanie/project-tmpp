@@ -44,7 +44,7 @@
         [
             'label' => 'Jam Layanan',
             'value' => 'Senin – Jumat',
-            'description' => '08.00 – 16.00 WIB',
+            'description' => '07.00 – 16.00 WIB',
             'icon' => 'fa-clock',
             'theme' => 'gold',
             'href' => null,
