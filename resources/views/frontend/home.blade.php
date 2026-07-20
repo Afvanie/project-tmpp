@@ -10,7 +10,7 @@
 
     @include('components.home.about')
 
-    
+    @include('components.home.news')
 
     @include('components.home.video-profile')
 

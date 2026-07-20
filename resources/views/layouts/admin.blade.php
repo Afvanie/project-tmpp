@@ -411,7 +411,38 @@
                                 <span>Konten Beranda</span>
                             </a>
 
+                            <a
+                                href="{{ route(
+                                    'admin.news.index'
+                                ) }}"
+                                @class([
+                                    'admin-menu-link',
+                                    'admin-menu-link-active' =>
+                                        request()->routeIs(
+                                            'admin.news.*'
+                                        ),
+                                ])
+                            >
+                                <span class="admin-menu-icon">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-4.5 w-4.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M4 6h16M4 10h16M4 14h10M4 18h10"
+                                        />
+                                    </svg>
+                                </span>
 
+                                <span>Berita</span>
+                            </a>
                             <a
                                 href="{{ route(
                                     'admin.profile-contents.index'

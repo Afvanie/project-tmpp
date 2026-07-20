@@ -19,6 +19,8 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LecturerStaffController;
 use App\Http\Controllers\Frontend\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Frontend\NewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +150,19 @@ Route::get(
     ]
 )->name('contact');
 
+/*
+|--------------------------------------------------------------------------
+| Berita
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/berita/{news}',
+    [
+        NewsController::class,
+        'show',
+    ]
+)->name('news.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -191,6 +206,19 @@ Route::prefix('admin')
         Route::middleware('admin.auth')
             ->group(function (): void {
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Berita
+                |--------------------------------------------------------------------------
+                */
+
+                Route::resource(
+                    'news',
+                    AdminNewsController::class
+                )->except([
+                    'show',
+                ]);
                 /*
                 |--------------------------------------------------------------------------
                 | Dashboard

@@ -8,21 +8,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Accreditation;
 use App\Models\HomeContent;
 use App\Models\HomeStatistic;
+use App\Models\News;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
-    /**
-     * Menampilkan halaman beranda.
-     */
     public function index(): View
     {
-        /*
-        |--------------------------------------------------------------------------
-        | DESKRIPSI PROGRAM STUDI
-        |--------------------------------------------------------------------------
-        */
-
         $homeContent = HomeContent::query()
             ->where(
                 'section_key',
@@ -36,12 +28,6 @@ class HomeController extends Controller
             ->orderByDesc('id')
             ->first();
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIK BERANDA
-        |--------------------------------------------------------------------------
-        */
-
         $homeStats = HomeStatistic::query()
             ->where(
                 'is_active',
@@ -51,26 +37,38 @@ class HomeController extends Controller
             ->orderBy('id')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | AKREDITASI YANG DIPUBLIKASIKAN
-        |--------------------------------------------------------------------------
-        |
-        | Hanya data yang diaktifkan melalui panel admin yang disiapkan
-        | untuk halaman publik. Nomor sertifikat dan masa berlaku tetap
-        | boleh kosong ketika dokumen resmi belum tersedia.
-        |
-        */
-
         $accreditations = Accreditation::query()
             ->active()
             ->ordered()
             ->get();
 
-        return view('frontend.home', [
-            'homeContent' => $homeContent,
-            'homeStats' => $homeStats,
-            'accreditations' => $accreditations,
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | BERITA TERBARU
+        |--------------------------------------------------------------------------
+        */
+
+        $latestNews = News::query()
+            ->published()
+            ->latestPublished()
+            ->limit(3)
+            ->get();
+
+        return view(
+            'frontend.home',
+            [
+                'homeContent' =>
+                    $homeContent,
+
+                'homeStats' =>
+                    $homeStats,
+
+                'accreditations' =>
+                    $accreditations,
+
+                'latestNews' =>
+                    $latestNews,
+            ]
+        );
     }
 }
